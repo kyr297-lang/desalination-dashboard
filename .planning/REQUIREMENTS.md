@@ -90,37 +90,37 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | — | Pending |
-| DATA-02 | — | Pending |
-| DATA-03 | — | Pending |
-| SEL-01 | — | Pending |
-| SEL-02 | — | Pending |
-| SEL-03 | — | Pending |
-| HYB-01 | — | Pending |
-| HYB-02 | — | Pending |
-| HYB-03 | — | Pending |
-| HYB-04 | — | Pending |
-| SCORE-01 | — | Pending |
-| SCORE-02 | — | Pending |
-| SCORE-03 | — | Pending |
-| CHART-01 | — | Pending |
-| CHART-02 | — | Pending |
-| CHART-03 | — | Pending |
-| CHART-04 | — | Pending |
-| CHART-05 | — | Pending |
-| CTRL-01 | — | Pending |
-| CTRL-02 | — | Pending |
-| VIS-01 | — | Pending |
-| VIS-02 | — | Pending |
-| VIS-03 | — | Pending |
-| EXP-01 | — | Pending |
-| DEP-01 | — | Pending |
+| DATA-01 | Phase 1 | Pending |
+| DATA-02 | Phase 1 | Pending |
+| DATA-03 | Phase 1 | Pending |
+| DEP-01 | Phase 1 | Pending |
+| SEL-01 | Phase 2 | Pending |
+| SEL-02 | Phase 2 | Pending |
+| SEL-03 | Phase 2 | Pending |
+| SCORE-01 | Phase 2 | Pending |
+| SCORE-02 | Phase 2 | Pending |
+| VIS-01 | Phase 2 | Pending |
+| VIS-02 | Phase 2 | Pending |
+| CHART-01 | Phase 3 | Pending |
+| CHART-02 | Phase 3 | Pending |
+| CHART-03 | Phase 3 | Pending |
+| CHART-04 | Phase 3 | Pending |
+| CHART-05 | Phase 3 | Pending |
+| CTRL-01 | Phase 3 | Pending |
+| CTRL-02 | Phase 3 | Pending |
+| VIS-03 | Phase 3 | Pending |
+| HYB-01 | Phase 4 | Pending |
+| HYB-02 | Phase 4 | Pending |
+| HYB-03 | Phase 4 | Pending |
+| HYB-04 | Phase 4 | Pending |
+| SCORE-03 | Phase 4 | Pending |
+| EXP-01 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 25 total
-- Mapped to phases: 0
-- Unmapped: 25 ⚠️
+- Mapped to phases: 25
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-21 after initial definition*
+*Last updated: 2026-02-21 after roadmap creation — traceability complete*
