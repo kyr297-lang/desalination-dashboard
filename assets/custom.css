@@ -1,0 +1,97 @@
+/* ============================================================
+   assets/custom.css
+   Custom styles for the Wind-Powered Desalination Dashboard
+   ============================================================ */
+
+/* Sidebar toggle (hamburger) button
+   ─────────────────────────────────
+   Removes default browser button chrome; styles the Unicode
+   hamburger character (U+2630) to match the navbar. */
+.sidebar-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: white;
+    padding: 0 0.5rem;
+    line-height: 1;
+}
+
+.sidebar-toggle-btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Sidebar transition
+   ───────────────────
+   The inline style on #sidebar drives the actual width change.
+   This rule ensures the transition is honoured even when set
+   via inline style (belt-and-suspenders for cross-browser). */
+#sidebar {
+    transition: width 0.2s ease;
+    overflow: hidden;
+}
+
+/* System identity accent border — print preservation
+   ────────────────────────────────────────────────────
+   The render_content callback applies an inline borderTop to #page-content
+   when a system tab is active (4px solid in the system color). By default
+   browsers may strip border colors when printing. These rules ensure the
+   accent border prints faithfully as a system identifier.
+   Do NOT add display:none here — the border is an intentional print identifier. */
+#page-content {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* Print layout fix
+   ─────────────────
+   @page at top level (NOT inside @media print) fixes the Bootstrap/dbc
+   Chrome print dialog issue (dbc GitHub #269) where the Layout option
+   (portrait/landscape) disappears. */
+@page {
+    size: auto;
+}
+
+/* Print media rules
+   ──────────────────
+   Hide all non-report UI elements in print/PDF export view.
+   Only the RAG scorecard table and the four comparison charts remain.
+   Do NOT hide dcc.Graph / js-plotly-plot with display:none — that causes
+   Plotly layout reflow issues. Only hide non-chart UI. */
+@media print {
+    /* Navigation and sidebar */
+    .navbar,
+    #sidebar,
+    .sidebar-toggle-btn { display: none !important; }
+
+    /* System tab bar and breadcrumb */
+    #system-tabs,
+    #back-to-overview { display: none !important; }
+
+    /* Interactive controls and export button */
+    .no-print { display: none !important; }
+
+    /* Hybrid builder inputs (results only, not inputs per CONTEXT.md) */
+    .hybrid-builder-section { display: none !important; }
+
+    /* Chart control panel (sliders, legend badges) */
+    .chart-controls { display: none !important; }
+
+    /* Ensure content fills page width */
+    #page-content {
+        padding: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    /* Keep charts visible and full-width */
+    .dcc-graph,
+    .js-plotly-plot {
+        width: 100% !important;
+    }
+
+    /* Page break control */
+    .scorecard-print-section {
+        page-break-inside: avoid;
+    }
+}
