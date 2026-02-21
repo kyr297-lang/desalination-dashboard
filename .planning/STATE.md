@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 1 of 5 (Foundation)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-21 — Completed 01-01-PLAN.md (data layer)
+Plan: 2 of 2 in current phase — PHASE COMPLETE
+Status: Phase 1 complete, ready for Phase 2
+Last activity: 2026-02-21 — Completed 01-02-PLAN.md (app shell and entry point)
 
-Progress: [█░░░░░░░░░] 10%
+Progress: [██░░░░░░░░] 20%
 
 ## Performance Metrics
 
@@ -27,10 +27,10 @@ Progress: [█░░░░░░░░░] 10%
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Foundation | 1/2 | 2 min | 2 min |
+| 1. Foundation | 2/2 | 27 min | 13.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min)
+- Last 5 plans: 01-01 (2 min), 01-02 (25 min)
 - Trend: —
 
 *Updated after each plan completion*
@@ -49,6 +49,10 @@ Recent decisions affecting current work:
 - [01-01]: Use pandas 2.3.3 (already installed) instead of 2.2.3 — matches installed environment, no compatibility issues
 - [01-01]: data_only=True in openpyxl.load_workbook — returns computed values not formula strings
 - [01-01]: Row 33 note text included in miscellaneous DataFrame (6 rows); column B is not None so name guard does not skip it
+- [01-02]: debug=False in app.run() prevents Flask reloader from opening two browser tabs on auto-open
+- [01-02]: Use 127.0.0.1 not localhost in browser URL to avoid DNS resolution delay on Windows
+- [01-02]: Sidebar state stored in dcc.Store (client-side) so collapse persists across tab navigations
+- [01-02]: suppress_callback_exceptions=True set globally for multi-page readiness
 
 ### Pending Todos
 
@@ -63,5 +67,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 01-01-PLAN.md — data layer (loader.py, config.py, requirements.txt)
+Stopped at: Completed 01-02-PLAN.md — app shell and entry point (app.py, shell.py, error_page.py, custom.css)
 Resume file: None

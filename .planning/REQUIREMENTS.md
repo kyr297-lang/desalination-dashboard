@@ -55,7 +55,7 @@
 
 ### Deployment
 
-- [ ] **DEP-01**: App runs locally via `python app.py` with no external service dependencies
+- [x] **DEP-01**: App runs locally via `python app.py` with no external service dependencies
 
 ## v2 Requirements
 
@@ -93,7 +93,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-01 | Phase 1 | Complete |
 | DATA-02 | Phase 1 | Complete |
 | DATA-03 | Phase 1 | Complete |
-| DEP-01 | Phase 1 | Pending |
+| DEP-01 | Phase 1 | Complete |
 | SEL-01 | Phase 2 | Pending |
 | SEL-02 | Phase 2 | Pending |
 | SEL-03 | Phase 2 | Pending |

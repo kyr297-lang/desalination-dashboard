@@ -12,7 +12,7 @@ This roadmap builds the dashboard in strict dependency order: data layer first (
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Data layer, app shell, and project scaffolding — everything else depends on this
+- [x] **Phase 1: Foundation** - Data layer, app shell, and project scaffolding — everything else depends on this (completed 2026-02-21)
 - [ ] **Phase 2: System Selection and Scorecard** - Static layouts, equipment detail views, and RAG scorecard
 - [ ] **Phase 3: Comparison Charts and Electrical Slider** - All four comparison charts with real data and the battery/tank tradeoff control
 - [ ] **Phase 4: Hybrid Builder** - 5-slot equipment builder, completion gate, and hybrid data flowing into all charts
@@ -29,7 +29,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. All three Excel sheets (Electrical, Mechanical, Miscellaneous) load and parse without crashing
   3. A startup validation message or error clearly tells the user if any sheet fails to parse
   4. A consistent color is visibly assigned to each system (Mechanical, Electrical, Hybrid) that will persist across all future charts
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 01-01-PLAN.md — Data layer: Excel parser, config, system colors, requirements.txt
 - [ ] 01-02-PLAN.md — App shell: Dash entry point, collapsible sidebar, error page, browser auto-open
@@ -88,7 +88,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/2 | In Progress|  |
+| 1. Foundation | 2/2 | Complete   | 2026-02-21 |
 | 2. System Selection and Scorecard | 0/TBD | Not started | - |
 | 3. Comparison Charts and Electrical Slider | 0/TBD | Not started | - |
 | 4. Hybrid Builder | 0/TBD | Not started | - |
