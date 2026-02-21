@@ -44,7 +44,10 @@ Plans:
   3. User can click an individual piece of equipment and see its detailed description and data
   4. Scorecard displays cost, land area, and efficiency values for all three systems
   5. Each scorecard metric has a clearly visible red, yellow, or green indicator relative to the other systems
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 02-01-PLAN.md — Data processing helpers, config domain data (process stages, equipment descriptions, RAG logic, scorecard computation)
+- [ ] 02-02-PLAN.md — Landing overview, tab navigation, RAG scorecard table, equipment card grid with accordion detail and cross-system comparison
 
 ### Phase 3: Comparison Charts and Electrical Slider
 **Goal**: Students can explore side-by-side charts for all three systems and adjust the electrical battery/tank tradeoff to see its effect in real time
@@ -89,7 +92,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete    | 2026-02-21 |
-| 2. System Selection and Scorecard | 0/TBD | Not started | - |
+| 2. System Selection and Scorecard | 0/2 | Planned | - |
 | 3. Comparison Charts and Electrical Slider | 0/TBD | Not started | - |
 | 4. Hybrid Builder | 0/TBD | Not started | - |
 | 5. Polish and Deployment | 0/TBD | Not started | - |
