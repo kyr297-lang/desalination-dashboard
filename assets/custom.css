@@ -1,0 +1,33 @@
+/* ============================================================
+   assets/custom.css
+   Custom styles for the Wind-Powered Desalination Dashboard
+   ============================================================ */
+
+/* Sidebar toggle (hamburger) button
+   ─────────────────────────────────
+   Removes default browser button chrome; styles the Unicode
+   hamburger character (U+2630) to match the navbar. */
+.sidebar-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: white;
+    padding: 0 0.5rem;
+    line-height: 1;
+}
+
+.sidebar-toggle-btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Sidebar transition
+   ───────────────────
+   The inline style on #sidebar drives the actual width change.
+   This rule ensures the transition is honoured even when set
+   via inline style (belt-and-suspenders for cross-browser). */
+#sidebar {
+    transition: width 0.2s ease;
+    overflow: hidden;
+}
