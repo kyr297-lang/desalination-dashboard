@@ -7,9 +7,9 @@
 
 ### Data & Infrastructure
 
-- [ ] **DATA-01**: App loads and parses data.xlsx at startup (Electrical, Mechanical, Miscellaneous sheets)
-- [ ] **DATA-02**: Data validation ensures all three sheets parse correctly before rendering UI
-- [ ] **DATA-03**: Consistent color mapping per system (Mechanical/Electrical/Hybrid) across all charts and components
+- [x] **DATA-01**: App loads and parses data.xlsx at startup (Electrical, Mechanical, Miscellaneous sheets)
+- [x] **DATA-02**: Data validation ensures all three sheets parse correctly before rendering UI
+- [x] **DATA-03**: Consistent color mapping per system (Mechanical/Electrical/Hybrid) across all charts and components
 
 ### System Selection
 
@@ -90,9 +90,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
+| DATA-03 | Phase 1 | Complete |
 | DEP-01 | Phase 1 | Pending |
 | SEL-01 | Phase 2 | Pending |
 | SEL-02 | Phase 2 | Pending |
