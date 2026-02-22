@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Students can visually compare mechanical, electrical, and custom hybrid desalination systems side-by-side to understand cost, land, and efficiency tradeoffs
-**Current focus:** Phase 3 — Comparison Charts and Electrical Slider
+**Current focus:** Phase 4 — Hybrid Builder
 
 ## Current Position
 
-Phase: 3 of 5 (Comparison Charts and Electrical Slider)
-Plan: 2 of 2 in current phase
-Status: Complete
-Last activity: 2026-02-22 — Completed 03-02-PLAN.md (chart callbacks, slider integration, legend toggles)
+Phase: 4 of 5 (Hybrid Builder)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-22 — Completed 04-01-PLAN.md (hybrid builder foundation: config, processing helpers, pipeline layout)
 
-Progress: [██████░░░░] 60%
+Progress: [███████░░░] 70%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 10 min
-- Total execution time: 73 min
+- Total execution time: 76 min
 
 **By Phase:**
 
@@ -30,15 +30,17 @@ Progress: [██████░░░░] 60%
 | 1. Foundation | 2/2 | 27 min | 13.5 min |
 | 2. System Selection | 2/4 | 28 min | 14 min |
 | 3. Comparison Charts | 2/2 | 18 min | 9 min |
+| 4. Hybrid Builder | 1/2 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (2 min), 02-02 (26 min), 03-01 (3 min), 03-02 (15 min)
-- Trend: Steady (callback wiring, human-verify checkpoint)
+- Last 5 plans: 02-02 (26 min), 03-01 (3 min), 03-02 (15 min), 04-01 (3 min)
+- Trend: Fast (config + processing helpers + self-contained layout module)
 
 *Updated after each plan completion*
 | Phase 02-system-selection-and-scorecard P02 | 26 min | 3 tasks | 6 files |
 | Phase 03-comparison-charts-and-electrical-slider P01 | 3 min | 2 tasks | 2 files |
 | Phase 03-comparison-charts-and-electrical-slider P02 | 15 min | 2 tasks | 3 files |
+| Phase 04-hybrid-builder P01 | 3 min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -74,6 +76,10 @@ Recent decisions affecting current work:
 - [03-02]: ctx.triggered_id with dict map to system key in toggle_legend() — cleaner than if/else per Input, extends easily for a fourth system
 - [03-02]: Badge dimming uses opacity 0.4 + text-decoration: line-through — line-through makes toggle-off state unambiguous vs opacity alone
 - [03-02]: set_data() pattern extended to charts.py exactly mirroring shell.py — consistent module-level data access, no data loading inside callbacks
+- [04-01]: Desalination dropdown items sourced from mechanical/electrical DataFrames (not miscellaneous) — hybrid builder allows cross-system equipment selection
+- [04-01]: Multi-Media Filtration removed from miscellaneous Pre-Treatment — exists only in electrical sheet, leaving it would produce unresolvable dropdown option
+- [04-01]: clear_all_slots callback cascades through update_slot_store — single writer pattern maintained for store-hybrid-slots
+- [04-01]: hybrid_energy in compute_chart_data uses miscellaneous system key for stage lookup — hybrid items are mapped via that stage config
 
 ### Pending Todos
 
@@ -88,5 +94,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 03-02-PLAN.md — Phase 3 complete; all charts interactive, sliders wired, legend toggles working
+Stopped at: Completed 04-01-PLAN.md — hybrid builder foundation complete; config extended, processing helpers added, pipeline layout and callbacks self-contained in hybrid_builder.py
 Resume file: None

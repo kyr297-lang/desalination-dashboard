@@ -19,8 +19,8 @@
 
 ### Hybrid Builder
 
-- [ ] **HYB-01**: User sees 5 functional slots: Water Extraction, Pre-Treatment, Desalination, Post-Treatment, Brine Disposal
-- [ ] **HYB-02**: Each slot presents a dropdown of valid equipment from the Miscellaneous sheet
+- [x] **HYB-01**: User sees 5 functional slots: Water Extraction, Pre-Treatment, Desalination, Post-Treatment, Brine Disposal
+- [x] **HYB-02**: Each slot presents a dropdown of valid equipment from the Miscellaneous sheet
 - [ ] **HYB-03**: User cannot see comparison results or detailed output until all 5 slots are filled (completion gate)
 - [ ] **HYB-04**: After completion, user can select hybrid equipment for detailed data view
 
@@ -109,8 +109,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CTRL-01 | Phase 3 | Complete |
 | CTRL-02 | Phase 3 | Complete |
 | VIS-03 | Phase 3 | Complete |
-| HYB-01 | Phase 4 | Pending |
-| HYB-02 | Phase 4 | Pending |
+| HYB-01 | Phase 4 | Complete |
+| HYB-02 | Phase 4 | Complete |
 | HYB-03 | Phase 4 | Pending |
 | HYB-04 | Phase 4 | Pending |
 | SCORE-03 | Phase 4 | Pending |
