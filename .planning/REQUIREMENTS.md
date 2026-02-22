@@ -13,9 +13,9 @@
 
 ### System Selection
 
-- [ ] **SEL-01**: User can select between Mechanical, Electrical, or Hybrid system from a clear selector interface
-- [ ] **SEL-02**: Selecting Mechanical or Electrical shows equipment list with quantity, cost, energy, land area, and lifespan
-- [ ] **SEL-03**: User can click/select individual equipment for detailed description and data
+- [x] **SEL-01**: User can select between Mechanical, Electrical, or Hybrid system from a clear selector interface
+- [x] **SEL-02**: Selecting Mechanical or Electrical shows equipment list with quantity, cost, energy, land area, and lifespan
+- [x] **SEL-03**: User can click/select individual equipment for detailed description and data
 
 ### Hybrid Builder
 
@@ -45,8 +45,8 @@
 
 ### Visual Design
 
-- [ ] **VIS-01**: Academic styling — clean, professional, muted colors (FLATLY Bootstrap theme or similar)
-- [ ] **VIS-02**: Easy to navigate for students unfamiliar with the tool
+- [x] **VIS-01**: Academic styling — clean, professional, muted colors (FLATLY Bootstrap theme or similar)
+- [x] **VIS-02**: Easy to navigate for students unfamiliar with the tool
 - [ ] **VIS-03**: All charts have labeled axes with units, hover tooltips with formatted values
 
 ### Export
@@ -94,13 +94,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-02 | Phase 1 | Complete |
 | DATA-03 | Phase 1 | Complete |
 | DEP-01 | Phase 1 | Complete |
-| SEL-01 | Phase 2 | Pending |
-| SEL-02 | Phase 2 | Pending |
-| SEL-03 | Phase 2 | Pending |
+| SEL-01 | Phase 2 | Complete |
+| SEL-02 | Phase 2 | Complete |
+| SEL-03 | Phase 2 | Complete |
 | SCORE-01 | Phase 2 | Complete |
 | SCORE-02 | Phase 2 | Complete |
-| VIS-01 | Phase 2 | Pending |
-| VIS-02 | Phase 2 | Pending |
+| VIS-01 | Phase 2 | Complete |
+| VIS-02 | Phase 2 | Complete |
 | CHART-01 | Phase 3 | Pending |
 | CHART-02 | Phase 3 | Pending |
 | CHART-03 | Phase 3 | Pending |
