@@ -178,11 +178,9 @@ def make_hybrid_builder(data: dict) -> html.Div:
     html.Div
         Complete pipeline builder section ready to embed in the Hybrid tab.
     """
-    # ── Slot store ────────────────────────────────────────────────────────────
-    slot_store = dcc.Store(
-        id="store-hybrid-slots",
-        data={stage: None for stage in SLOT_STAGES},
-    )
+    # Note: dcc.Store(id="store-hybrid-slots") lives in the app shell (shell.py)
+    # so it is always in the DOM regardless of active tab. This ensures
+    # callbacks that use it as Input (charts, scorecard) fire on all tabs.
 
     # ── Top bar: counter + Clear All button ──────────────────────────────────
     top_bar = html.Div(
@@ -223,7 +221,6 @@ def make_hybrid_builder(data: dict) -> html.Div:
 
     return html.Div(
         [
-            slot_store,
             html.H5("Hybrid System Builder", className="mb-3"),
             top_bar,
             pipeline,

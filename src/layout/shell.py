@@ -18,6 +18,8 @@ import dash
 from dash import html, dcc, callback, Input, Output, State, ctx, ALL
 import dash_bootstrap_components as dbc
 
+from src.layout.hybrid_builder import SLOT_STAGES
+
 from src.config import SYSTEM_COLORS  # available for future use by child components
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -78,6 +80,14 @@ def create_layout(data: dict) -> html.Div:
 
         # Active system store — None = landing overview, string = system key
         dcc.Store(id="active-system", data=None),
+
+        # Hybrid slot store — always in the DOM so chart/scorecard callbacks
+        # can use it as an Input regardless of which tab is active.
+        # Written by the hybrid builder callbacks when the Hybrid tab is open.
+        dcc.Store(
+            id="store-hybrid-slots",
+            data={stage: None for stage in SLOT_STAGES},
+        ),
 
 
         # ── Top header bar ─────────────────────────────────────────────────
