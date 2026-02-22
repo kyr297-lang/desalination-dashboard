@@ -11,17 +11,17 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 
 Phase: 3 of 5 (Comparison Charts and Electrical Slider)
 Plan: 2 of 2 in current phase
-Status: In Progress
-Last activity: 2026-02-22 — Completed 03-01-PLAN.md (chart data computation layer and figure builders)
+Status: Complete
+Last activity: 2026-02-22 — Completed 03-02-PLAN.md (chart callbacks, slider integration, legend toggles)
 
-Progress: [█████░░░░░] 50%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 9 min
-- Total execution time: 58 min
+- Total plans completed: 6
+- Average duration: 10 min
+- Total execution time: 73 min
 
 **By Phase:**
 
@@ -29,15 +29,16 @@ Progress: [█████░░░░░] 50%
 |-------|-------|-------|----------|
 | 1. Foundation | 2/2 | 27 min | 13.5 min |
 | 2. System Selection | 2/4 | 28 min | 14 min |
-| 3. Comparison Charts | 1/2 | 3 min | 3 min |
+| 3. Comparison Charts | 2/2 | 18 min | 9 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (25 min), 02-01 (2 min), 02-02 (26 min), 03-01 (3 min)
-- Trend: Fast (data+figure layer, no callbacks)
+- Last 5 plans: 02-01 (2 min), 02-02 (26 min), 03-01 (3 min), 03-02 (15 min)
+- Trend: Steady (callback wiring, human-verify checkpoint)
 
 *Updated after each plan completion*
 | Phase 02-system-selection-and-scorecard P02 | 26 min | 3 tasks | 6 files |
 | Phase 03-comparison-charts-and-electrical-slider P01 | 3 min | 2 tasks | 2 files |
+| Phase 03-comparison-charts-and-electrical-slider P02 | 15 min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -69,6 +70,10 @@ Recent decisions affecting current work:
 - [03-01]: Hybrid placeholder is zeros/empty dicts throughout Phase 3 — no KeyError risk from data dict; TODO comments mark Phase 4 integration points
 - [03-01]: Empty energy dict for hybrid pie uses ["No data"]/[1] grey slice to avoid go.Pie(values=[]) error
 - [03-01]: External HTML legend (dbc.Badge) is authoritative for visibility state — no reliance on restyleData (known Dash bug #2037)
+- [03-02]: update_charts() master callback consolidates all four chart outputs + three labels — single callback avoids state fragmentation across figures
+- [03-02]: ctx.triggered_id with dict map to system key in toggle_legend() — cleaner than if/else per Input, extends easily for a fourth system
+- [03-02]: Badge dimming uses opacity 0.4 + text-decoration: line-through — line-through makes toggle-off state unambiguous vs opacity alone
+- [03-02]: set_data() pattern extended to charts.py exactly mirroring shell.py — consistent module-level data access, no data loading inside callbacks
 
 ### Pending Todos
 
@@ -83,5 +88,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 03-01-PLAN.md — data layer + figure builders done, ready for 03-02 callback wiring
+Stopped at: Completed 03-02-PLAN.md — Phase 3 complete; all charts interactive, sliders wired, legend toggles working
 Resume file: None
