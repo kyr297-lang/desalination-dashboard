@@ -21,14 +21,14 @@
 
 - [x] **HYB-01**: User sees 5 functional slots: Water Extraction, Pre-Treatment, Desalination, Post-Treatment, Brine Disposal
 - [x] **HYB-02**: Each slot presents a dropdown of valid equipment from the Miscellaneous sheet
-- [ ] **HYB-03**: User cannot see comparison results or detailed output until all 5 slots are filled (completion gate)
-- [ ] **HYB-04**: After completion, user can select hybrid equipment for detailed data view
+- [x] **HYB-03**: User cannot see comparison results or detailed output until all 5 slots are filled (completion gate)
+- [x] **HYB-04**: After completion, user can select hybrid equipment for detailed data view
 
 ### Scorecard & Ranking
 
 - [x] **SCORE-01**: Dashboard displays cost, land area, and efficiency scorecard for all systems
 - [x] **SCORE-02**: Each metric has red/yellow/green (RAG) ranking relative to the three systems
-- [ ] **SCORE-03**: Hybrid system shows comparison description text against the two preset systems
+- [x] **SCORE-03**: Hybrid system shows comparison description text against the two preset systems
 
 ### Comparison Charts
 
@@ -111,9 +111,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VIS-03 | Phase 3 | Complete |
 | HYB-01 | Phase 4 | Complete |
 | HYB-02 | Phase 4 | Complete |
-| HYB-03 | Phase 4 | Pending |
-| HYB-04 | Phase 4 | Pending |
-| SCORE-03 | Phase 4 | Pending |
+| HYB-03 | Phase 4 | Complete |
+| HYB-04 | Phase 4 | Complete |
+| SCORE-03 | Phase 4 | Complete |
 | EXP-01 | Phase 5 | Pending |
 
 **Coverage:**
