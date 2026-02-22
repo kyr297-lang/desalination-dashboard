@@ -1,26 +1,55 @@
 """
 src/layout/charts.py
 ====================
-Plotly figure builders and chart section layout for the System Comparison panel.
+Plotly figure builders, chart section layout, and callbacks for the System
+Comparison panel.
 
-Provides four pure figure-building functions (no callbacks) and one layout
-factory. All callbacks that wire sliders and legend toggles to these figures
-are defined in Plan 02 (03-02-PLAN.md).
+Provides four pure figure-building functions, one layout factory, and three
+Dash callbacks that wire sliders and legend toggles to the chart figures.
 
 Exports
 -------
+set_data(data) -> None
 build_cost_chart(years, mech_cumulative, elec_cumulative, hybrid_cumulative, visibility) -> go.Figure
 build_land_chart(mech_land, elec_land, hybrid_land, visibility) -> go.Figure
 build_turbine_chart(mech_count, elec_count, hybrid_count, visibility) -> go.Figure
 build_pie_chart(mech_energy, elec_energy, hybrid_energy, visibility) -> go.Figure
 make_chart_section() -> html.Div
+update_charts(years, battery_fraction, visibility) -> tuple
+toggle_legend(n_mech, n_elec, n_hybrid, visibility) -> dict
+update_badge_styles(visibility) -> tuple
 """
 
 import plotly.graph_objects as go
-from dash import html, dcc
+from dash import html, dcc, callback, Input, Output, State, ctx
 import dash_bootstrap_components as dbc
 
 from src.config import SYSTEM_COLORS
+from src.data.processing import compute_chart_data, interpolate_battery_cost, battery_ratio_label, fmt_cost
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Module-level data reference — mirrors set_data() pattern from shell.py.
+# Populated by set_data() called from app.py after data is loaded.
+# ──────────────────────────────────────────────────────────────────────────────
+
+_data = None
+
+
+def set_data(data: dict) -> None:
+    """Store the loaded data dict for use in the chart callbacks.
+
+    Called once from app.py after DATA is loaded, before any callbacks fire.
+    Mirrors the pattern used in shell.py to avoid circular imports and
+    callback data loading.
+
+    Parameters
+    ----------
+    data : dict
+        Data dict returned by load_data().
+    """
+    global _data
+    _data = data
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -502,3 +531,168 @@ def make_chart_section() -> html.Div:
         row1,
         row2,
     ])
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Callbacks
+# ──────────────────────────────────────────────────────────────────────────────
+
+@callback(
+    Output("chart-cost", "figure"),
+    Output("chart-land", "figure"),
+    Output("chart-turbine", "figure"),
+    Output("chart-pie", "figure"),
+    Output("label-years", "children"),
+    Output("label-battery-ratio", "children"),
+    Output("label-elec-cost", "children"),
+    Input("slider-time-horizon", "value"),
+    Input("slider-battery", "value"),
+    Input("store-legend-visibility", "data"),
+)
+def update_charts(years, battery_fraction, visibility):
+    """Master chart update callback.
+
+    Fires whenever the time horizon slider, battery/tank slider, or legend
+    visibility store changes. Computes all chart data in one call and returns
+    four updated figures plus three live label strings.
+
+    Parameters
+    ----------
+    years : int
+        Time horizon from the time horizon slider (1-50).
+    battery_fraction : float
+        Battery/tank split from the battery slider (0.0-1.0).
+    visibility : dict
+        Legend visibility store {"mechanical": bool, "electrical": bool, "hybrid": bool}.
+
+    Returns
+    -------
+    tuple
+        (cost_fig, land_fig, turbine_fig, pie_fig, label_years, label_ratio, label_cost)
+    """
+    # Guard: if data not yet loaded, return empty figures and blank labels
+    if _data is None:
+        empty = go.Figure()
+        return empty, empty, empty, empty, "", "", ""
+
+    cd = compute_chart_data(_data, battery_fraction, years)
+
+    cost_fig = build_cost_chart(
+        years,
+        cd["cost_over_time"]["mechanical"],
+        cd["cost_over_time"]["electrical"],
+        cd["cost_over_time"]["hybrid"],
+        visibility,
+    )
+    land_fig = build_land_chart(
+        cd["land_area"]["mechanical"],
+        cd["land_area"]["electrical"],
+        cd["land_area"]["hybrid"],
+        visibility,
+    )
+    turbine_fig = build_turbine_chart(
+        cd["turbine_count"]["mechanical"],
+        cd["turbine_count"]["electrical"],
+        cd["turbine_count"]["hybrid"],
+        visibility,
+    )
+    pie_fig = build_pie_chart(
+        cd["energy_breakdown"]["mechanical"],
+        cd["energy_breakdown"]["electrical"],
+        cd["energy_breakdown"]["hybrid"],
+        visibility,
+    )
+
+    label_years = f"{years} year{'s' if years != 1 else ''}"
+    label_ratio = battery_ratio_label(battery_fraction)
+    label_cost = f"Electrical total: {fmt_cost(cd['electrical_total_cost'])}"
+
+    return cost_fig, land_fig, turbine_fig, pie_fig, label_years, label_ratio, label_cost
+
+
+@callback(
+    Output("store-legend-visibility", "data"),
+    Input("legend-btn-mechanical", "n_clicks"),
+    Input("legend-btn-electrical", "n_clicks"),
+    Input("legend-btn-hybrid", "n_clicks"),
+    State("store-legend-visibility", "data"),
+    prevent_initial_call=True,
+)
+def toggle_legend(n_mech, n_elec, n_hybrid, visibility):
+    """Toggle a system's visibility in the legend store.
+
+    Uses ctx.triggered_id to identify which badge was clicked, then flips
+    that system's boolean in the visibility dict.
+
+    Parameters
+    ----------
+    n_mech : int or None
+        Number of times Mechanical badge was clicked.
+    n_elec : int or None
+        Number of times Electrical badge was clicked.
+    n_hybrid : int or None
+        Number of times Hybrid badge was clicked.
+    visibility : dict
+        Current legend visibility store.
+
+    Returns
+    -------
+    dict
+        Updated visibility dict with one system's bool toggled.
+    """
+    _id_to_key = {
+        "legend-btn-mechanical": "mechanical",
+        "legend-btn-electrical": "electrical",
+        "legend-btn-hybrid": "hybrid",
+    }
+    triggered = ctx.triggered_id
+    key = _id_to_key.get(triggered)
+    if key is None:
+        return visibility
+
+    updated = dict(visibility)
+    updated[key] = not updated[key]
+    return updated
+
+
+@callback(
+    Output("legend-btn-mechanical", "style"),
+    Output("legend-btn-electrical", "style"),
+    Output("legend-btn-hybrid", "style"),
+    Input("store-legend-visibility", "data"),
+)
+def update_badge_styles(visibility):
+    """Update legend badge opacity to reflect visibility state.
+
+    Fully visible systems have opacity 1.0; hidden systems have opacity 0.4
+    with a line-through text decoration to signal toggled-off state.
+
+    Parameters
+    ----------
+    visibility : dict
+        Legend visibility store {"mechanical": bool, "electrical": bool, "hybrid": bool}.
+
+    Returns
+    -------
+    tuple[dict, dict, dict]
+        Style dicts for Mechanical, Electrical, and Hybrid badges.
+    """
+    systems = [
+        ("mechanical", "Mechanical"),
+        ("electrical", "Electrical"),
+        ("hybrid",     "Hybrid"),
+    ]
+    styles = []
+    for key, label in systems:
+        is_visible = visibility.get(key, True)
+        style = {
+            "cursor": "pointer",
+            "backgroundColor": SYSTEM_COLORS[label],
+            "fontSize": "0.9rem",
+            "opacity": "1" if is_visible else "0.4",
+        }
+        if not is_visible:
+            style["textDecoration"] = "line-through"
+        styles.append(style)
+
+    return styles[0], styles[1], styles[2]

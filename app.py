@@ -66,6 +66,8 @@ if DATA is not None:
     app.layout = create_layout(DATA)
     from src.layout.shell import set_data
     set_data(DATA)
+    from src.layout.charts import set_data as set_charts_data
+    set_charts_data(DATA)
 else:
     app.layout = create_error_page(error=_error_msg, details=_detail_str)
 
