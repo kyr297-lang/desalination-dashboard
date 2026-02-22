@@ -15,6 +15,7 @@ import dash_bootstrap_components as dbc
 from src.config import SYSTEM_COLORS
 from src.layout.scorecard import make_scorecard_table
 from src.layout.equipment_grid import make_equipment_section
+from src.layout.charts import make_chart_section
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -114,4 +115,5 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
             ],
             className="mt-3",
         ),
+        make_chart_section(),
     ])
