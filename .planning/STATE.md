@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 2 of 5 (System Selection and Scorecard)
-Plan: 1 of 4 in current phase
-Status: In progress
-Last activity: 2026-02-22 — Completed 02-01-PLAN.md (data processing layer: processing.py and config extensions)
+Plan: 2 of 4 in current phase
+Status: Checkpoint — awaiting human verification
+Last activity: 2026-02-22 — Completed 02-02-PLAN.md tasks 1-2 (UI layer: overview, scorecard, equipment grid, system view, shell navigation)
 
-Progress: [███░░░░░░░] 30%
+Progress: [████░░░░░░] 40%
 
 ## Performance Metrics
 
@@ -28,13 +28,14 @@ Progress: [███░░░░░░░] 30%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 2/2 | 27 min | 13.5 min |
-| 2. System Selection | 1/4 | 2 min | 2 min |
+| 2. System Selection | 2/4 | 6 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (25 min), 02-01 (2 min)
+- Last 5 plans: 01-01 (2 min), 01-02 (25 min), 02-01 (2 min), 02-02 (4 min)
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 02-system-selection-and-scorecard P02 | 4 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -58,6 +59,9 @@ Recent decisions affecting current work:
 - [02-01]: Electrical system gets a "Control" stage for PLC (beyond standard 5 stages)
 - [02-01]: Miscellaneous equipment included in PROCESS_STAGES for Phase 4 hybrid builder readiness
 - [02-01]: fmt_cost thresholds: >=1M -> $X.XM, >=1K -> $X.XK, <1K -> $X,XXX
+- [Phase 02-system-selection-and-scorecard]: Deferred imports in render_content callback prevent circular imports at shell.py module load time
+- [Phase 02-system-selection-and-scorecard]: set_data() pattern: module-level _data in shell.py populated from app.py — avoids circular imports and callback data loading
+- [Phase 02-system-selection-and-scorecard]: Static active_tab prop on dbc.Tabs (not Output callback) eliminates circular callback dependency in system navigation
 
 ### Pending Todos
 
@@ -72,5 +76,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 02-01-PLAN.md — data processing layer (src/data/processing.py, src/config.py PROCESS_STAGES + EQUIPMENT_DESCRIPTIONS)
+Stopped at: Checkpoint — 02-02-PLAN.md Task 3 human-verify (Phase 2 UI complete, awaiting browser verification at http://127.0.0.1:8050)
 Resume file: None

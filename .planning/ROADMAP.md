@@ -13,7 +13,7 @@ This roadmap builds the dashboard in strict dependency order: data layer first (
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Data layer, app shell, and project scaffolding — everything else depends on this (completed 2026-02-21)
-- [ ] **Phase 2: System Selection and Scorecard** - Static layouts, equipment detail views, and RAG scorecard
+- [x] **Phase 2: System Selection and Scorecard** - Static layouts, equipment detail views, and RAG scorecard (completed 2026-02-22)
 - [ ] **Phase 3: Comparison Charts and Electrical Slider** - All four comparison charts with real data and the battery/tank tradeoff control
 - [ ] **Phase 4: Hybrid Builder** - 5-slot equipment builder, completion gate, and hybrid data flowing into all charts
 - [ ] **Phase 5: Polish and Deployment** - Comparison description text, visual audit, export, and local deployment readiness
@@ -44,7 +44,7 @@ Plans:
   3. User can click an individual piece of equipment and see its detailed description and data
   4. Scorecard displays cost, land area, and efficiency values for all three systems
   5. Each scorecard metric has a clearly visible red, yellow, or green indicator relative to the other systems
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 02-01-PLAN.md — Data processing helpers, config domain data (process stages, equipment descriptions, RAG logic, scorecard computation)
 - [ ] 02-02-PLAN.md — Landing overview, tab navigation, RAG scorecard table, equipment card grid with accordion detail and cross-system comparison
@@ -92,7 +92,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete    | 2026-02-21 |
-| 2. System Selection and Scorecard | 1/2 | In Progress|  |
+| 2. System Selection and Scorecard | 2/2 | Complete   | 2026-02-22 |
 | 3. Comparison Charts and Electrical Slider | 0/TBD | Not started | - |
 | 4. Hybrid Builder | 0/TBD | Not started | - |
 | 5. Polish and Deployment | 0/TBD | Not started | - |
