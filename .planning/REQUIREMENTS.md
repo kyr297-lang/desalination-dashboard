@@ -26,8 +26,8 @@
 
 ### Scorecard & Ranking
 
-- [ ] **SCORE-01**: Dashboard displays cost, land area, and efficiency scorecard for all systems
-- [ ] **SCORE-02**: Each metric has red/yellow/green (RAG) ranking relative to the three systems
+- [x] **SCORE-01**: Dashboard displays cost, land area, and efficiency scorecard for all systems
+- [x] **SCORE-02**: Each metric has red/yellow/green (RAG) ranking relative to the three systems
 - [ ] **SCORE-03**: Hybrid system shows comparison description text against the two preset systems
 
 ### Comparison Charts
@@ -97,8 +97,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEL-01 | Phase 2 | Pending |
 | SEL-02 | Phase 2 | Pending |
 | SEL-03 | Phase 2 | Pending |
-| SCORE-01 | Phase 2 | Pending |
-| SCORE-02 | Phase 2 | Pending |
+| SCORE-01 | Phase 2 | Complete |
+| SCORE-02 | Phase 2 | Complete |
 | VIS-01 | Phase 2 | Pending |
 | VIS-02 | Phase 2 | Pending |
 | CHART-01 | Phase 3 | Pending |
