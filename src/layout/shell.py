@@ -14,6 +14,7 @@ Navigation state is managed via a dcc.Store("active-system"):
   - "hybrid"      → hybrid system tab view (empty state until Phase 4)
 """
 
+import dash
 from dash import html, dcc, callback, Input, Output, State, ctx, ALL
 import dash_bootstrap_components as dbc
 
@@ -77,6 +78,7 @@ def create_layout(data: dict) -> html.Div:
 
         # Active system store — None = landing overview, string = system key
         dcc.Store(id="active-system", data=None),
+
 
         # ── Top header bar ─────────────────────────────────────────────────
         dbc.Navbar(
@@ -174,53 +176,36 @@ def toggle_sidebar(n_clicks, is_collapsed):
 @callback(
     Output("active-system", "data"),
     Input({"type": "system-card-btn", "index": ALL}, "n_clicks"),
-    Input("system-tabs", "active_tab"),
-    Input("back-to-overview", "n_clicks"),
-    State("active-system", "data"),
     prevent_initial_call=True,
 )
-def update_active_system(card_clicks, active_tab, back_clicks, current_system):
-    """Update the active-system store based on user interaction.
-
-    Sources:
-    - system-card-btn pattern-match: sets system to the clicked card's index
-    - system-tabs active_tab: sets system to the selected tab
-    - back-to-overview n_clicks: resets to None (landing page)
-
-    Parameters
-    ----------
-    card_clicks : list
-        n_clicks values for all system-card-btn instances (pattern-matched).
-    active_tab : str or None
-        Current active tab ID from the system-tabs component.
-    back_clicks : int or None
-        n_clicks for the back-to-overview link.
-    current_system : str or None
-        Current value of the active-system store.
-
-    Returns
-    -------
-    str or None
-        New active-system value.
-    """
+def select_system_from_card(card_clicks):
+    """Set active system when a landing page card is clicked."""
     triggered = ctx.triggered_id
-
-    if triggered is None:
-        return current_system
-
-    # Pattern-matched system card button click
     if isinstance(triggered, dict) and triggered.get("type") == "system-card-btn":
         return triggered["index"]
+    return dash.no_update
 
-    # Tab switch
-    if triggered == "system-tabs":
+
+@callback(
+    Output("active-system", "data", allow_duplicate=True),
+    Input("system-tabs", "active_tab"),
+    prevent_initial_call=True,
+)
+def select_system_from_tab(active_tab):
+    """Set active system when a tab is clicked."""
+    if active_tab is not None:
         return active_tab
+    return dash.no_update
 
-    # Back to overview link
-    if triggered == "back-to-overview":
-        return None
 
-    return current_system
+@callback(
+    Output("active-system", "data", allow_duplicate=True),
+    Input("back-to-overview", "n_clicks"),
+    prevent_initial_call=True,
+)
+def back_to_overview(n_clicks):
+    """Reset to landing page when back link is clicked."""
+    return None
 
 
 @callback(
