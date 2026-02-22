@@ -76,9 +76,17 @@ PROCESS_STAGES = {
         ],
     },
     "miscellaneous": {
+        "Water Extraction": [
+            "Piston pump",
+        ],
         "Pre-Treatment": [
             "Antiscalant (assuming 3g/L of antiscalant)",
-            "Multi-Media Filtration",
+        ],
+        "Desalination": [
+            "2 RO membranes in parallel",
+            "RO membranes in parallel",
+            "Gear and Booster Pump",
+            "Booster Pump",
         ],
         "Post-Treatment": [
             "Green blend addition",
@@ -87,9 +95,6 @@ PROCESS_STAGES = {
         ],
         "Brine Disposal": [
             "Evaporation Pond",
-        ],
-        "Water Extraction": [
-            "Piston pump",
         ],
     },
 }

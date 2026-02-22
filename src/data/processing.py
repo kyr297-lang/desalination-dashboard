@@ -171,6 +171,7 @@ def rag_color(values: dict[str, float], metric: str) -> dict[str, str]:
 def compute_scorecard_metrics(
     mechanical_df: pd.DataFrame,
     electrical_df: pd.DataFrame,
+    hybrid_df: pd.DataFrame | None = None,
 ) -> dict[str, dict[str, float]]:
     """Compute aggregate scorecard metrics for each system.
 
@@ -184,10 +185,14 @@ def compute_scorecard_metrics(
         Equipment DataFrame for the mechanical system (from load_data()).
     electrical_df : pd.DataFrame
         Equipment DataFrame for the electrical system (from load_data()).
+    hybrid_df : pd.DataFrame or None, optional
+        Equipment DataFrame for the hybrid system (from compute_hybrid_df()).
+        When provided and not None, a "hybrid" key is included in the result.
 
     Returns
     -------
-    dict with keys "mechanical" and "electrical", each mapping to:
+    dict with keys "mechanical" and "electrical" (and optionally "hybrid"),
+    each mapping to:
         {
             "cost":       float  (sum of cost_usd column, USD),
             "land_area":  float  (sum of land_area_m2 column, m²),
@@ -204,10 +209,126 @@ def compute_scorecard_metrics(
             "efficiency": float(energy),
         }
 
-    return {
+    result = {
         "mechanical": _aggregate(mechanical_df),
         "electrical": _aggregate(electrical_df),
     }
+
+    if hybrid_df is not None:
+        result["hybrid"] = _aggregate(hybrid_df)
+
+    return result
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Hybrid system helpers
+# ──────────────────────────────────────────────────────────────────────────────
+
+def compute_hybrid_df(slots: dict, data: dict) -> pd.DataFrame | None:
+    """Build a 5-row DataFrame for the hybrid system from slot selections.
+
+    For each stage slot, searches data["miscellaneous"], then data["mechanical"],
+    then data["electrical"] for a matching equipment row (by name). Returns None
+    if any slot is unfilled or any lookup fails.
+
+    Parameters
+    ----------
+    slots : dict
+        Mapping of stage name to selected equipment name (or None).
+        Keys: "Water Extraction", "Pre-Treatment", "Desalination",
+              "Post-Treatment", "Brine Disposal".
+    data : dict
+        Full data dict from load_data() with keys "miscellaneous", "mechanical",
+        "electrical".
+
+    Returns
+    -------
+    pd.DataFrame or None
+        A 5-row DataFrame with the same columns as equipment DataFrames
+        (name, quantity, cost_usd, energy_kw, land_area_m2, lifespan_years),
+        or None if any slot is None or any equipment name cannot be found.
+    """
+    # Gate: all slots must be filled
+    if any(v is None for v in slots.values()):
+        return None
+
+    search_order = ["miscellaneous", "mechanical", "electrical"]
+    matched_rows: list[dict] = []
+
+    for stage, equipment_name in slots.items():
+        found = False
+        for source_key in search_order:
+            source_df: pd.DataFrame = data[source_key]
+            match = source_df[source_df["name"] == equipment_name]
+            if not match.empty:
+                matched_rows.append(match.iloc[0].to_dict())
+                found = True
+                break
+        if not found:
+            return None
+
+    return pd.DataFrame(matched_rows)
+
+
+def generate_comparison_text(
+    hybrid_metrics: dict,
+    mech_metrics: dict,
+    elec_metrics: dict,
+) -> str:
+    """Generate neutral, factual comparison sentences for hybrid vs each preset.
+
+    Computes percentage differences for cost, land_area, and efficiency between
+    the hybrid system and each of the two preset systems. Handles division-by-zero
+    and None values gracefully.
+
+    Parameters
+    ----------
+    hybrid_metrics : dict
+        Metric dict for the hybrid system with keys "cost", "land_area",
+        "efficiency" (same structure returned by compute_scorecard_metrics).
+    mech_metrics : dict
+        Metric dict for the mechanical system.
+    elec_metrics : dict
+        Metric dict for the electrical system.
+
+    Returns
+    -------
+    str
+        Multi-sentence factual comparison. One sentence per metric per preset.
+    """
+    metric_labels = {
+        "cost": "cost",
+        "land_area": "land area",
+        "efficiency": "energy use",
+    }
+
+    def _pct_diff(hybrid_val, other_val, metric_key: str) -> str | None:
+        """Return a sentence comparing hybrid to other, or None if undetermined."""
+        h = pd.to_numeric(hybrid_val, errors="coerce")
+        o = pd.to_numeric(other_val, errors="coerce")
+        if pd.isna(h) or pd.isna(o) or o == 0:
+            return None
+        h_f = float(h)
+        o_f = float(o)
+        label = metric_labels[metric_key]
+        pct = abs((h_f - o_f) / o_f) * 100
+        if abs(h_f - o_f) < 0.001 * o_f:
+            return f"Hybrid has similar {label} to {{other}}."
+        direction = "less" if h_f < o_f else "more"
+        return f"Hybrid has {pct:.0f}% {direction} {label} than {{other}}."
+
+    lines: list[str] = []
+
+    for metric_key in ["cost", "land_area", "efficiency"]:
+        h_val = hybrid_metrics.get(metric_key)
+
+        for other_name, other_metrics in [("Mechanical", mech_metrics), ("Electrical", elec_metrics)]:
+            o_val = other_metrics.get(metric_key)
+            sentence = _pct_diff(h_val, o_val, metric_key)
+            if sentence:
+                lines.append(sentence.format(other=other_name))
+
+    return " ".join(lines) if lines else "Hybrid system comparison data unavailable."
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -348,6 +469,7 @@ def compute_chart_data(
     data: dict,
     battery_fraction: float = 0.5,
     years: int = 50,
+    hybrid_df: pd.DataFrame | None = None,
 ) -> dict:
     """Aggregate all chart data for the comparison charts section.
 
@@ -364,6 +486,9 @@ def compute_chart_data(
         Current battery/tank slider value, 0.0 (all tank) to 1.0 (all battery).
     years : int
         Time horizon in years for cost-over-time computation.
+    hybrid_df : pd.DataFrame or None, optional
+        When provided and not None, hybrid chart values are computed from this
+        DataFrame instead of using placeholder zeros. Comes from compute_hybrid_df().
 
     Returns
     -------
@@ -404,14 +529,19 @@ def compute_chart_data(
         override_costs={"Battery (1 day of power)": interpolated_cost},
     )
 
-    # Hybrid: placeholder zeros for Phase 3 — real data comes in Phase 4
-    # TODO Phase 4: replace with actual hybrid system data
-    hybrid_cumulative = np.zeros(years + 1)
+    # Hybrid: use real data when hybrid_df is provided; zeros otherwise
+    if hybrid_df is not None:
+        hybrid_cumulative = compute_cost_over_time(hybrid_df, years)
+    else:
+        hybrid_cumulative = np.zeros(years + 1)
 
     # ── Land area ─────────────────────────────────────────────────────────────
     mech_land = float(pd.to_numeric(mechanical_df["land_area_m2"], errors="coerce").sum())
     elec_land = float(pd.to_numeric(electrical_df["land_area_m2"], errors="coerce").sum())
-    hybrid_land = 0.0  # TODO Phase 4
+    if hybrid_df is not None:
+        hybrid_land = float(pd.to_numeric(hybrid_df["land_area_m2"], errors="coerce").sum())
+    else:
+        hybrid_land = 0.0
 
     # ── Turbine count ─────────────────────────────────────────────────────────
     # Mechanical system uses the "250kW aeromotor turbine " row for turbine count
@@ -422,7 +552,8 @@ def compute_chart_data(
     elec_turbine_rows = electrical_df[electrical_df["name"] == "Turbine"]["quantity"]
     elec_turbines = int(pd.to_numeric(elec_turbine_rows, errors="coerce").sum()) if len(elec_turbine_rows) > 0 else 0
 
-    hybrid_turbines = 0  # TODO Phase 4
+    # Hybrid: miscellaneous items don't include turbines
+    hybrid_turbines = 0
 
     # ── Energy breakdown by process stage ────────────────────────────────────
     def _energy_by_stage(df: pd.DataFrame, system: str) -> dict[str, float]:
@@ -437,7 +568,12 @@ def compute_chart_data(
 
     mech_energy = _energy_by_stage(mechanical_df, "mechanical")
     elec_energy = _energy_by_stage(electrical_df, "electrical")
-    hybrid_energy: dict[str, float] = {}  # TODO Phase 4
+
+    # Hybrid energy: built directly from the hybrid_df rows using miscellaneous stage mapping
+    if hybrid_df is not None:
+        hybrid_energy = _energy_by_stage(hybrid_df, "miscellaneous")
+    else:
+        hybrid_energy = {}
 
     # ── Electrical total cost (live readout for slider label) ─────────────────
     # Sum all electrical costs EXCLUDING the battery row, then add interpolated cost.
