@@ -31,6 +31,7 @@ from src.data.processing import (
     rag_color,
     fmt_cost,
 )
+from src.layout.equipment_grid import make_equipment_section
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -395,3 +396,40 @@ def update_gate_overlay(slots):
         "justifyContent": "center",
         "borderRadius": "4px",
     }
+
+
+@callback(
+    Output("hybrid-equipment-container", "children"),
+    Input("store-hybrid-slots", "data"),
+)
+def update_hybrid_equipment(slots):
+    """Update the hybrid equipment detail section when slots change.
+
+    When all 5 slots are filled: builds hybrid_df and renders equipment
+    accordion items. When any slot is empty: shows gate message.
+
+    Parameters
+    ----------
+    slots : dict or None
+        Current hybrid slot store data.
+
+    Returns
+    -------
+    dash component
+        Equipment section or gate message.
+    """
+    if _data is None:
+        return []
+
+    gate_open = (
+        slots is not None
+        and all(v is not None for v in slots.values())
+    )
+
+    if gate_open:
+        hybrid_df = compute_hybrid_df(slots, _data)
+        if hybrid_df is not None:
+            data_with_hybrid = {**_data, "hybrid_selected": hybrid_df}
+            return make_equipment_section(hybrid_df, "hybrid", data_with_hybrid)
+
+    return make_equipment_section(None, "hybrid", _data)
