@@ -16,7 +16,7 @@ provides:
   - create_system_view_layout(active_system, data) — tab bar + scorecard + equipment grid
   - make_scorecard_table(mechanical_df, electrical_df) — RAG traffic-light scorecard
   - make_equipment_section(df, system, all_data) — accordion equipment grid with cross-system comparison
-  - updated shell.py with active-system dcc.Store and navigation callbacks
+  - updated shell.py with active-system dcc.Store and 3 separate navigation callbacks (select_system_from_card, select_system_from_tab, back_to_overview)
 
 affects:
   - Phase 3 charts (will embed chart components inside system_view.py content area)
@@ -32,7 +32,8 @@ tech-stack:
     - Static active_tab prop on dbc.Tabs (re-rendered each time) instead of Output callback — avoids circular dependency
     - borderBottom on active tab label (not backgroundColor) per known Dash-Bootstrap tab styling bug
     - pattern-matching Input({"type": "system-card-btn", "index": ALL}) for card navigation
-    - ctx.triggered_id to distinguish callback sources in unified update_active_system callback
+    - allow_duplicate=True for multiple callbacks writing to same dcc.Store output
+    - Split callbacks per trigger source (not unified) when triggers don't all exist in initial DOM
     - dbc.Accordion(always_open=False, active_item=None) for one-at-a-time expand behavior
     - Cross-system comparison: find same process stage in other systems via get_equipment_stage
 
@@ -52,10 +53,11 @@ key-decisions:
   - "Static active_tab prop on dbc.Tabs: tabs re-rendered with correct active_tab each call instead of using Output(system-tabs, active_tab) — eliminates circular callback graph"
   - "active_label_style uses borderBottom not backgroundColor: workaround for known Bootstrap + Dash tab active-indicator styling bug"
   - "Cross-system comparison finds equipment in same process stage (not same name) — allows Mechanical Water Extraction to compare with Electrical Water Extraction items"
+  - "Split callbacks per trigger source using allow_duplicate=True: unified callback with system-tabs + back-to-overview inputs fails when those elements don't exist in initial DOM (card clicks silently ignored)"
 
 # Metrics
-duration: 4min
-completed: 2026-02-22
+duration: 26min
+completed: 2026-02-21
 ---
 
 # Phase 2 Plan 02: System Selection and Scorecard — UI Layer Summary
@@ -64,20 +66,21 @@ completed: 2026-02-22
 
 ## Performance
 
-- **Duration:** 4 min
-- **Started:** 2026-02-22T00:28:50Z
-- **Completed:** 2026-02-22T00:32:31Z
-- **Tasks:** 2 of 3 (Task 3 is human verification checkpoint)
+- **Duration:** 26 min
+- **Started:** 2026-02-21T18:30:00Z
+- **Completed:** 2026-02-21T18:56:55Z
+- **Tasks:** 3 of 3 (including human-verify checkpoint, approved)
 - **Files modified:** 6
 
 ## Accomplishments
 
 - Created `src/layout/overview.py` with `create_overview_layout()` — three system selection cards with SYSTEM_COLORS headers, descriptions, and pattern-matched Explore buttons
-- Updated `src/layout/shell.py` — added active-system dcc.Store, System Explorer nav link, `update_active_system` callback (handles card clicks, tab switches, back-to-overview), `render_content` callback, and `set_data()` module function
+- Updated `src/layout/shell.py` — added active-system dcc.Store, System Explorer nav link, 3 separate navigation callbacks (select_system_from_card, select_system_from_tab, back_to_overview), `render_content` callback, and `set_data()` module function
 - Updated `app.py` to call `set_data(DATA)` after creating the layout
 - Created `src/layout/scorecard.py` with `make_scorecard_table()` — RAG dot indicators for cost, land area, and energy; best-overall summary row
 - Created `src/layout/equipment_grid.py` with `make_equipment_section()` — accordion items grouped by process stage, detail tables, badge summary rows, cross-system comparison table
 - Created `src/layout/system_view.py` with `create_system_view_layout()` — breadcrumb, tab bar with colored active indicators, scorecard + equipment vertical stack
+- Human verification approved: full 11-step UI flow confirmed working in browser
 
 ## Task Commits
 
@@ -85,12 +88,13 @@ Each task was committed atomically:
 
 1. **Task 1: Create landing overview and update shell with navigation state management** - `13ee285` (feat)
 2. **Task 2: Create scorecard table, equipment grid with accordion detail, and system view assembly** - `8da382d` (feat)
-3. **Task 3: Verify complete Phase 2 UI flow** - PENDING (human-verify checkpoint)
+3. **Task 3: Verify complete Phase 2 UI flow** - APPROVED (human-verify checkpoint — no code commit)
+4. **Post-checkpoint fix: Split monolithic callback in shell.py** - `8a3d01c` (fix)
 
 ## Files Created/Modified
 
 - `src/layout/overview.py` — `create_overview_layout()`: 3 system cards with colored headers, Explore buttons using pattern-matched IDs
-- `src/layout/shell.py` — Added active-system store, System Explorer nav link, `update_active_system` + `render_content` callbacks, `set_data()` module function
+- `src/layout/shell.py` — Added active-system store, System Explorer nav link, 3 split callbacks (select_system_from_card, select_system_from_tab, back_to_overview) with allow_duplicate=True, `render_content` callback, `set_data()` module function
 - `app.py` — Added `set_data(DATA)` call after layout creation
 - `src/layout/scorecard.py` — `make_scorecard_table()`: RAG dots, formatted metric values, best-overall summary
 - `src/layout/equipment_grid.py` — `make_equipment_section()`: process-stage groups, accordion items, detail tables, cross-system comparison
@@ -103,18 +107,32 @@ Each task was committed atomically:
 - **Static active_tab prop on dbc.Tabs:** Tab bar re-rendered with correct `active_tab` each time `render_content` fires; no `Output("system-tabs", "active_tab")` used — eliminates the circular callback dependency documented in research.
 - **borderBottom active tab styling:** Uses `borderBottom: "3px solid {color}"` on `active_label_style` instead of `backgroundColor` — workaround for known Bootstrap Dash tab rendering bug.
 - **Cross-system comparison by process stage:** Matches equipment from other systems by their process stage (via `get_equipment_stage`), not by name — allows meaningful comparison across systems with different equipment names.
+- **Split callbacks with allow_duplicate=True:** When triggers (system-tabs, back-to-overview) don't exist in the initial DOM, a unified callback silently ignores card clicks. Fix: separate callback per trigger source, each writing to active-system store using allow_duplicate=True.
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+### Auto-fixed Issues
+
+**1. [Rule 1 - Bug] Split monolithic update_active_system callback into 3 separate callbacks**
+- **Found during:** Post-checkpoint verification (after Task 2 commit, before Task 3 approval)
+- **Issue:** The plan specified a single `update_active_system` callback with 3 inputs: pattern-matched card buttons, `system-tabs`, and `back-to-overview`. When `system-tabs` and `back-to-overview` don't exist in the initial DOM (landing page renders neither), Dash's callback registration phase encounters missing component IDs and silently fails to fire the callback for card clicks as well.
+- **Fix:** Split into 3 callbacks — `select_system_from_card` (pattern-match only), `select_system_from_tab` (`allow_duplicate=True`), and `back_to_overview` (`allow_duplicate=True`). Each callback only references inputs that exist when it fires.
+- **Files modified:** `src/layout/shell.py`
+- **Verification:** Card clicks navigate to system tab view; tab switches change active system; back link returns to overview. All three paths confirmed working.
+- **Committed in:** `8a3d01c` (fix commit)
+
+---
+
+**Total deviations:** 1 auto-fixed (Rule 1 — bug in callback registration due to non-existent initial DOM elements)
+**Impact on plan:** Fix required for core navigation to work. No scope creep — only changed callback structure, not functionality.
 
 ## Issues Encountered
 
-None.
+- Monolithic callback with non-existent DOM element IDs in inputs caused card click navigation to silently fail. Resolved by splitting into 3 callbacks with allow_duplicate=True (see Deviations above).
 
 ## User Setup Required
 
-Run `python app.py` and open http://127.0.0.1:8050 to verify the complete UI flow.
+None - no external service configuration required.
 
 ## Next Phase Readiness
 
@@ -122,7 +140,8 @@ Run `python app.py` and open http://127.0.0.1:8050 to verify the complete UI flo
 - Equipment accordion structure in place — Phase 3 charts can be inserted as additional accordion content
 - Hybrid empty state in place — Phase 4 hybrid builder replaces it
 - All 5 layout modules exported with clean APIs ready for Phase 3 integration
+- allow_duplicate=True pattern established for future multi-source callbacks writing to same dcc.Store
 
 ---
 *Phase: 02-system-selection-and-scorecard*
-*Completed: 2026-02-22*
+*Completed: 2026-02-21*

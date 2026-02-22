@@ -13,7 +13,7 @@ This roadmap builds the dashboard in strict dependency order: data layer first (
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Data layer, app shell, and project scaffolding — everything else depends on this (completed 2026-02-21)
-- [x] **Phase 2: System Selection and Scorecard** - Static layouts, equipment detail views, and RAG scorecard (completed 2026-02-22)
+- [x] **Phase 2: System Selection and Scorecard** - Static layouts, equipment detail views, and RAG scorecard (completed 2026-02-21)
 - [ ] **Phase 3: Comparison Charts and Electrical Slider** - All four comparison charts with real data and the battery/tank tradeoff control
 - [ ] **Phase 4: Hybrid Builder** - 5-slot equipment builder, completion gate, and hybrid data flowing into all charts
 - [ ] **Phase 5: Polish and Deployment** - Comparison description text, visual audit, export, and local deployment readiness
@@ -92,7 +92,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete    | 2026-02-21 |
-| 2. System Selection and Scorecard | 2/2 | Complete   | 2026-02-22 |
+| 2. System Selection and Scorecard | 2/2 | Complete   | 2026-02-21 |
 | 3. Comparison Charts and Electrical Slider | 0/TBD | Not started | - |
 | 4. Hybrid Builder | 0/TBD | Not started | - |
 | 5. Polish and Deployment | 0/TBD | Not started | - |
