@@ -74,7 +74,10 @@ Plans:
   3. After all five slots are filled, the hybrid system appears in all comparison charts and the scorecard alongside the two preset systems
   4. User can click a hybrid equipment item to see its detailed data view
   5. A description text compares the hybrid system's scorecard ranking against the Mechanical and Electrical presets
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 04-01-PLAN.md — Config fix, hybrid processing helpers, and pipeline builder UI with slot store and callbacks
+- [ ] 04-02-PLAN.md — Integration: gate overlay, chart/scorecard/equipment wiring, comparison text, human verification
 
 ### Phase 5: Polish and Deployment
 **Goal**: The dashboard is visually polished, easy for unfamiliar students to navigate, supports export for lab reports, and runs cleanly from a single command
@@ -97,5 +100,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 2/2 | Complete    | 2026-02-21 |
 | 2. System Selection and Scorecard | 2/2 | Complete    | 2026-02-22 |
 | 3. Comparison Charts and Electrical Slider | 2/2 | Complete    | 2026-02-22 |
-| 4. Hybrid Builder | 0/TBD | Not started | - |
+| 4. Hybrid Builder | 0/2 | Not started | - |
 | 5. Polish and Deployment | 0/TBD | Not started | - |
