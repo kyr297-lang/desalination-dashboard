@@ -32,22 +32,22 @@
 
 ### Comparison Charts
 
-- [ ] **CHART-01**: Cost over time line chart comparing all three systems side-by-side
-- [ ] **CHART-02**: User can select time horizon for cost-over-time chart (slider or input)
-- [ ] **CHART-03**: Land area grouped bar chart comparing all three systems
-- [ ] **CHART-04**: Wind turbine count grouped bar chart comparing all three systems
-- [ ] **CHART-05**: Pie chart showing energy percentage by action (water extraction, desalination) per system
+- [x] **CHART-01**: Cost over time line chart comparing all three systems side-by-side
+- [x] **CHART-02**: User can select time horizon for cost-over-time chart (slider or input)
+- [x] **CHART-03**: Land area grouped bar chart comparing all three systems
+- [x] **CHART-04**: Wind turbine count grouped bar chart comparing all three systems
+- [x] **CHART-05**: Pie chart showing energy percentage by action (water extraction, desalination) per system
 
 ### Interactive Controls
 
-- [ ] **CTRL-01**: Battery/tank tradeoff slider for electrical system maps to 11-row lookup table from data.xlsx
+- [x] **CTRL-01**: Battery/tank tradeoff slider for electrical system maps to 11-row lookup table from data.xlsx
 - [ ] **CTRL-02**: Slider updates electrical system cost and all related charts in real-time
 
 ### Visual Design
 
 - [x] **VIS-01**: Academic styling — clean, professional, muted colors (FLATLY Bootstrap theme or similar)
 - [x] **VIS-02**: Easy to navigate for students unfamiliar with the tool
-- [ ] **VIS-03**: All charts have labeled axes with units, hover tooltips with formatted values
+- [x] **VIS-03**: All charts have labeled axes with units, hover tooltips with formatted values
 
 ### Export
 
@@ -101,14 +101,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCORE-02 | Phase 2 | Complete |
 | VIS-01 | Phase 2 | Complete |
 | VIS-02 | Phase 2 | Complete |
-| CHART-01 | Phase 3 | Pending |
-| CHART-02 | Phase 3 | Pending |
-| CHART-03 | Phase 3 | Pending |
-| CHART-04 | Phase 3 | Pending |
-| CHART-05 | Phase 3 | Pending |
-| CTRL-01 | Phase 3 | Pending |
+| CHART-01 | Phase 3 | Complete |
+| CHART-02 | Phase 3 | Complete |
+| CHART-03 | Phase 3 | Complete |
+| CHART-04 | Phase 3 | Complete |
+| CHART-05 | Phase 3 | Complete |
+| CTRL-01 | Phase 3 | Complete |
 | CTRL-02 | Phase 3 | Pending |
-| VIS-03 | Phase 3 | Pending |
+| VIS-03 | Phase 3 | Complete |
 | HYB-01 | Phase 4 | Pending |
 | HYB-02 | Phase 4 | Pending |
 | HYB-03 | Phase 4 | Pending |
@@ -123,4 +123,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-21 after roadmap creation — traceability complete*
+*Last updated: 2026-02-22 after 03-01 execution — CHART-01 through CHART-05, CTRL-01, VIS-03 complete*
