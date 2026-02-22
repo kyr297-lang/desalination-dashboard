@@ -144,6 +144,8 @@ def _stage_dropdown(stage: str, data: dict) -> html.Div:
                 clearable=True,
                 placeholder="Select...",
                 style={"minWidth": "160px"},
+                persistence=True,
+                persistence_type="session",
             ),
         ],
         style={"flex": "1 1 160px"},

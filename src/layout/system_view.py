@@ -121,8 +121,12 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
     comparison_text_div = html.Div(id="comparison-text")
 
     # ── 6. Equipment section ──────────────────────────────────────────────────
-    system_df = data.get(active_system, data.get("mechanical"))
-    equipment = make_equipment_section(system_df, active_system, data)
+    if active_system == "hybrid":
+        # Hybrid equipment is callback-driven (updates when slots change)
+        equipment = html.Div(id="hybrid-equipment-container")
+    else:
+        system_df = data.get(active_system, data.get("mechanical"))
+        equipment = make_equipment_section(system_df, active_system, data)
 
     # ── 7. Chart section (with gate overlay for hybrid tab) ───────────────────
     chart_section = make_chart_section()
