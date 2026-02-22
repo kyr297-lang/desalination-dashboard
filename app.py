@@ -68,6 +68,10 @@ if DATA is not None:
     set_data(DATA)
     from src.layout.charts import set_data as set_charts_data
     set_charts_data(DATA)
+    from src.layout.scorecard import set_data as set_scorecard_data
+    set_scorecard_data(DATA)
+    from src.layout.hybrid_builder import set_data as set_hybrid_builder_data
+    set_hybrid_builder_data(DATA)
 else:
     app.layout = create_error_page(error=_error_msg, details=_detail_str)
 

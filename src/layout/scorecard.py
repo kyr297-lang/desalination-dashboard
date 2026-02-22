@@ -5,18 +5,54 @@ RAG scorecard comparison table for the system overview view.
 
 Exports
 -------
-make_scorecard_table(mechanical_df, electrical_df)
+set_data(data) -> None
+make_scorecard_table(mechanical_df, electrical_df, hybrid_df=None)
     Returns an html.Div containing the formatted comparison table with RAG
-    traffic-light dots for Mechanical vs Electrical systems.  Hybrid is omitted
-    until Phase 4.
+    traffic-light dots. Accepts an optional hybrid_df for 3-column display.
+
+Callbacks registered here
+--------------------------
+update_scorecard  -- Output("scorecard-container", "children"),
+                     Output("comparison-text", "children")
+                     triggered by Input("store-hybrid-slots", "data")
+update_gate_overlay -- Output("hybrid-gate-overlay", "style")
+                       triggered by Input("store-hybrid-slots", "data")
 """
 
 import pandas as pd
-from dash import html
+from dash import html, callback, Input, Output
 import dash_bootstrap_components as dbc
 
 from src.config import RAG_COLORS
-from src.data.processing import compute_scorecard_metrics, rag_color, fmt_cost
+from src.data.processing import (
+    compute_scorecard_metrics,
+    compute_hybrid_df,
+    generate_comparison_text,
+    rag_color,
+    fmt_cost,
+)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Module-level data reference — mirrors set_data() pattern from shell.py.
+# ──────────────────────────────────────────────────────────────────────────────
+
+_data: dict | None = None
+
+
+def set_data(data: dict) -> None:
+    """Store the loaded data dict for use in scorecard callbacks.
+
+    Called once from app.py after DATA is loaded, before any callbacks fire.
+    Mirrors the pattern used in shell.py and charts.py.
+
+    Parameters
+    ----------
+    data : dict
+        Data dict returned by load_data().
+    """
+    global _data
+    _data = data
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -57,6 +93,7 @@ def _make_rag_dot(color_hex: str) -> html.Span:
 def make_scorecard_table(
     mechanical_df: pd.DataFrame,
     electrical_df: pd.DataFrame,
+    hybrid_df: pd.DataFrame | None = None,
 ) -> html.Div:
     """Build the RAG scorecard comparison table.
 
@@ -65,7 +102,10 @@ def make_scorecard_table(
     renders a bordered Bootstrap table with colored dot indicators.
 
     An overall summary row counts which system has more green dots and declares
-    the best overall system.  Hybrid is excluded until Phase 4.
+    the best overall system.
+
+    When hybrid_df is provided, a third "Hybrid" column is added to the table
+    and RAG colors are computed across all three systems.
 
     Parameters
     ----------
@@ -73,6 +113,9 @@ def make_scorecard_table(
         Equipment DataFrame for the mechanical system.
     electrical_df : pd.DataFrame
         Equipment DataFrame for the electrical system.
+    hybrid_df : pd.DataFrame or None, optional
+        Equipment DataFrame for the hybrid system (from compute_hybrid_df()).
+        When provided, a Hybrid column is added with RAG indicators.
 
     Returns
     -------
@@ -80,40 +123,43 @@ def make_scorecard_table(
         Container holding the title, legend note, table, and summary row.
     """
     # ── 1. Compute aggregate metrics ─────────────────────────────────────────
-    metrics = compute_scorecard_metrics(mechanical_df, electrical_df)
+    metrics = compute_scorecard_metrics(mechanical_df, electrical_df, hybrid_df)
     mech = metrics["mechanical"]
     elec = metrics["electrical"]
+    has_hybrid = hybrid_df is not None and "hybrid" in metrics
+    hyb = metrics.get("hybrid") if has_hybrid else None
 
     # ── 2. Assign RAG colors per metric ──────────────────────────────────────
-    cost_colors = rag_color(
-        {"mechanical": mech["cost"], "electrical": elec["cost"]},
-        metric="cost",
-    )
-    land_colors = rag_color(
-        {"mechanical": mech["land_area"], "electrical": elec["land_area"]},
-        metric="land_area",
-    )
-    energy_colors = rag_color(
-        {"mechanical": mech["efficiency"], "electrical": elec["efficiency"]},
-        metric="efficiency",
-    )
+    if has_hybrid:
+        cost_values = {"mechanical": mech["cost"], "electrical": elec["cost"], "hybrid": hyb["cost"]}
+        land_values = {"mechanical": mech["land_area"], "electrical": elec["land_area"], "hybrid": hyb["land_area"]}
+        energy_values = {"mechanical": mech["efficiency"], "electrical": elec["efficiency"], "hybrid": hyb["efficiency"]}
+    else:
+        cost_values = {"mechanical": mech["cost"], "electrical": elec["cost"]}
+        land_values = {"mechanical": mech["land_area"], "electrical": elec["land_area"]}
+        energy_values = {"mechanical": mech["efficiency"], "electrical": elec["efficiency"]}
+
+    cost_colors = rag_color(cost_values, metric="cost")
+    land_colors = rag_color(land_values, metric="land_area")
+    energy_colors = rag_color(energy_values, metric="efficiency")
 
     # ── 3. Count green dots per system ───────────────────────────────────────
     green_hex = RAG_COLORS["green"]
-    mech_greens = sum(
-        1 for colors in [cost_colors, land_colors, energy_colors]
-        if colors.get("mechanical") == green_hex
-    )
-    elec_greens = sum(
-        1 for colors in [cost_colors, land_colors, energy_colors]
-        if colors.get("electrical") == green_hex
-    )
+    all_color_maps = [cost_colors, land_colors, energy_colors]
 
-    if mech_greens > elec_greens:
-        best_overall = "Mechanical"
-    elif elec_greens > mech_greens:
-        best_overall = "Electrical"
-    else:
+    mech_greens = sum(1 for colors in all_color_maps if colors.get("mechanical") == green_hex)
+    elec_greens = sum(1 for colors in all_color_maps if colors.get("electrical") == green_hex)
+    hyb_greens = sum(1 for colors in all_color_maps if colors.get("hybrid") == green_hex) if has_hybrid else 0
+
+    systems_greens = {"Mechanical": mech_greens, "Electrical": elec_greens}
+    if has_hybrid:
+        systems_greens["Hybrid"] = hyb_greens
+
+    best_overall = max(systems_greens, key=lambda k: systems_greens[k])
+    # Check for tie
+    max_greens = systems_greens[best_overall]
+    tied = [k for k, v in systems_greens.items() if v == max_greens]
+    if len(tied) > 1:
         best_overall = "Tied"
 
     # ── 4. Build table rows ───────────────────────────────────────────────────
@@ -123,41 +169,94 @@ def make_scorecard_table(
             style={"textAlign": "center"},
         )
 
-    rows = [
-        html.Tr([
-            html.Th("Total Cost"),
-            _value_cell(fmt_cost(mech["cost"]), cost_colors.get("mechanical", "")),
-            _value_cell(fmt_cost(elec["cost"]), cost_colors.get("electrical", "")),
-        ]),
-        html.Tr([
-            html.Th("Total Land Area"),
-            _value_cell(
-                f"{mech['land_area']:.1f} m\u00b2",
-                land_colors.get("mechanical", ""),
-            ),
-            _value_cell(
-                f"{elec['land_area']:.1f} m\u00b2",
-                land_colors.get("electrical", ""),
-            ),
-        ]),
-        html.Tr([
-            html.Th("Total Energy (kW)"),
-            _value_cell(
-                f"{mech['efficiency']:,.0f} kW",
-                energy_colors.get("mechanical", ""),
-            ),
-            _value_cell(
-                f"{elec['efficiency']:,.0f} kW",
-                energy_colors.get("electrical", ""),
-            ),
-        ]),
-    ]
+    if has_hybrid:
+        rows = [
+            html.Tr([
+                html.Th("Total Cost"),
+                _value_cell(fmt_cost(mech["cost"]), cost_colors.get("mechanical", "")),
+                _value_cell(fmt_cost(elec["cost"]), cost_colors.get("electrical", "")),
+                _value_cell(fmt_cost(hyb["cost"]), cost_colors.get("hybrid", "")),
+            ]),
+            html.Tr([
+                html.Th("Total Land Area"),
+                _value_cell(
+                    f"{mech['land_area']:.1f} m\u00b2",
+                    land_colors.get("mechanical", ""),
+                ),
+                _value_cell(
+                    f"{elec['land_area']:.1f} m\u00b2",
+                    land_colors.get("electrical", ""),
+                ),
+                _value_cell(
+                    f"{hyb['land_area']:.1f} m\u00b2",
+                    land_colors.get("hybrid", ""),
+                ),
+            ]),
+            html.Tr([
+                html.Th("Total Energy (kW)"),
+                _value_cell(
+                    f"{mech['efficiency']:,.0f} kW",
+                    energy_colors.get("mechanical", ""),
+                ),
+                _value_cell(
+                    f"{elec['efficiency']:,.0f} kW",
+                    energy_colors.get("electrical", ""),
+                ),
+                _value_cell(
+                    f"{hyb['efficiency']:,.0f} kW",
+                    energy_colors.get("hybrid", ""),
+                ),
+            ]),
+        ]
+        col_span = 4
+        header_row = html.Tr([
+            html.Th("Metric"),
+            html.Th("Mechanical", style={"textAlign": "center"}),
+            html.Th("Electrical", style={"textAlign": "center"}),
+            html.Th("Hybrid", style={"textAlign": "center"}),
+        ])
+    else:
+        rows = [
+            html.Tr([
+                html.Th("Total Cost"),
+                _value_cell(fmt_cost(mech["cost"]), cost_colors.get("mechanical", "")),
+                _value_cell(fmt_cost(elec["cost"]), cost_colors.get("electrical", "")),
+            ]),
+            html.Tr([
+                html.Th("Total Land Area"),
+                _value_cell(
+                    f"{mech['land_area']:.1f} m\u00b2",
+                    land_colors.get("mechanical", ""),
+                ),
+                _value_cell(
+                    f"{elec['land_area']:.1f} m\u00b2",
+                    land_colors.get("electrical", ""),
+                ),
+            ]),
+            html.Tr([
+                html.Th("Total Energy (kW)"),
+                _value_cell(
+                    f"{mech['efficiency']:,.0f} kW",
+                    energy_colors.get("mechanical", ""),
+                ),
+                _value_cell(
+                    f"{elec['efficiency']:,.0f} kW",
+                    energy_colors.get("electrical", ""),
+                ),
+            ]),
+        ]
+        col_span = 3
+        header_row = html.Tr([
+            html.Th("Metric"),
+            html.Th("Mechanical", style={"textAlign": "center"}),
+            html.Th("Electrical", style={"textAlign": "center"}),
+        ])
 
     # ── 5. Best overall summary row ───────────────────────────────────────────
     summary_row = html.Tr(
         html.Td(
             f"Best Overall: {best_overall}",
-            colSpan=3,
+            colSpan=col_span,
             style={
                 "textAlign": "center",
                 "fontWeight": "600",
@@ -169,13 +268,7 @@ def make_scorecard_table(
 
     table = dbc.Table(
         [
-            html.Thead(
-                html.Tr([
-                    html.Th("Metric"),
-                    html.Th("Mechanical", style={"textAlign": "center"}),
-                    html.Th("Electrical", style={"textAlign": "center"}),
-                ])
-            ),
+            html.Thead(header_row),
             html.Tbody(rows + [summary_row]),
         ],
         bordered=True,
@@ -193,3 +286,112 @@ def make_scorecard_table(
         ),
         table,
     ])
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Callbacks
+# ──────────────────────────────────────────────────────────────────────────────
+
+@callback(
+    Output("scorecard-container", "children"),
+    Output("comparison-text", "children"),
+    Input("store-hybrid-slots", "data"),
+)
+def update_scorecard(slots):
+    """Update the scorecard table and comparison text when hybrid slots change.
+
+    When all 5 slots are filled (gate open): builds hybrid_df, renders a
+    3-column scorecard with hybrid RAG indicators, and generates comparison text.
+
+    When any slot is None (gate closed): renders the 2-system scorecard and
+    returns no comparison text.
+
+    Parameters
+    ----------
+    slots : dict or None
+        Current hybrid slot store data mapping stage names to equipment names.
+
+    Returns
+    -------
+    tuple
+        (scorecard_children, comparison_text_children)
+    """
+    if _data is None:
+        return [], None
+
+    mech_df = _data["mechanical"]
+    elec_df = _data["electrical"]
+
+    # Check if gate is open (all 5 slots filled)
+    gate_open = (
+        slots is not None
+        and all(v is not None for v in slots.values())
+    )
+
+    if gate_open:
+        hybrid_df = compute_hybrid_df(slots, _data)
+        if hybrid_df is not None:
+            # Build 3-column scorecard
+            scorecard = make_scorecard_table(mech_df, elec_df, hybrid_df)
+
+            # Build comparison text
+            metrics = compute_scorecard_metrics(mech_df, elec_df, hybrid_df)
+            comparison_str = generate_comparison_text(
+                metrics["hybrid"],
+                metrics["mechanical"],
+                metrics["electrical"],
+            )
+            comparison_content = html.P(
+                comparison_str,
+                className="text-muted small mt-2",
+                style={"fontStyle": "italic"},
+            )
+            return scorecard, comparison_content
+
+    # Gate closed or hybrid_df failed — 2-system scorecard, no comparison text
+    scorecard = make_scorecard_table(mech_df, elec_df)
+    return scorecard, None
+
+
+@callback(
+    Output("hybrid-gate-overlay", "style"),
+    Input("store-hybrid-slots", "data"),
+)
+def update_gate_overlay(slots):
+    """Show or hide the hybrid gate overlay based on slot completion.
+
+    Returns a complete style dict (never partial) to ensure consistent
+    overlay behavior. The overlay is hidden when all 5 slots are filled;
+    visible otherwise.
+
+    Parameters
+    ----------
+    slots : dict or None
+        Current hybrid slot store data.
+
+    Returns
+    -------
+    dict
+        Complete CSS style dict for the overlay div.
+    """
+    gate_open = (
+        slots is not None
+        and all(v is not None for v in slots.values())
+    )
+
+    if gate_open:
+        return {"display": "none"}
+
+    return {
+        "display": "flex",
+        "position": "absolute",
+        "top": "0",
+        "left": "0",
+        "right": "0",
+        "bottom": "0",
+        "backgroundColor": "rgba(255,255,255,0.85)",
+        "zIndex": "10",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "borderRadius": "4px",
+    }

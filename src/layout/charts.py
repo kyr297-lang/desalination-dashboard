@@ -25,7 +25,7 @@ from dash import html, dcc, callback, Input, Output, State, ctx
 import dash_bootstrap_components as dbc
 
 from src.config import SYSTEM_COLORS
-from src.data.processing import compute_chart_data, interpolate_battery_cost, battery_ratio_label, fmt_cost
+from src.data.processing import compute_chart_data, compute_hybrid_df, interpolate_battery_cost, battery_ratio_label, fmt_cost
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -548,13 +548,14 @@ def make_chart_section() -> html.Div:
     Input("slider-time-horizon", "value"),
     Input("slider-battery", "value"),
     Input("store-legend-visibility", "data"),
+    Input("store-hybrid-slots", "data"),
 )
-def update_charts(years, battery_fraction, visibility):
+def update_charts(years, battery_fraction, visibility, slots):
     """Master chart update callback.
 
-    Fires whenever the time horizon slider, battery/tank slider, or legend
-    visibility store changes. Computes all chart data in one call and returns
-    four updated figures plus three live label strings.
+    Fires whenever the time horizon slider, battery/tank slider, legend
+    visibility store, or hybrid slot store changes. Computes all chart data
+    in one call and returns four updated figures plus three live label strings.
 
     Parameters
     ----------
@@ -564,6 +565,10 @@ def update_charts(years, battery_fraction, visibility):
         Battery/tank split from the battery slider (0.0-1.0).
     visibility : dict
         Legend visibility store {"mechanical": bool, "electrical": bool, "hybrid": bool}.
+    slots : dict or None
+        Hybrid slot store mapping stage names to selected equipment names.
+        When all 5 slots are filled, hybrid data is computed and passed to
+        compute_chart_data. When any slot is None, hybrid uses placeholder zeros.
 
     Returns
     -------
@@ -575,7 +580,12 @@ def update_charts(years, battery_fraction, visibility):
         empty = go.Figure()
         return empty, empty, empty, empty, "", "", ""
 
-    cd = compute_chart_data(_data, battery_fraction, years)
+    # Build hybrid_df if gate is open (all 5 slots filled)
+    hybrid_df = None
+    if slots is not None and all(v is not None for v in slots.values()):
+        hybrid_df = compute_hybrid_df(slots, _data)
+
+    cd = compute_chart_data(_data, battery_fraction, years, hybrid_df=hybrid_df)
 
     cost_fig = build_cost_chart(
         years,
