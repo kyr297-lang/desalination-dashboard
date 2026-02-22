@@ -5,32 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Students can visually compare mechanical, electrical, and custom hybrid desalination systems side-by-side to understand cost, land, and efficiency tradeoffs
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 2 — System Selection and Scorecard
 
 ## Current Position
 
-Phase: 1 of 5 (Foundation)
-Plan: 2 of 2 in current phase — PHASE COMPLETE
-Status: Phase 1 complete, ready for Phase 2
-Last activity: 2026-02-21 — Completed 01-02-PLAN.md (app shell and entry point)
+Phase: 2 of 5 (System Selection and Scorecard)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-22 — Completed 02-01-PLAN.md (data processing layer: processing.py and config extensions)
 
-Progress: [██░░░░░░░░] 20%
+Progress: [███░░░░░░░] 30%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 2 min
-- Total execution time: 2 min
+- Total plans completed: 3
+- Average duration: 9 min
+- Total execution time: 29 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 2/2 | 27 min | 13.5 min |
+| 2. System Selection | 1/4 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (25 min)
+- Last 5 plans: 01-01 (2 min), 01-02 (25 min), 02-01 (2 min)
 - Trend: —
 
 *Updated after each plan completion*
@@ -53,6 +54,10 @@ Recent decisions affecting current work:
 - [01-02]: Use 127.0.0.1 not localhost in browser URL to avoid DNS resolution delay on Windows
 - [01-02]: Sidebar state stored in dcc.Store (client-side) so collapse persists across tab navigations
 - [01-02]: suppress_callback_exceptions=True set globally for multi-page readiness
+- [02-01]: RAG "efficiency" key holds total energy_kw (lower is better); label clarity handled in UI not processing.py
+- [02-01]: Electrical system gets a "Control" stage for PLC (beyond standard 5 stages)
+- [02-01]: Miscellaneous equipment included in PROCESS_STAGES for Phase 4 hybrid builder readiness
+- [02-01]: fmt_cost thresholds: >=1M -> $X.XM, >=1K -> $X.XK, <1K -> $X,XXX
 
 ### Pending Todos
 
@@ -61,11 +66,11 @@ None yet.
 ### Blockers/Concerns
 
 - [Resolved — 01-01]: data.xlsx actual column names, data types, and merged cells — RESOLVED: loader parses correctly
-- [Research flag]: Miscellaneous sheet part categorization by process stage needs verification before designing slot dropdowns (Phase 4)
+- [Resolved — 02-01]: Miscellaneous sheet part categorization by process stage — RESOLVED: categorized in PROCESS_STAGES (miscellaneous key)
 - [Research flag]: Cost-over-time formula needs confirmation against data.xlsx structure before implementing calculations.py (Phase 1/3)
 
 ## Session Continuity
 
-Last session: 2026-02-21
-Stopped at: Completed 01-02-PLAN.md — app shell and entry point (app.py, shell.py, error_page.py, custom.css)
+Last session: 2026-02-22
+Stopped at: Completed 02-01-PLAN.md — data processing layer (src/data/processing.py, src/config.py PROCESS_STAGES + EQUIPMENT_DESCRIPTIONS)
 Resume file: None
