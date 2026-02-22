@@ -41,7 +41,7 @@
 ### Interactive Controls
 
 - [x] **CTRL-01**: Battery/tank tradeoff slider for electrical system maps to 11-row lookup table from data.xlsx
-- [ ] **CTRL-02**: Slider updates electrical system cost and all related charts in real-time
+- [x] **CTRL-02**: Slider updates electrical system cost and all related charts in real-time
 
 ### Visual Design
 
@@ -107,7 +107,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHART-04 | Phase 3 | Complete |
 | CHART-05 | Phase 3 | Complete |
 | CTRL-01 | Phase 3 | Complete |
-| CTRL-02 | Phase 3 | Pending |
+| CTRL-02 | Phase 3 | Complete |
 | VIS-03 | Phase 3 | Complete |
 | HYB-01 | Phase 4 | Pending |
 | HYB-02 | Phase 4 | Pending |
