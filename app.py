@@ -64,6 +64,8 @@ app.config.suppress_callback_exceptions = True
 
 if DATA is not None:
     app.layout = create_layout(DATA)
+    from src.layout.shell import set_data
+    set_data(DATA)
 else:
     app.layout = create_error_page(error=_error_msg, details=_detail_str)
 

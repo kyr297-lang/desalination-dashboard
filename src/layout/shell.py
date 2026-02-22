@@ -4,10 +4,17 @@ src/layout/shell.py
 App shell layout: top header bar, collapsible sidebar, and content area.
 
 create_layout(data) returns the full Dash component tree.  The sidebar toggle
-callback is registered here via the @callback decorator (Dash 4.0 style).
+callback and navigation callbacks are registered here via the @callback
+decorator (Dash 4.0 style).
+
+Navigation state is managed via a dcc.Store("active-system"):
+  - None          → landing overview
+  - "mechanical"  → mechanical system tab view
+  - "electrical"  → electrical system tab view
+  - "hybrid"      → hybrid system tab view (empty state until Phase 4)
 """
 
-from dash import html, dcc, callback, Input, Output, State
+from dash import html, dcc, callback, Input, Output, State, ctx, ALL
 import dash_bootstrap_components as dbc
 
 from src.config import SYSTEM_COLORS  # available for future use by child components
@@ -27,6 +34,24 @@ _SIDEBAR_STYLE_BASE = {
     "flexShrink": "0",
 }
 
+# Module-level data reference — avoids circular imports.
+# Populated by set_data() called from app.py after data is loaded.
+_data = None
+
+
+def set_data(data: dict) -> None:
+    """Store the loaded data dict for use in the render_content callback.
+
+    Called once from app.py after DATA is loaded, before any callbacks fire.
+
+    Parameters
+    ----------
+    data : dict
+        Data dict returned by load_data().
+    """
+    global _data
+    _data = data
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Layout factory
@@ -39,8 +64,8 @@ def create_layout(data: dict) -> html.Div:
     Parameters
     ----------
     data : dict
-        Data dict returned by load_data().  Passed in for future use by child
-        components (charts, tables) that will be embedded in the content area.
+        Data dict returned by load_data().  Stored via set_data() for use in
+        the render_content callback.
 
     Returns
     -------
@@ -49,6 +74,9 @@ def create_layout(data: dict) -> html.Div:
     return html.Div([
         # Persist sidebar collapsed/expanded state across callbacks
         dcc.Store(id="sidebar-collapsed", data=False),
+
+        # Active system store — None = landing overview, string = system key
+        dcc.Store(id="active-system", data=None),
 
         # ── Top header bar ─────────────────────────────────────────────────
         dbc.Navbar(
@@ -81,7 +109,11 @@ def create_layout(data: dict) -> html.Div:
                     dbc.Nav(
                         [
                             dbc.NavLink("Overview", href="/", active="exact"),
-                            # Future phases add nav items here
+                            dbc.NavLink(
+                                "System Explorer",
+                                href="#",
+                                id="nav-system-explorer",
+                            ),
                         ],
                         vertical=True,
                         pills=True,
@@ -90,15 +122,11 @@ def create_layout(data: dict) -> html.Div:
                 ],
             ),
 
-            # Main content area
+            # Main content area — populated by render_content callback
             html.Div(
                 id="page-content",
                 style={"flex": "1", "padding": "1.5rem"},
-                children=[
-                    html.P(
-                        "Dashboard content will appear here as features are built."
-                    )
-                ],
+                children=[],
             ),
 
         ], style={"display": "flex", "flex": "1"}),
@@ -137,3 +165,93 @@ def toggle_sidebar(n_clicks, is_collapsed):
     width = SIDEBAR_WIDTH_COLLAPSED if new_collapsed else SIDEBAR_WIDTH_EXPANDED
     new_style = {**_SIDEBAR_STYLE_BASE, "width": width}
     return new_style, new_collapsed
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Navigation callbacks
+# ──────────────────────────────────────────────────────────────────────────────
+
+@callback(
+    Output("active-system", "data"),
+    Input({"type": "system-card-btn", "index": ALL}, "n_clicks"),
+    Input("system-tabs", "active_tab"),
+    Input("back-to-overview", "n_clicks"),
+    State("active-system", "data"),
+    prevent_initial_call=True,
+)
+def update_active_system(card_clicks, active_tab, back_clicks, current_system):
+    """Update the active-system store based on user interaction.
+
+    Sources:
+    - system-card-btn pattern-match: sets system to the clicked card's index
+    - system-tabs active_tab: sets system to the selected tab
+    - back-to-overview n_clicks: resets to None (landing page)
+
+    Parameters
+    ----------
+    card_clicks : list
+        n_clicks values for all system-card-btn instances (pattern-matched).
+    active_tab : str or None
+        Current active tab ID from the system-tabs component.
+    back_clicks : int or None
+        n_clicks for the back-to-overview link.
+    current_system : str or None
+        Current value of the active-system store.
+
+    Returns
+    -------
+    str or None
+        New active-system value.
+    """
+    triggered = ctx.triggered_id
+
+    if triggered is None:
+        return current_system
+
+    # Pattern-matched system card button click
+    if isinstance(triggered, dict) and triggered.get("type") == "system-card-btn":
+        return triggered["index"]
+
+    # Tab switch
+    if triggered == "system-tabs":
+        return active_tab
+
+    # Back to overview link
+    if triggered == "back-to-overview":
+        return None
+
+    return current_system
+
+
+@callback(
+    Output("page-content", "children"),
+    Input("active-system", "data"),
+)
+def render_content(active_system):
+    """Render the main page content based on the active-system store.
+
+    - None → landing overview (create_overview_layout)
+    - string → system tab view (create_system_view_layout)
+
+    Imports are deferred inside this function to avoid circular imports at
+    module load time.
+
+    Parameters
+    ----------
+    active_system : str or None
+        Current value of the active-system store.
+
+    Returns
+    -------
+    list
+        Dash component(s) to render in the page-content area.
+    """
+    # Deferred imports — layout modules import from shell.py's module scope
+    # so top-level imports would create circular dependencies.
+    from src.layout.overview import create_overview_layout
+    from src.layout.system_view import create_system_view_layout
+
+    if active_system is None:
+        return create_overview_layout()
+
+    return create_system_view_layout(active_system, _data)
