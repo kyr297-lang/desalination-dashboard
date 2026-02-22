@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 4 of 5 (Hybrid Builder)
-Plan: 1 of 2 in current phase
-Status: In Progress
-Last activity: 2026-02-22 — Completed 04-01-PLAN.md (hybrid builder foundation: config, processing helpers, pipeline layout)
+Plan: 2 of 2 in current phase — COMPLETE
+Status: Phase Complete
+Last activity: 2026-02-22 — Completed 04-02-PLAN.md (hybrid builder integration: gate overlay, charts, scorecard, equipment detail)
 
-Progress: [███████░░░] 70%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 10 min
-- Total execution time: 76 min
+- Total plans completed: 8
+- Average duration: 12 min
+- Total execution time: 97 min
 
 **By Phase:**
 
@@ -30,17 +30,18 @@ Progress: [███████░░░] 70%
 | 1. Foundation | 2/2 | 27 min | 13.5 min |
 | 2. System Selection | 2/4 | 28 min | 14 min |
 | 3. Comparison Charts | 2/2 | 18 min | 9 min |
-| 4. Hybrid Builder | 1/2 | 3 min | 3 min |
+| 4. Hybrid Builder | 2/2 | 24 min | 12 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (26 min), 03-01 (3 min), 03-02 (15 min), 04-01 (3 min)
-- Trend: Fast (config + processing helpers + self-contained layout module)
+- Last 5 plans: 03-01 (3 min), 03-02 (15 min), 04-01 (3 min), 04-02 (21 min)
+- Trend: Moderate (integration plan with cross-module wiring + human verification)
 
 *Updated after each plan completion*
 | Phase 02-system-selection-and-scorecard P02 | 26 min | 3 tasks | 6 files |
 | Phase 03-comparison-charts-and-electrical-slider P01 | 3 min | 2 tasks | 2 files |
 | Phase 03-comparison-charts-and-electrical-slider P02 | 15 min | 2 tasks | 3 files |
 | Phase 04-hybrid-builder P01 | 3 min | 2 tasks | 3 files |
+| Phase 04-hybrid-builder P02 | 21 min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,10 @@ Recent decisions affecting current work:
 - [04-01]: Multi-Media Filtration removed from miscellaneous Pre-Treatment — exists only in electrical sheet, leaving it would produce unresolvable dropdown option
 - [04-01]: clear_all_slots callback cascades through update_slot_store — single writer pattern maintained for store-hybrid-slots
 - [04-01]: hybrid_energy in compute_chart_data uses miscellaneous system key for stage lookup — hybrid items are mapped via that stage config
+- [04-02]: store-hybrid-slots moved to shell.py so it is always in the DOM — chart and scorecard callbacks use it as Input on all tabs, not just hybrid tab
+- [04-02]: update_gate_overlay always returns complete style dict (never partial) — avoids Dash partial-style pitfalls
+- [04-02]: hybrid equipment section is callback-driven (hybrid-equipment-container) — static render at layout time would always show gate-closed state
+- [04-02]: dcc.Dropdown persistence=True / persistence_type="session" on all 5 hybrid dropdowns — selections survive tab switches without extra callbacks
 
 ### Pending Todos
 
@@ -94,5 +99,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 04-01-PLAN.md — hybrid builder foundation complete; config extended, processing helpers added, pipeline layout and callbacks self-contained in hybrid_builder.py
+Stopped at: Completed 04-02-PLAN.md — hybrid builder fully integrated; gate overlay, chart wiring, 3-column scorecard, comparison text, equipment detail callback all verified
 Resume file: None

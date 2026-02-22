@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - Data layer, app shell, and project scaffolding — everything else depends on this (completed 2026-02-21)
 - [x] **Phase 2: System Selection and Scorecard** - Static layouts, equipment detail views, and RAG scorecard (completed 2026-02-21)
 - [x] **Phase 3: Comparison Charts and Electrical Slider** - All four comparison charts with real data and the battery/tank tradeoff control (completed 2026-02-22)
-- [ ] **Phase 4: Hybrid Builder** - 5-slot equipment builder, completion gate, and hybrid data flowing into all charts
+- [x] **Phase 4: Hybrid Builder** - 5-slot equipment builder, completion gate, and hybrid data flowing into all charts (completed 2026-02-22)
 - [ ] **Phase 5: Polish and Deployment** - Comparison description text, visual audit, export, and local deployment readiness
 
 ## Phase Details
@@ -74,7 +74,7 @@ Plans:
   3. After all five slots are filled, the hybrid system appears in all comparison charts and the scorecard alongside the two preset systems
   4. User can click a hybrid equipment item to see its detailed data view
   5. A description text compares the hybrid system's scorecard ranking against the Mechanical and Electrical presets
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 04-01-PLAN.md — Config fix, hybrid processing helpers, and pipeline builder UI with slot store and callbacks
 - [ ] 04-02-PLAN.md — Integration: gate overlay, chart/scorecard/equipment wiring, comparison text, human verification
@@ -100,5 +100,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 2/2 | Complete    | 2026-02-21 |
 | 2. System Selection and Scorecard | 2/2 | Complete    | 2026-02-22 |
 | 3. Comparison Charts and Electrical Slider | 2/2 | Complete    | 2026-02-22 |
-| 4. Hybrid Builder | 1/2 | In Progress|  |
+| 4. Hybrid Builder | 2/2 | Complete   | 2026-02-22 |
 | 5. Polish and Deployment | 0/TBD | Not started | - |
