@@ -61,7 +61,7 @@ Plans:
   5. Moving the electrical battery/tank slider updates the electrical system values across all relevant charts in real time
 **Plans:** 2 plans
 Plans:
-- [ ] 03-01-PLAN.md — Data computation functions (cost-over-time, battery interpolation, chart data aggregation) and chart figure builders with layout
+- [x] 03-01-PLAN.md — Data computation functions (cost-over-time, battery interpolation, chart data aggregation) and chart figure builders with layout
 - [ ] 03-02-PLAN.md — Callback wiring, legend toggle, slider integration, and chart section into system view
 
 ### Phase 4: Hybrid Builder
@@ -96,6 +96,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete    | 2026-02-21 |
 | 2. System Selection and Scorecard | 2/2 | Complete    | 2026-02-22 |
-| 3. Comparison Charts and Electrical Slider | 0/2 | Not started | - |
+| 3. Comparison Charts and Electrical Slider | 1/2 | In Progress | - |
 | 4. Hybrid Builder | 0/TBD | Not started | - |
 | 5. Polish and Deployment | 0/TBD | Not started | - |

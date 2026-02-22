@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Students can visually compare mechanical, electrical, and custom hybrid desalination systems side-by-side to understand cost, land, and efficiency tradeoffs
-**Current focus:** Phase 2 — System Selection and Scorecard
+**Current focus:** Phase 3 — Comparison Charts and Electrical Slider
 
 ## Current Position
 
-Phase: 2 of 5 (System Selection and Scorecard)
-Plan: 3 of 4 in current phase
+Phase: 3 of 5 (Comparison Charts and Electrical Slider)
+Plan: 2 of 2 in current phase
 Status: In Progress
-Last activity: 2026-02-21 — Completed 02-02-PLAN.md (UI layer: overview, scorecard, equipment grid, system view, shell navigation — human-verify approved)
+Last activity: 2026-02-22 — Completed 03-01-PLAN.md (chart data computation layer and figure builders)
 
-Progress: [████░░░░░░] 40%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 10 min
-- Total execution time: 55 min
+- Total plans completed: 5
+- Average duration: 9 min
+- Total execution time: 58 min
 
 **By Phase:**
 
@@ -29,13 +29,15 @@ Progress: [████░░░░░░] 40%
 |-------|-------|-------|----------|
 | 1. Foundation | 2/2 | 27 min | 13.5 min |
 | 2. System Selection | 2/4 | 28 min | 14 min |
+| 3. Comparison Charts | 1/2 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (25 min), 02-01 (2 min), 02-02 (26 min)
-- Trend: —
+- Last 5 plans: 01-02 (25 min), 02-01 (2 min), 02-02 (26 min), 03-01 (3 min)
+- Trend: Fast (data+figure layer, no callbacks)
 
 *Updated after each plan completion*
 | Phase 02-system-selection-and-scorecard P02 | 26 min | 3 tasks | 6 files |
+| Phase 03-comparison-charts-and-electrical-slider P01 | 3 min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -63,6 +65,10 @@ Recent decisions affecting current work:
 - [02-02]: set_data() pattern: module-level _data in shell.py populated from app.py — avoids circular imports and callback data loading
 - [02-02]: Static active_tab prop on dbc.Tabs (not Output callback) eliminates circular callback dependency in system navigation
 - [02-02]: Split callbacks with allow_duplicate=True — unified callback with system-tabs/back-to-overview inputs silently fails when those elements absent from initial DOM; separate callbacks per trigger source fix card click navigation
+- [03-01]: Battery override via override_costs dict in compute_cost_over_time() — injects interpolated cost for all battery replacement cycles (years 0, 12, 24, 36, 48), avoiding double-counting pitfall
+- [03-01]: Hybrid placeholder is zeros/empty dicts throughout Phase 3 — no KeyError risk from data dict; TODO comments mark Phase 4 integration points
+- [03-01]: Empty energy dict for hybrid pie uses ["No data"]/[1] grey slice to avoid go.Pie(values=[]) error
+- [03-01]: External HTML legend (dbc.Badge) is authoritative for visibility state — no reliance on restyleData (known Dash bug #2037)
 
 ### Pending Todos
 
@@ -72,10 +78,10 @@ None yet.
 
 - [Resolved — 01-01]: data.xlsx actual column names, data types, and merged cells — RESOLVED: loader parses correctly
 - [Resolved — 02-01]: Miscellaneous sheet part categorization by process stage — RESOLVED: categorized in PROCESS_STAGES (miscellaneous key)
-- [Research flag]: Cost-over-time formula needs confirmation against data.xlsx structure before implementing calculations.py (Phase 1/3)
+- [Resolved — 03-01]: Cost-over-time formula confirmed and implemented — replacement cycle model verified against data.xlsx, all values match RESEARCH.md benchmarks
 
 ## Session Continuity
 
-Last session: 2026-02-21
-Stopped at: Completed 02-02-PLAN.md — all 3 tasks done, human-verify approved, shell.py callback split fix committed
+Last session: 2026-02-22
+Stopped at: Completed 03-01-PLAN.md — data layer + figure builders done, ready for 03-02 callback wiring
 Resume file: None
