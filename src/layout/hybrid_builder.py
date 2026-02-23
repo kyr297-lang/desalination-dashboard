@@ -225,6 +225,10 @@ def make_hybrid_builder(data: dict) -> html.Div:
         [
             html.H5("Hybrid System Builder", className="mb-3"),
             top_bar,
+            html.P(
+                "Select one piece of equipment for each process stage",
+                className="text-muted small mb-2",
+            ),
             pipeline,
         ],
         className="hybrid-builder-section",

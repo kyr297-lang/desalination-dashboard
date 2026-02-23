@@ -57,7 +57,7 @@ def set_data(data: dict) -> None:
 # ──────────────────────────────────────────────────────────────────────────────
 
 _TRANSITION = {"duration": 300, "easing": "cubic-in-out"}
-_MARGIN = dict(l=60, r=20, t=10, b=40)
+_MARGIN = dict(l=75, r=20, t=10, b=40)
 
 
 def _visibility(visibility: dict, key: str):
@@ -124,6 +124,10 @@ def build_cost_chart(
     fig.update_layout(
         xaxis_title="Year",
         yaxis_title="Cumulative Cost (USD)",
+        yaxis=dict(
+            tickprefix="$",
+            tickformat="~s",
+        ),
         showlegend=False,
         uirevision="static",
         transition=_TRANSITION,
@@ -236,7 +240,7 @@ def build_turbine_chart(
 
     fig.update_layout(
         barmode="group",
-        yaxis_title="Count",
+        yaxis_title="Wind Turbines",
         yaxis=dict(dtick=1),
         showlegend=False,
         uirevision="static",
