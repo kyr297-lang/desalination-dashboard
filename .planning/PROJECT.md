@@ -2,7 +2,7 @@
 
 ## What This Is
 
-An interactive 2D dashboard built with Python (Dash/Plotly) that lets users explore and compare three wind-powered desalination system configurations — mechanical, electrical, and hybrid — for a municipality of ~10,000 people. Designed as an academic tool for engineering students to understand design tradeoffs in wind-powered desalination.
+An interactive dashboard built with Python (Dash/Plotly) that lets engineering students explore and compare three wind-powered desalination system configurations — mechanical, electrical, and custom hybrid — for a municipality of ~10,000 people. Features side-by-side comparison charts, a RAG scorecard, a 5-slot hybrid builder with completion gate, and browser print-to-PDF export.
 
 ## Core Value
 
@@ -12,45 +12,47 @@ Students can visually compare mechanical, electrical, and custom hybrid desalina
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Three-system selection interface (mechanical, electrical, hybrid) — v1.0
+- ✓ Equipment detail view with parts, data, and descriptions — v1.0
+- ✓ Hybrid "build your own" with 5 functional slots — v1.0
+- ✓ Hybrid completion gate (all slots required) — v1.0
+- ✓ Equipment selection with detailed data per part — v1.0
+- ✓ Cost/land/efficiency scorecard with RAG ranking — v1.0
+- ✓ Comparison description of hybrid vs. preset systems — v1.0
+- ✓ Cost over time graph with time horizon slider — v1.0
+- ✓ Land area comparison graph — v1.0
+- ✓ Wind turbine count per system graph — v1.0
+- ✓ Energy percentage pie chart by action — v1.0
+- ✓ All graphs compare 3 systems side-by-side — v1.0
+- ✓ Electrical battery/tank tradeoff slider — v1.0
+- ✓ Academic visual design (FLATLY Bootstrap theme) — v1.0
+- ✓ Data sourced from data.xlsx — v1.0
+- ✓ Runs locally via `python app.py` — v1.0
+- ✓ Export/print scorecard for lab reports — v1.0
 
 ### Active
 
-- [ ] Three-system selection interface (mechanical, electrical, hybrid)
-- [ ] Equipment detail view showing parts, data, and descriptions for mechanical and electrical systems
-- [ ] Hybrid "build your own" interface with 5 functional slots (Water Extraction, Pre-Treatment, Desalination, Post-Treatment, Brine Disposal)
-- [ ] Hybrid system completion gate — user must fill all functional slots before seeing details
-- [ ] Equipment selection shows detailed data and description per part
-- [ ] Cost/land/efficiency scorecard with red/yellow/green ranking
-- [ ] Comparison description of hybrid system vs. the other two preset systems
-- [ ] Cost over time graph with user-selectable time horizon
-- [ ] Land area comparison graph across all three systems
-- [ ] Wind turbine count per system graph
-- [ ] Pie chart showing energy percentage by action (water extraction, desalination)
-- [ ] All graphs compare mechanical, electrical, and hybrid side-by-side
-- [ ] Electrical system battery/tank tradeoff slider (bigger storage tank vs. smaller battery)
-- [ ] Academic visual design — clean, professional, not tacky or high-tech
-- [ ] Data sourced from `data.xlsx` Excel file in project directory
-- [ ] Runs locally via `python app.py`
-- [ ] Optionally deployable to a hosted service (Render, Railway, etc.)
+- [ ] Deployable to Render/Railway free tier for sharing with classmates
+- [ ] Lifecycle cost (NPV) view with discount rate input
+- [ ] Side-by-side equipment comparison table across systems
+- [ ] Export charts as PNG/PDF for reports
 
 ### Out of Scope
 
-- 3D visualization — 2D dashboard only
-- Real-time wind data integration — static/calculated data from spreadsheet
+- 3D visualization — 2D dashboard only; clarity over flash
+- Real-time wind data integration — static data from spreadsheet; maintenance burden
 - Mobile-optimized layout — desktop-first academic tool
-- User accounts or saving configurations — stateless dashboard
+- User accounts or saving configurations — stateless dashboard; unnecessary complexity
+- AI/LLM explanations — breaks deterministic academic tool contract
+- Solar/gravity-fed configurations — not covered by current data.xlsx
 
 ## Context
 
-- Data lives in `data.xlsx` with three sections: Electrical Components, Mechanical Components, Miscellaneous (hybrid parts)
-- Electrical sheet includes battery fraction vs. tank fraction tradeoff table (11 rows, 0% to 100% battery)
-- Mechanical system uses 4x 250kW aeromotor turbines; electrical uses 1 turbine + battery/PLC
-- Miscellaneous parts include green blend addition, activated carbon, evaporation pond, piston pump, antiscalant
-- Equipment data includes: quantity, cost (USD), energy (kW), land area (m²), lifespan (years)
-- Target: potable water for ~10,000 people (~1 million gal/day)
-- Hybrid functional categories: Water Extraction, Pre-Treatment, Desalination, Post-Treatment, Brine Disposal
-- Dashboard will be used by future engineering students — clarity and learnability are paramount
+Shipped v1.0 with 3,772 LOC Python (Dash/Plotly + pandas + openpyxl).
+Tech stack: Python 3, Dash 2.x, Plotly, dash-bootstrap-components (FLATLY theme), pandas, openpyxl, numpy.
+Data source: single `data.xlsx` with Electrical, Mechanical, and Miscellaneous sheets.
+Architecture: Module-level `set_data()` pattern avoids circular imports; `dcc.Store` for client-side state; `suppress_callback_exceptions=True` for multi-tab DOM.
+User testing confirmed 30-second comprehension for unfamiliar students.
 
 ## Constraints
 
@@ -63,10 +65,16 @@ Students can visually compare mechanical, electrical, and custom hybrid desalina
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Dash/Plotly for dashboard | Academic standard, good data viz, Python ecosystem | — Pending |
-| 5 hybrid functional slots | Maps to real desalination process stages | — Pending |
-| User-selectable time horizon for cost graph | Allows exploration of short vs. long-term economics | — Pending |
-| Red/yellow/green ranking system | Intuitive at-a-glance comparison for students | — Pending |
+| Dash/Plotly for dashboard | Academic standard, good data viz, Python ecosystem | ✓ Good — clean charts, easy callbacks |
+| 5 hybrid functional slots | Maps to real desalination process stages | ✓ Good — intuitive pipeline metaphor |
+| User-selectable time horizon for cost graph | Allows exploration of short vs. long-term economics | ✓ Good — students explore 5-50yr ranges |
+| Red/yellow/green ranking system | Intuitive at-a-glance comparison for students | ✓ Good — immediate comprehension |
+| Tabs over Dash Pages | Preserve dcc.Store cross-tab state | ✓ Good — hybrid slots persist across tabs |
+| Module-level data loading with set_data() | Avoid circular imports and data loading in callbacks | ✓ Good — clean, consistent pattern |
+| data_only=True in openpyxl | Returns computed values not formula strings | ✓ Good — correct numeric parsing |
+| debug=False in app.run() | Prevents Flask reloader double browser tabs | ✓ Good — clean single-tab launch |
+| suppress_callback_exceptions=True | Multi-tab DOM where not all elements exist initially | ⚠️ Revisit — masks real errors; consider targeted PreventUpdate |
+| Browser print-to-PDF for export | No server-side PDF dependency; works everywhere | ✓ Good — simple, reliable |
 
 ---
-*Last updated: 2026-02-20 after initialization*
+*Last updated: 2026-02-23 after v1.0 milestone*
