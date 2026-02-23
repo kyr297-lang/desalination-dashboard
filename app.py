@@ -54,6 +54,9 @@ app = dash.Dash(
 )
 app.title = "Wind-Powered Desalination Dashboard"
 
+# WSGI entry point — exposes Flask server for gunicorn
+server = app.server
+
 # Allow callbacks that reference IDs not yet in the layout (needed when
 # multi-page content is added in future phases).
 app.config.suppress_callback_exceptions = True
