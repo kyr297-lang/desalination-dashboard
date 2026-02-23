@@ -73,7 +73,7 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         "\u2190 Overview",
         id="back-to-overview",
         href="#",
-        className="text-muted small mb-2 d-inline-block",
+        className="text-muted small mb-2 d-inline-block no-print",
         style={"cursor": "pointer", "textDecoration": "none"},
     )
 
@@ -203,10 +203,14 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         className="shadow-sm mb-3",
     )
 
+    equipment_card = dbc.Card(
+        dbc.CardBody(equipment),
+        className="shadow-sm mb-3",
+    )
+
     main_content_children = [
         scorecard_card,
-        html.Hr(className="my-3"),
-        equipment,
+        equipment_card,
     ]
 
     top_level_children = [

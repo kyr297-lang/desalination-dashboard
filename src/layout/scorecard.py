@@ -98,8 +98,8 @@ def _make_rag_dot(color_hex: str) -> html.Span:
         "",
         style={
             "display": "inline-block",
-            "width": "12px",
-            "height": "12px",
+            "width": "14px",
+            "height": "14px",
             "borderRadius": "50%",
             "backgroundColor": color_hex,
             "marginRight": "6px",
