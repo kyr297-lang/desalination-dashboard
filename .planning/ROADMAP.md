@@ -36,7 +36,10 @@
   2. User visits the URL and all charts, scorecard, and hybrid builder load with correct data
   3. User who clones the repo can install all dependencies with a single `pip install -r requirements.txt` using pinned versions
   4. Deployed app reads `data.xlsx` correctly with no path-related errors in the Render logs
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 06-01-PLAN.md — Prepare codebase for Render (WSGI entry point, Procfile, gunicorn, .gitignore)
+- [ ] 06-02-PLAN.md — Push to GitHub and create Render Web Service
 
 ### Phase 7: NPV Lifecycle Cost Analysis
 **Goal**: Students can view and explore net present value lifecycle costs for all three systems with a user-controlled discount rate
@@ -78,7 +81,7 @@
 | 3. Comparison Charts and Electrical Slider | v1.0 | 2/2 | Complete | 2026-02-22 |
 | 4. Hybrid Builder | v1.0 | 2/2 | Complete | 2026-02-22 |
 | 5. Polish and Deployment | v1.0 | 2/2 | Complete | 2026-02-23 |
-| 6. Render Deployment | v1.1 | 0/? | Not started | - |
+| 6. Render Deployment | v1.1 | 0/2 | Planning complete | - |
 | 7. NPV Lifecycle Cost Analysis | v1.1 | 0/? | Not started | - |
 | 8. Equipment Comparison Table | v1.1 | 0/? | Not started | - |
 | 9. Chart PNG Export | v1.1 | 0/? | Not started | - |
