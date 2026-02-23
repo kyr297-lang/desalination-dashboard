@@ -81,7 +81,7 @@ Plans:
 | 3. Comparison Charts and Electrical Slider | v1.0 | 2/2 | Complete | 2026-02-22 |
 | 4. Hybrid Builder | v1.0 | 2/2 | Complete | 2026-02-22 |
 | 5. Polish and Deployment | v1.0 | 2/2 | Complete | 2026-02-23 |
-| 6. Render Deployment | v1.1 | 0/2 | Planning complete | - |
+| 6. Render Deployment | 1/2 | In Progress|  | - |
 | 7. NPV Lifecycle Cost Analysis | v1.1 | 0/? | Not started | - |
 | 8. Equipment Comparison Table | v1.1 | 0/? | Not started | - |
 | 9. Chart PNG Export | v1.1 | 0/? | Not started | - |

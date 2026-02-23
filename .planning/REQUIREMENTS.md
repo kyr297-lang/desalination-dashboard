@@ -9,10 +9,10 @@ Requirements for Milestone v1.1: Sharing & Analysis. Each maps to roadmap phases
 
 ### Deployment
 
-- [ ] **DEPLOY-01**: App is deployable to Render free tier with gunicorn and Procfile
-- [ ] **DEPLOY-02**: App exposes `server = app.server` for WSGI compatibility
-- [ ] **DEPLOY-03**: `requirements.txt` includes all dependencies with pinned versions
-- [ ] **DEPLOY-04**: App loads `data.xlsx` correctly in deployed environment (pathlib-based paths)
+- [x] **DEPLOY-01**: App is deployable to Render free tier with gunicorn and Procfile
+- [x] **DEPLOY-02**: App exposes `server = app.server` for WSGI compatibility
+- [x] **DEPLOY-03**: `requirements.txt` includes all dependencies with pinned versions
+- [x] **DEPLOY-04**: App loads `data.xlsx` correctly in deployed environment (pathlib-based paths)
 
 ### NPV Analysis
 
@@ -60,10 +60,10 @@ Deferred beyond v1.1.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DEPLOY-01 | Phase 6 | Pending |
-| DEPLOY-02 | Phase 6 | Pending |
-| DEPLOY-03 | Phase 6 | Pending |
-| DEPLOY-04 | Phase 6 | Pending |
+| DEPLOY-01 | Phase 6 | Complete |
+| DEPLOY-02 | Phase 6 | Complete |
+| DEPLOY-03 | Phase 6 | Complete |
+| DEPLOY-04 | Phase 6 | Complete |
 | NPV-01 | Phase 7 | Pending |
 | NPV-02 | Phase 7 | Pending |
 | NPV-03 | Phase 7 | Pending |
