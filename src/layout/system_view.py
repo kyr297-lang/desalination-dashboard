@@ -111,6 +111,9 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
     # ── 4. Scorecard container (dynamic via callback) ─────────────────────────
     # The initial render shows the 2-system scorecard. The scorecard callback
     # updates scorecard-container when store-hybrid-slots changes.
+    # The export button is a sibling ABOVE scorecard-container inside the
+    # CardBody so it is NOT destroyed when the scorecard callback re-renders
+    # the scorecard-container children.
     initial_scorecard = make_scorecard_table(data["mechanical"], data["electrical"])
     scorecard_container = html.Div(
         initial_scorecard,
@@ -119,6 +122,16 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
 
     # ── 5. Comparison text (populated by callback when gate is open) ──────────
     comparison_text_div = html.Div(id="comparison-text")
+
+    # ── Export / Print button (hidden in print via no-print class) ────────────
+    export_btn = dbc.Button(
+        "Export / Print",
+        id="export-btn",
+        color="secondary",
+        outline=True,
+        size="sm",
+        className="mb-2 no-print",
+    )
 
     # ── 6. Equipment section ──────────────────────────────────────────────────
     if active_system == "hybrid":
@@ -178,9 +191,20 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         chart_wrapper = chart_section
 
     # ── Assemble layout ───────────────────────────────────────────────────────
+    # Scorecard section wrapped in a Card. The export button is inside the
+    # CardBody ABOVE scorecard-container so the callback that re-renders
+    # scorecard-container children does not destroy the button.
+    scorecard_card = dbc.Card(
+        dbc.CardBody([
+            export_btn,
+            scorecard_container,
+            comparison_text_div,
+        ]),
+        className="shadow-sm mb-3",
+    )
+
     main_content_children = [
-        scorecard_container,
-        comparison_text_div,
+        scorecard_card,
         html.Hr(className="my-3"),
         equipment,
     ]
