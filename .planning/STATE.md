@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Students can visually compare mechanical, electrical, and custom hybrid desalination systems side-by-side to understand cost, land, and efficiency tradeoffs
-**Current focus:** Phase 4 — Hybrid Builder
+**Current focus:** Phase 5 — Polish and Deployment
 
 ## Current Position
 
-Phase: 4 of 5 (Hybrid Builder)
+Phase: 5 of 5 (Polish and Deployment)
 Plan: 2 of 2 in current phase — COMPLETE
-Status: Phase Complete
-Last activity: 2026-02-22 — Completed 04-02-PLAN.md (hybrid builder integration: gate overlay, charts, scorecard, equipment detail)
+Status: Phase Complete — All 5 Phases Done
+Last activity: 2026-02-23 — Completed 05-02-PLAN.md (chart axis formatting, card wrappers, hybrid instruction line, user-verified visual polish)
 
-Progress: [████████░░] 80%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 12 min
-- Total execution time: 97 min
+- Total plans completed: 9
+- Average duration: 11 min
+- Total execution time: 102 min
 
 **By Phase:**
 
@@ -31,10 +31,11 @@ Progress: [████████░░] 80%
 | 2. System Selection | 2/4 | 28 min | 14 min |
 | 3. Comparison Charts | 2/2 | 18 min | 9 min |
 | 4. Hybrid Builder | 2/2 | 24 min | 12 min |
+| 5. Polish and Deployment | 2/2 | 25 min | 12.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (3 min), 03-02 (15 min), 04-01 (3 min), 04-02 (21 min)
-- Trend: Moderate (integration plan with cross-module wiring + human verification)
+- Last 5 plans: 04-01 (3 min), 04-02 (21 min), 05-01 (5 min), 05-02 (~20 min)
+- Trend: Consistent (visual polish + human verification)
 
 *Updated after each plan completion*
 | Phase 02-system-selection-and-scorecard P02 | 26 min | 3 tasks | 6 files |
@@ -42,6 +43,8 @@ Progress: [████████░░] 80%
 | Phase 03-comparison-charts-and-electrical-slider P02 | 15 min | 2 tasks | 3 files |
 | Phase 04-hybrid-builder P01 | 3 min | 2 tasks | 3 files |
 | Phase 04-hybrid-builder P02 | 21 min | 2 tasks | 7 files |
+| Phase 05-polish-and-deployment P01 | 5 min | 2 tasks | 5 files |
+| Phase 05-polish-and-deployment P02 | 20 min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -85,6 +88,12 @@ Recent decisions affecting current work:
 - [04-02]: update_gate_overlay always returns complete style dict (never partial) — avoids Dash partial-style pitfalls
 - [04-02]: hybrid equipment section is callback-driven (hybrid-equipment-container) — static render at layout time would always show gate-closed state
 - [04-02]: dcc.Dropdown persistence=True / persistence_type="session" on all 5 hybrid dropdowns — selections survive tab switches without extra callbacks
+- [05-01]: export-btn placed above scorecard-container in CardBody (not inside it) so scorecard callback re-renders do not destroy the button
+- [05-01]: @page { size: auto; } added as top-level rule (not inside @media print) to fix Chrome print dialog Layout option disappearing (dbc GitHub #269)
+- [05-01]: dcc-graph and js-plotly-plot NOT hidden with display:none — Plotly reflow issues; only non-chart UI hidden in print
+- [05-01]: clientside_callback imported at module level from dash, not app.clientside_callback — consistent with project callback pattern
+- [05-02]: d3 "~s" tickformat uses lowercase k/M (SI convention) on chart axes — scorecard uses fmt_cost() uppercase K/M; both correct in their respective UI contexts
+- [05-02]: Content sections (equipment, pretreatment, water extraction) are intentionally visible in print view — only interactive controls hidden via no-print; confirmed by user verification
 
 ### Pending Todos
 
@@ -98,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-22
-Stopped at: Completed 04-02-PLAN.md — hybrid builder fully integrated; gate overlay, chart wiring, 3-column scorecard, comparison text, equipment detail callback all verified
+Last session: 2026-02-23
+Stopped at: Completed 05-02-PLAN.md — chart axis SI formatting, card wrappers, hybrid instruction line, user-verified visual polish. All 5 phases complete. Project ready for student use.
 Resume file: None

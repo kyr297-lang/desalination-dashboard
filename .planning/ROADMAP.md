@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: System Selection and Scorecard** - Static layouts, equipment detail views, and RAG scorecard (completed 2026-02-21)
 - [x] **Phase 3: Comparison Charts and Electrical Slider** - All four comparison charts with real data and the battery/tank tradeoff control (completed 2026-02-22)
 - [x] **Phase 4: Hybrid Builder** - 5-slot equipment builder, completion gate, and hybrid data flowing into all charts (completed 2026-02-22)
-- [ ] **Phase 5: Polish and Deployment** - Comparison description text, visual audit, export, and local deployment readiness
+- [x] **Phase 5: Polish and Deployment** - Comparison description text, visual audit, export, and local deployment readiness (completed 2026-02-23)
 
 ## Phase Details
 
@@ -88,10 +88,10 @@ Plans:
   2. All chart axes have labeled units, all hover tooltips show formatted values (dollar signs, units), and colors are consistent across every chart
   3. User can export or print the scorecard summary suitable for inclusion in a lab report
   4. Running `python app.py` on a clean machine with dependencies installed starts the app with no configuration beyond the command
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
-- [ ] 05-01-PLAN.md — Scorecard export via browser print-to-PDF with clientside_callback and @media print CSS
-- [ ] 05-02-PLAN.md — Visual polish audit, chart axis formatting, hybrid instruction line, and deployment verification
+- [x] 05-01-PLAN.md — Scorecard export via browser print-to-PDF with clientside_callback and @media print CSS
+- [x] 05-02-PLAN.md — Visual polish audit, chart axis formatting, hybrid instruction line, and deployment verification
 
 ## Progress
 
@@ -104,4 +104,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. System Selection and Scorecard | 2/2 | Complete    | 2026-02-22 |
 | 3. Comparison Charts and Electrical Slider | 2/2 | Complete    | 2026-02-22 |
 | 4. Hybrid Builder | 2/2 | Complete   | 2026-02-22 |
-| 5. Polish and Deployment | 0/2 | Planning complete | - |
+| 5. Polish and Deployment | 2/2 | Complete | 2026-02-23 |

@@ -51,7 +51,7 @@
 
 ### Export
 
-- [ ] **EXP-01**: User can export or print the scorecard summary for lab reports
+- [x] **EXP-01**: User can export or print the scorecard summary for lab reports
 
 ### Deployment
 
@@ -114,7 +114,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HYB-03 | Phase 4 | Complete |
 | HYB-04 | Phase 4 | Complete |
 | SCORE-03 | Phase 4 | Complete |
-| EXP-01 | Phase 5 | Pending |
+| EXP-01 | Phase 5 | Complete |
+| VIS-02 | Phase 5 (reinforced) | Complete |
+| DEP-01 | Phase 5 (verified) | Complete |
 
 **Coverage:**
 - v1 requirements: 25 total
@@ -123,4 +125,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-22 after 03-01 execution — CHART-01 through CHART-05, CTRL-01, VIS-03 complete*
+*Last updated: 2026-02-23 after 05-02 execution — EXP-01, VIS-02, DEP-01 complete. All v1 requirements satisfied.*
