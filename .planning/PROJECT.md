@@ -32,6 +32,8 @@ Students can visually compare mechanical, electrical, and custom hybrid desalina
 
 ### Active
 
+<!-- Current Milestone: v1.1 Sharing & Analysis -->
+
 - [ ] Deployable to Render/Railway free tier for sharing with classmates
 - [ ] Lifecycle cost (NPV) view with discount rate input
 - [ ] Side-by-side equipment comparison table across systems
@@ -76,5 +78,15 @@ User testing confirmed 30-second comprehension for unfamiliar students.
 | suppress_callback_exceptions=True | Multi-tab DOM where not all elements exist initially | ⚠️ Revisit — masks real errors; consider targeted PreventUpdate |
 | Browser print-to-PDF for export | No server-side PDF dependency; works everywhere | ✓ Good — simple, reliable |
 
+## Current Milestone: v1.1 Sharing & Analysis
+
+**Goal:** Deploy the dashboard online and add deeper analysis tools — NPV lifecycle cost, equipment comparison table, and chart export for reports.
+
+**Target features:**
+- Deployable to Render/Railway free tier for sharing with classmates
+- Lifecycle cost (NPV) view with discount rate input
+- Side-by-side equipment comparison table across systems
+- Export charts as PNG/PDF for reports
+
 ---
-*Last updated: 2026-02-23 after v1.0 milestone*
+*Last updated: 2026-02-23 after v1.1 milestone started*
