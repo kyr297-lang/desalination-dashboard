@@ -20,7 +20,7 @@ update_gate_overlay -- Output("hybrid-gate-overlay", "style")
 """
 
 import pandas as pd
-from dash import html, callback, Input, Output
+from dash import html, callback, clientside_callback, Input, Output
 import dash_bootstrap_components as dbc
 
 from src.config import RAG_COLORS
@@ -32,6 +32,27 @@ from src.data.processing import (
     fmt_cost,
 )
 from src.layout.equipment_grid import make_equipment_section
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Export / Print clientside callback
+# Fires window.print() when the export button is clicked.
+# Uses module-level clientside_callback (not app.clientside_callback) to
+# follow the project's existing callback registration pattern.
+# ──────────────────────────────────────────────────────────────────────────────
+
+clientside_callback(
+    """
+    function(n_clicks) {
+        if (!n_clicks) return window.dash_clientside.no_update;
+        window.print();
+        return window.dash_clientside.no_update;
+    }
+    """,
+    Output("export-btn", "n_clicks"),
+    Input("export-btn", "n_clicks"),
+    prevent_initial_call=True,
+)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
