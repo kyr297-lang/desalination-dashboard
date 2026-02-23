@@ -25,26 +25,27 @@ _SYSTEM_CARDS = [
         "label": "Mechanical",
         "key": "mechanical",
         "description": (
-            "Uses wind-driven mechanical pumps to directly pressurize seawater "
-            "through reverse osmosis membranes. Requires multiple large turbines "
-            "but avoids electrical conversion losses."
+            "Click Explore to view cost, land area, and energy data for the "
+            "mechanical system. Uses wind-driven pumps to pressurize seawater "
+            "through reverse osmosis membranes — no electrical conversion losses."
         ),
     },
     {
         "label": "Electrical",
         "key": "electrical",
         "description": (
-            "Converts wind energy to electricity to power pumps, with battery or "
-            "tank storage options for continuous operation. More flexible but adds "
-            "conversion and storage costs."
+            "Click Explore to view cost, land area, and energy data for the "
+            "electrical system. Converts wind to electricity with adjustable "
+            "battery/tank storage — use the slider to compare storage options."
         ),
     },
     {
         "label": "Hybrid",
         "key": "hybrid",
         "description": (
-            "Combine components from both systems to create a custom desalination "
-            "solution tailored to specific site conditions."
+            "Click Explore to build a custom system. Select one piece of equipment "
+            "for each process stage to see its combined cost, land, and energy "
+            "performance compared with the two standard systems."
         ),
     },
 ]
@@ -104,7 +105,8 @@ def create_overview_layout() -> html.Div:
     return html.Div(
         [
             html.P(
-                "Select a desalination system to explore its equipment and performance.",
+                "Start by clicking Explore on any system card below to compare "
+                "desalination system costs, land use, and energy requirements.",
                 className="text-muted mb-3",
             ),
             dbc.Row(cards, className="g-3"),
