@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 MVP** — Phases 1-5 (shipped 2026-02-23)
-- 🔄 **v1.1 Sharing & Analysis** — Phases 6-9 (in progress)
+- 🔄 **v1.1 Sharing & Analysis** — Phases 6-9 (Phase 6 complete; Phases 7-9 pending)
 
 ## Phases
 
@@ -20,7 +20,7 @@
 
 ### v1.1 Sharing & Analysis (Phases 6-9)
 
-- [ ] **Phase 6: Render Deployment** — App runs on Render free tier and is shareable via URL
+- [x] **Phase 6: Render Deployment** — App runs on Render free tier and is shareable via URL (completed 2026-02-23)
 - [ ] **Phase 7: NPV Lifecycle Cost Analysis** — Students can explore lifecycle economics with adjustable discount rate
 - [ ] **Phase 8: Equipment Comparison Table** — Students can compare equipment specs across all three systems in one table
 - [ ] **Phase 9: Chart PNG Export** — Students can download any comparison chart as PNG for lab reports
@@ -38,8 +38,8 @@
   4. Deployed app reads `data.xlsx` correctly with no path-related errors in the Render logs
 **Plans**: 2 plans
 Plans:
-- [ ] 06-01-PLAN.md — Prepare codebase for Render (WSGI entry point, Procfile, gunicorn, .gitignore)
-- [ ] 06-02-PLAN.md — Push to GitHub and create Render Web Service
+- [x] 06-01-PLAN.md — Prepare codebase for Render (WSGI entry point, Procfile, gunicorn, .gitignore)
+- [x] 06-02-PLAN.md — Push to GitHub and create Render Web Service
 
 ### Phase 7: NPV Lifecycle Cost Analysis
 **Goal**: Students can view and explore net present value lifecycle costs for all three systems with a user-controlled discount rate
@@ -81,7 +81,7 @@ Plans:
 | 3. Comparison Charts and Electrical Slider | v1.0 | 2/2 | Complete | 2026-02-22 |
 | 4. Hybrid Builder | v1.0 | 2/2 | Complete | 2026-02-22 |
 | 5. Polish and Deployment | v1.0 | 2/2 | Complete | 2026-02-23 |
-| 6. Render Deployment | 1/2 | In Progress|  | - |
+| 6. Render Deployment | v1.1 | 2/2 | Complete | 2026-02-23 |
 | 7. NPV Lifecycle Cost Analysis | v1.1 | 0/? | Not started | - |
 | 8. Equipment Comparison Table | v1.1 | 0/? | Not started | - |
 | 9. Chart PNG Export | v1.1 | 0/? | Not started | - |
