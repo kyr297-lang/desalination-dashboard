@@ -226,7 +226,8 @@ def make_hybrid_builder(data: dict) -> html.Div:
             html.H5("Hybrid System Builder", className="mb-3"),
             top_bar,
             pipeline,
-        ]
+        ],
+        className="hybrid-builder-section",
     )
 
 

@@ -439,7 +439,7 @@ def make_chart_section() -> html.Div:
                 ),
             ])
         ),
-        className="shadow-sm mb-3",
+        className="shadow-sm mb-3 chart-controls",
         style={"backgroundColor": "#f8f9fa"},
     )
 

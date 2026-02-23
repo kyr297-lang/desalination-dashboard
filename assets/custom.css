@@ -31,3 +31,55 @@
     transition: width 0.2s ease;
     overflow: hidden;
 }
+
+/* Print layout fix
+   ─────────────────
+   @page at top level (NOT inside @media print) fixes the Bootstrap/dbc
+   Chrome print dialog issue (dbc GitHub #269) where the Layout option
+   (portrait/landscape) disappears. */
+@page {
+    size: auto;
+}
+
+/* Print media rules
+   ──────────────────
+   Hide all non-report UI elements in print/PDF export view.
+   Only the RAG scorecard table and the four comparison charts remain.
+   Do NOT hide dcc.Graph / js-plotly-plot with display:none — that causes
+   Plotly layout reflow issues. Only hide non-chart UI. */
+@media print {
+    /* Navigation and sidebar */
+    .navbar,
+    #sidebar,
+    .sidebar-toggle-btn { display: none !important; }
+
+    /* System tab bar and breadcrumb */
+    #system-tabs,
+    #back-to-overview { display: none !important; }
+
+    /* Interactive controls and export button */
+    .no-print { display: none !important; }
+
+    /* Hybrid builder inputs (results only, not inputs per CONTEXT.md) */
+    .hybrid-builder-section { display: none !important; }
+
+    /* Chart control panel (sliders, legend badges) */
+    .chart-controls { display: none !important; }
+
+    /* Ensure content fills page width */
+    #page-content {
+        padding: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    /* Keep charts visible and full-width */
+    .dcc-graph,
+    .js-plotly-plot {
+        width: 100% !important;
+    }
+
+    /* Page break control */
+    .scorecard-print-section {
+        page-break-inside: avoid;
+    }
+}
