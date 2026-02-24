@@ -19,3 +19,21 @@
 
 ---
 
+
+## v1.1 Sharing & Analysis (Shipped: 2026-02-24)
+
+**Delivered:** Deployed the dashboard to Render free tier with auto-deploy from GitHub, making it accessible to classmates via public URL.
+
+**Stats:** 1 phase, 2 plans | 6 commits | 1 day (2026-02-23 → 2026-02-24)
+
+**Key accomplishments:**
+1. WSGI entry point (`server = app.server`) and Procfile with gunicorn for Render deployment
+2. Public GitHub repo at https://github.com/kyr297-lang/desalination-dashboard
+3. Auto-deploy pipeline: push to main → Render rebuilds automatically
+4. Fixed Python 3.14 → 3.11 compatibility (no pre-built wheels for pandas on 3.14)
+
+**Requirements:** 4/14 v1.1 requirements satisfied (DEPLOY-01 through DEPLOY-04)
+**Known gaps:** NPV analysis (Phase 7), Equipment comparison table (Phase 8), Chart PNG export (Phase 9) — deferred to future milestone
+
+---
+
