@@ -398,7 +398,7 @@ def make_chart_section() -> html.Div:
                             value=50,
                             marks={1: "1yr", 25: "25yr", 50: "50yr"},
                             tooltip={"always_visible": True, "placement": "bottom"},
-                            updatemode="drag",
+                            updatemode="mouseup",
                         ),
                         html.Span(
                             id="label-years",
@@ -426,7 +426,7 @@ def make_chart_section() -> html.Div:
                             value=0.5,
                             marks={},
                             tooltip={"always_visible": False},
-                            updatemode="drag",
+                            updatemode="mouseup",
                         ),
                         html.Span(
                             id="label-battery-ratio",
