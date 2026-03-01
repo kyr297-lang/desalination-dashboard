@@ -9,6 +9,9 @@ Provides:
   - Scorecard metric aggregation from raw DataFrames (compute_scorecard_metrics)
   - Process-stage lookup for equipment items (get_equipment_stage)
   - Energy interpolation against Part 2 lookup tables (interpolate_energy)
+  - Aggregate chart data computation (compute_chart_data(data, battery_fraction,
+    years, hybrid_df, tds_ppm, depth_m)) — applies TDS and depth energy offsets
+    from Part 2 lookup tables to both mechanical and electrical energy breakdowns
 
 This module is a pure data/logic layer. It does NOT import from any layout
 or UI module. All formatting uses pandas for safe numeric coercion.
@@ -499,6 +502,8 @@ def compute_chart_data(
     battery_fraction: float = 0.5,
     years: int = 50,
     hybrid_df: pd.DataFrame | None = None,
+    tds_ppm: float = 950,
+    depth_m: float = 950,
 ) -> dict:
     """Aggregate all chart data for the comparison charts section.
 
@@ -510,7 +515,8 @@ def compute_chart_data(
     ----------
     data : dict
         Full data dict from load_data() with keys:
-        "mechanical", "electrical", "miscellaneous", "battery_lookup".
+        "mechanical", "electrical", "miscellaneous", "battery_lookup",
+        "tds_lookup", "depth_lookup".
     battery_fraction : float
         Current battery/tank slider value, 0.0 (all tank) to 1.0 (all battery).
     years : int
@@ -518,6 +524,14 @@ def compute_chart_data(
     hybrid_df : pd.DataFrame or None, optional
         When provided and not None, hybrid chart values are computed from this
         DataFrame instead of using placeholder zeros. Comes from compute_hybrid_df().
+    tds_ppm : float, optional
+        Source water salinity in PPM from the TDS slider (default 950).
+        Used to interpolate ro_energy_kw from data["tds_lookup"] and add it to
+        the "Desalination" stage in both mech_energy and elec_energy.
+    depth_m : float, optional
+        Water source depth in metres from the depth slider (default 950).
+        Used to interpolate pump_energy_kw from data["depth_lookup"] and add it
+        to the "Water Extraction" stage in both mech_energy and elec_energy.
 
     Returns
     -------
@@ -597,6 +611,20 @@ def compute_chart_data(
 
     mech_energy = _energy_by_stage(mechanical_df, "mechanical")
     elec_energy = _energy_by_stage(electrical_df, "electrical")
+
+    # ── TDS and depth energy offsets ──────────────────────────────────────────
+    # Interpolate RO desalination energy from Part 2 TDS lookup table
+    ro_kw = interpolate_energy(tds_ppm, data["tds_lookup"], "tds_ppm", "ro_energy_kw")
+    # Interpolate pump energy from Part 2 depth lookup table
+    pump_kw = interpolate_energy(depth_m, data["depth_lookup"], "depth_m", "pump_energy_kw")
+
+    # Apply offsets to both mechanical and electrical systems.
+    # TDS affects desalination energy demand (RO membranes) regardless of drive type.
+    # Depth affects water extraction energy demand (pump lift) regardless of drive type.
+    mech_energy["Desalination"] = mech_energy.get("Desalination", 0.0) + ro_kw
+    elec_energy["Desalination"] = elec_energy.get("Desalination", 0.0) + ro_kw
+    mech_energy["Water Extraction"] = mech_energy.get("Water Extraction", 0.0) + pump_kw
+    elec_energy["Water Extraction"] = elec_energy.get("Water Extraction", 0.0) + pump_kw
 
     # Hybrid energy: built directly from the hybrid_df rows using miscellaneous stage mapping
     if hybrid_df is not None:
