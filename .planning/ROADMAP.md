@@ -32,7 +32,7 @@
 
 - [x] **Phase 7: Data Layer** — Update sheet loader and ingest Part 2 lookup tables (completed 2026-02-28)
 - [~] **Phase 8: Parameter Sliders** — Salinity (TDS) and depth sliders wired to power breakdown chart (checkpoint awaiting human verification)
-- [ ] **Phase 9: System Page Differentiation** — Distinct visual treatment for Mechanical vs Electrical pages
+- [x] **Phase 9: System Page Differentiation** — Distinct visual treatment for Mechanical vs Electrical pages (completed 2026-03-01)
 - [ ] **Phase 10: Landing Page** — Project introduction section with contributors and course context
 - [ ] **Phase 11: Terminology and Display Polish** — Power labels, pie-to-bar chart, 2 significant figures
 
@@ -116,6 +116,6 @@ Use `/gsd:new-milestone` to start a new milestone incorporating any of these.
 | 6. Render Deployment | v1.1 | 2/2 | Complete | 2026-02-24 |
 | 7. Data Layer | v1.2 | 2/2 | Complete | 2026-02-28 |
 | 8. Parameter Sliders | v1.2 | 2/2 | Checkpoint (human-verify) | - |
-| 9. System Page Differentiation | v1.2 | 0/1 | Not started | - |
+| 9. System Page Differentiation | 1/1 | Complete   | 2026-03-01 | - |
 | 10. Landing Page | v1.2 | 0/TBD | Not started | - |
 | 11. Terminology and Display Polish | v1.2 | 0/TBD | Not started | - |

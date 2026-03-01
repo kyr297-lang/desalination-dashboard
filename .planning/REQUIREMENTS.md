@@ -21,8 +21,8 @@ Requirements for milestone v1.2. Each maps to roadmap phases.
 
 ### System Page Differentiation
 
-- [ ] **DIFF-01**: Mechanical system page has a distinct visual treatment (color accent, section styling, or descriptive callout) that distinguishes it from the Electrical page
-- [ ] **DIFF-02**: Electrical system page has a distinct visual treatment that distinguishes it from the Mechanical page
+- [x] **DIFF-01**: Mechanical system page has a distinct visual treatment (color accent, section styling, or descriptive callout) that distinguishes it from the Electrical page
+- [x] **DIFF-02**: Electrical system page has a distinct visual treatment that distinguishes it from the Mechanical page
 
 ### Landing Page
 
@@ -72,8 +72,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SLDR-01 | Phase 8 | Complete |
 | SLDR-02 | Phase 8 | Complete |
 | SLDR-03 | Phase 8 | Complete |
-| DIFF-01 | Phase 9 | Pending |
-| DIFF-02 | Phase 9 | Pending |
+| DIFF-01 | Phase 9 | Complete |
+| DIFF-02 | Phase 9 | Complete |
 | LAND-01 | Phase 10 | Pending |
 | LAND-02 | Phase 10 | Pending |
 | LAND-03 | Phase 10 | Pending |
