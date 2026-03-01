@@ -8,6 +8,7 @@ Provides:
   - RAG (Red / Amber / Green) color assignment logic (rag_color)
   - Scorecard metric aggregation from raw DataFrames (compute_scorecard_metrics)
   - Process-stage lookup for equipment items (get_equipment_stage)
+  - Energy interpolation against Part 2 lookup tables (interpolate_energy)
 
 This module is a pure data/logic layer. It does NOT import from any layout
 or UI module. All formatting uses pandas for safe numeric coercion.
@@ -387,6 +388,34 @@ def interpolate_battery_cost(battery_fraction: float, battery_lookup_df: pd.Data
     fractions = pd.to_numeric(battery_lookup_df["battery_fraction"], errors="coerce").values
     costs = pd.to_numeric(battery_lookup_df["total_cost"], errors="coerce").values
     return float(np.interp(battery_fraction, fractions, costs))
+
+
+def interpolate_energy(value: float, lookup_df: pd.DataFrame, col_x: str, col_y: str) -> float:
+    """Interpolate an energy value (kW) from a Part 2 lookup table.
+
+    Uses numpy.interp() for smooth linear interpolation between the discrete
+    lookup rows. Values outside the col_x range are clamped to boundary values
+    (numpy.interp default behaviour).
+
+    Parameters
+    ----------
+    value : float
+        Slider value (e.g. TDS in PPM or depth in m). Clamped to [min, max] of col_x.
+    lookup_df : pd.DataFrame
+        20-row lookup DataFrame from load_data() (tds_lookup or depth_lookup).
+    col_x : str
+        Name of the independent variable column (e.g. "tds_ppm" or "depth_m").
+    col_y : str
+        Name of the energy output column (e.g. "ro_energy_kw" or "pump_energy_kw").
+
+    Returns
+    -------
+    float
+        Linearly interpolated energy in kW. numpy.interp clamps out-of-range values.
+    """
+    x_vals = pd.to_numeric(lookup_df[col_x], errors="coerce").values
+    y_vals = pd.to_numeric(lookup_df[col_y], errors="coerce").values
+    return float(np.interp(value, x_vals, y_vals))
 
 
 def battery_ratio_label(battery_fraction: float) -> str:
