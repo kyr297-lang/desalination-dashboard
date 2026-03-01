@@ -15,7 +15,7 @@ build_land_chart(mech_land, elec_land, hybrid_land, visibility) -> go.Figure
 build_turbine_chart(mech_count, elec_count, hybrid_count, visibility) -> go.Figure
 build_pie_chart(mech_energy, elec_energy, hybrid_energy, visibility) -> go.Figure
 make_chart_section() -> html.Div
-update_charts(years, battery_fraction, visibility) -> tuple
+update_charts(years, battery_fraction, visibility, slots, tds_ppm, depth_m) -> tuple
 toggle_legend(n_mech, n_elec, n_hybrid, visibility) -> dict
 update_badge_styles(visibility) -> tuple
 """
@@ -378,7 +378,7 @@ def make_chart_section() -> html.Div:
 
     # ── Control panel ─────────────────────────────────────────────────────────
     control_panel = dbc.Card(
-        dbc.CardBody(
+        dbc.CardBody([
             dbc.Row([
                 # Left column: Time Horizon slider
                 dbc.Col(
@@ -441,8 +441,66 @@ def make_chart_section() -> html.Div:
                     ],
                     width=6,
                 ),
-            ])
-        ),
+            ]),
+            dbc.Row([
+                # Left column: TDS slider
+                dbc.Col(
+                    [
+                        html.Div([
+                            html.Strong("Source Water Salinity"),
+                            html.Small(
+                                " \u2014 Adjust to model RO energy demand",
+                                className="text-muted ms-1",
+                            ),
+                        ], className="mb-1"),
+                        dcc.Slider(
+                            id="slider-tds",
+                            min=0,
+                            max=1900,
+                            step=1,
+                            value=950,
+                            marks={0: "0", 950: "950", 1900: "1900"},
+                            tooltip={"always_visible": True, "placement": "bottom"},
+                            updatemode="drag",
+                        ),
+                        html.Span(
+                            id="label-tds",
+                            children="950 PPM",
+                            className="fw-bold ms-2",
+                        ),
+                    ],
+                    width=6,
+                ),
+                # Right column: Depth slider
+                dbc.Col(
+                    [
+                        html.Div([
+                            html.Strong("Water Source Depth"),
+                            html.Small(
+                                " \u2014 Adjust to model pump energy demand",
+                                className="text-muted ms-1",
+                            ),
+                        ], className="mb-1"),
+                        dcc.Slider(
+                            id="slider-depth",
+                            min=0,
+                            max=1900,
+                            step=1,
+                            value=950,
+                            marks={0: "0", 950: "950", 1900: "1900"},
+                            tooltip={"always_visible": True, "placement": "bottom"},
+                            updatemode="drag",
+                        ),
+                        html.Span(
+                            id="label-depth",
+                            children="950 m",
+                            className="fw-bold ms-2",
+                        ),
+                    ],
+                    width=6,
+                ),
+            ], className="mt-3"),
+        ]),
         className="shadow-sm mb-3 chart-controls",
         style={"backgroundColor": "#f8f9fa"},
     )
@@ -549,17 +607,22 @@ def make_chart_section() -> html.Div:
     Output("label-years", "children"),
     Output("label-battery-ratio", "children"),
     Output("label-elec-cost", "children"),
+    Output("label-tds", "children"),
+    Output("label-depth", "children"),
     Input("slider-time-horizon", "value"),
     Input("slider-battery", "value"),
     Input("store-legend-visibility", "data"),
     Input("store-hybrid-slots", "data"),
+    Input("slider-tds", "value"),
+    Input("slider-depth", "value"),
 )
-def update_charts(years, battery_fraction, visibility, slots):
+def update_charts(years, battery_fraction, visibility, slots, tds_ppm, depth_m):
     """Master chart update callback.
 
-    Fires whenever the time horizon slider, battery/tank slider, legend
-    visibility store, or hybrid slot store changes. Computes all chart data
-    in one call and returns four updated figures plus three live label strings.
+    Fires whenever the time horizon slider, battery/tank slider, TDS slider,
+    depth slider, legend visibility store, or hybrid slot store changes.
+    Computes all chart data in one call and returns four updated figures plus
+    five live label strings.
 
     Parameters
     ----------
@@ -573,23 +636,28 @@ def update_charts(years, battery_fraction, visibility, slots):
         Hybrid slot store mapping stage names to selected equipment names.
         When all 5 slots are filled, hybrid data is computed and passed to
         compute_chart_data. When any slot is None, hybrid uses placeholder zeros.
+    tds_ppm : float
+        Source water salinity in PPM from the TDS slider (0-1900, default 950).
+    depth_m : float
+        Water source depth in metres from the depth slider (0-1900, default 950).
 
     Returns
     -------
     tuple
-        (cost_fig, land_fig, turbine_fig, pie_fig, label_years, label_ratio, label_cost)
+        (cost_fig, land_fig, turbine_fig, pie_fig, label_years, label_ratio,
+         label_cost, label_tds, label_depth)
     """
     # Guard: if data not yet loaded, return empty figures and blank labels
     if _data is None:
         empty = go.Figure()
-        return empty, empty, empty, empty, "", "", ""
+        return empty, empty, empty, empty, "", "", "", "", ""
 
     # Build hybrid_df if gate is open (all 5 slots filled)
     hybrid_df = None
     if slots is not None and all(v is not None for v in slots.values()):
         hybrid_df = compute_hybrid_df(slots, _data)
 
-    cd = compute_chart_data(_data, battery_fraction, years, hybrid_df=hybrid_df)
+    cd = compute_chart_data(_data, battery_fraction, years, hybrid_df=hybrid_df, tds_ppm=tds_ppm, depth_m=depth_m)
 
     cost_fig = build_cost_chart(
         years,
@@ -620,8 +688,10 @@ def update_charts(years, battery_fraction, visibility, slots):
     label_years = f"{years} year{'s' if years != 1 else ''}"
     label_ratio = battery_ratio_label(battery_fraction)
     label_cost = f"Electrical total: {fmt_cost(cd['electrical_total_cost'])}"
+    label_tds = f"{int(round(tds_ppm))} PPM"
+    label_depth = f"{int(round(depth_m))} m"
 
-    return cost_fig, land_fig, turbine_fig, pie_fig, label_years, label_ratio, label_cost
+    return cost_fig, land_fig, turbine_fig, pie_fig, label_years, label_ratio, label_cost, label_tds, label_depth
 
 
 @callback(
