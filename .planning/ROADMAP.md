@@ -112,7 +112,7 @@ Use `/gsd:new-milestone` to start a new milestone incorporating any of these.
 | 5. Polish and Deployment | v1.0 | 2/2 | Complete | 2026-02-23 |
 | 6. Render Deployment | v1.1 | 2/2 | Complete | 2026-02-24 |
 | 7. Data Layer | v1.2 | 2/2 | Complete | 2026-02-28 |
-| 8. Parameter Sliders | v1.2 | 0/TBD | Not started | - |
+| 8. Parameter Sliders | 1/2 | In Progress|  | - |
 | 9. System Page Differentiation | v1.2 | 0/TBD | Not started | - |
 | 10. Landing Page | v1.2 | 0/TBD | Not started | - |
 | 11. Terminology and Display Polish | v1.2 | 0/TBD | Not started | - |
