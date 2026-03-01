@@ -32,10 +32,10 @@ Requirements for milestone v1.2. Each maps to roadmap phases.
 
 ### Terminology & Display Polish
 
-- [ ] **POLISH-01**: Label "Energy" changed to "Power" in the scorecard row header (currently "Total Energy (kW)")
-- [ ] **POLISH-02**: Label "Energy" changed to "Power" in the equipment accordion badge (currently shows "Energy" badge)
-- [ ] **POLISH-03**: Power breakdown chart changed from pie chart to grouped bar chart
-- [ ] **POLISH-04**: Numeric values in equipment grid and scorecard display at consistent 2 significant figures
+- [x] **POLISH-01**: Label "Energy" changed to "Power" in the scorecard row header (currently "Total Energy (kW)")
+- [x] **POLISH-02**: Label "Energy" changed to "Power" in the equipment accordion badge (currently shows "Energy" badge)
+- [x] **POLISH-03**: Power breakdown chart changed from pie chart to grouped bar chart
+- [x] **POLISH-04**: Numeric values in equipment grid and scorecard display at consistent 2 significant figures
 
 ## Future Requirements
 
@@ -77,10 +77,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LAND-01 | Phase 10 | Complete |
 | LAND-02 | Phase 10 | Complete |
 | LAND-03 | Phase 10 | Complete |
-| POLISH-01 | Phase 11 | Pending |
-| POLISH-02 | Phase 11 | Pending |
-| POLISH-03 | Phase 11 | Pending |
-| POLISH-04 | Phase 11 | Pending |
+| POLISH-01 | Phase 11 | Complete |
+| POLISH-02 | Phase 11 | Complete |
+| POLISH-03 | Phase 11 | Complete |
+| POLISH-04 | Phase 11 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 15 total

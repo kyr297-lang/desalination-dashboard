@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Parameter Exploration & Presentation
 status: unknown
-last_updated: "2026-03-01T09:05:08.370Z"
+last_updated: "2026-03-01T19:46:11.322Z"
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 6
-  completed_plans: 6
+  total_phases: 5
+  completed_phases: 5
+  total_plans: 7
+  completed_plans: 7
 ---
 
 # Project State
@@ -70,6 +70,9 @@ Recent decisions affecting current work:
 - [Phase 09-01]: Overview returns transparent border (not no border) so content area height stays stable across navigation
 - [Phase 10-landing-page]: Intro card uses neutral header (no system color) so it sits above all three system cards without implying affiliation with any one system
 - [Phase 10-landing-page]: User-requested wording change at checkpoint: 'to help students' replaced with 'to compare' in intro card body
+- [Phase 11]: fmt_sig2 uses Python .2g format for 2 sig figs; large integer results comma-formatted via int cast
+- [Phase 11]: barmode='group' for power breakdown chart — side-by-side bars more readable than stacked for engineering comparison
+- [Phase 11]: Internal data keys (energy_kw, mech_energy) left unchanged; only user-facing label strings renamed to Power
 
 ### Pending Todos
 

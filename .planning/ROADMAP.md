@@ -34,7 +34,7 @@
 - [~] **Phase 8: Parameter Sliders** — Salinity (TDS) and depth sliders wired to power breakdown chart (checkpoint awaiting human verification)
 - [x] **Phase 9: System Page Differentiation** — Distinct visual treatment for Mechanical vs Electrical pages (completed 2026-03-01)
 - [x] **Phase 10: Landing Page** — Project introduction section with contributors and course context (completed 2026-03-01)
-- [ ] **Phase 11: Terminology and Display Polish** — Power labels, pie-to-bar chart, 2 significant figures
+- [x] **Phase 11: Terminology and Display Polish** — Power labels, pie-to-bar chart, 2 significant figures (completed 2026-03-01)
 
 ## Phase Details
 
@@ -121,4 +121,4 @@ Use `/gsd:new-milestone` to start a new milestone incorporating any of these.
 | 8. Parameter Sliders | v1.2 | 2/2 | Checkpoint (human-verify) | - |
 | 9. System Page Differentiation | 1/1 | Complete   | 2026-03-01 | - |
 | 10. Landing Page | 1/1 | Complete    | 2026-03-01 | - |
-| 11. Terminology and Display Polish | v1.2 | 0/TBD | Not started | - |
+| 11. Terminology and Display Polish | 1/1 | Complete   | 2026-03-01 | - |
