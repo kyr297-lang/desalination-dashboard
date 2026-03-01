@@ -26,9 +26,9 @@ Requirements for milestone v1.2. Each maps to roadmap phases.
 
 ### Landing Page
 
-- [ ] **LAND-01**: Overview tab shows a project introduction section above the system selection cards
-- [ ] **LAND-02**: Landing section displays the four contributor names (Amogh Herle, Sofia Ijazi, Kevin Ren, Kyler Sanders)
-- [ ] **LAND-03**: Landing section identifies the course context (Fall 2025–Spring 2026 senior design class)
+- [x] **LAND-01**: Overview tab shows a project introduction section above the system selection cards
+- [x] **LAND-02**: Landing section displays the four contributor names (Amogh Herle, Sofia Ijazi, Kevin Ren, Kyler Sanders)
+- [x] **LAND-03**: Landing section identifies the course context (Fall 2025–Spring 2026 senior design class)
 
 ### Terminology & Display Polish
 
@@ -74,9 +74,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SLDR-03 | Phase 8 | Complete |
 | DIFF-01 | Phase 9 | Complete |
 | DIFF-02 | Phase 9 | Complete |
-| LAND-01 | Phase 10 | Pending |
-| LAND-02 | Phase 10 | Pending |
-| LAND-03 | Phase 10 | Pending |
+| LAND-01 | Phase 10 | Complete |
+| LAND-02 | Phase 10 | Complete |
+| LAND-03 | Phase 10 | Complete |
 | POLISH-01 | Phase 11 | Pending |
 | POLISH-02 | Phase 11 | Pending |
 | POLISH-03 | Phase 11 | Pending |
