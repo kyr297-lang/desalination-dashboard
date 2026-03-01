@@ -315,8 +315,9 @@ def build_energy_bar_chart(
 
     for stage in ALL_STAGES:
         y_values = [energy_dict.get(stage, 0.0) for _, energy_dict in visible_systems]
-        if all(v == 0.0 for v in y_values):
-            continue
+        # Always emit all stage traces (even zeros) so trace count stays
+        # constant across slider updates — Plotly needs a stable trace list
+        # to correctly reconcile bar assignments during live drags.
         fig.add_trace(go.Bar(
             name=stage,
             x=x_labels,
