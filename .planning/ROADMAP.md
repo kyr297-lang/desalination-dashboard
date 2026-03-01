@@ -68,7 +68,10 @@
   1. The Mechanical system page has a distinct color accent, section styling, or descriptive callout not present on the Electrical page
   2. The Electrical system page has a distinct color accent, section styling, or descriptive callout not present on the Mechanical page
   3. Both pages remain readable and consistent with the FLATLY academic theme
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 09-01-PLAN.md — System badge + page-wide background tint for Mechanical and Electrical tabs
 
 ### Phase 10: Landing Page
 **Goal**: The Overview tab opens with a project introduction section that tells students who built this and why before they interact with any system cards
@@ -113,6 +116,6 @@ Use `/gsd:new-milestone` to start a new milestone incorporating any of these.
 | 6. Render Deployment | v1.1 | 2/2 | Complete | 2026-02-24 |
 | 7. Data Layer | v1.2 | 2/2 | Complete | 2026-02-28 |
 | 8. Parameter Sliders | v1.2 | 2/2 | Checkpoint (human-verify) | - |
-| 9. System Page Differentiation | v1.2 | 0/TBD | Not started | - |
+| 9. System Page Differentiation | v1.2 | 0/1 | Not started | - |
 | 10. Landing Page | v1.2 | 0/TBD | Not started | - |
 | 11. Terminology and Display Polish | v1.2 | 0/TBD | Not started | - |
