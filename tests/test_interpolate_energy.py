@@ -6,7 +6,7 @@ Tests for interpolate_energy() in src/data/processing.py.
 Uses synthetic DataFrames (no data.xlsx dependency) to verify:
   - Midpoint interpolation
   - Clamping below minimum (value < 0)
-  - Clamping above maximum (value > 1900)
+  - Linear extrapolation above maximum (value > table max)
   - On-row exact lookup
   - Boundary minimum (value == 0)
   - Boundary maximum (value == 1900)
@@ -62,10 +62,14 @@ class TestInterpolateEnergyTDS:
         result = interpolate_energy(-50, tds_df, "tds_ppm", "ro_energy_kw")
         assert result == pytest.approx(0.0)
 
-    def test_clamp_above_maximum(self, tds_df):
-        """Value > 1900 is clamped to the last row's output (same as value=1900)."""
+    def test_extrapolate_above_maximum(self, tds_df):
+        """Value > 1900 is linearly extrapolated using the last two rows' slope.
+
+        Fixture slope: (190-180)/(1900-1800) = 0.1 kW/PPM.
+        At 2000 PPM: 190 + 0.1 * 100 = 200.0 kW.
+        """
         result = interpolate_energy(2000, tds_df, "tds_ppm", "ro_energy_kw")
-        assert result == pytest.approx(190.0)
+        assert result == pytest.approx(200.0)
 
     def test_midpoint_interpolation(self, tds_df):
         """Value == 950 interpolates between row 9 (900 ppm, 90 kW) and row 10 (1000 ppm, 100 kW).
@@ -108,10 +112,14 @@ class TestInterpolateEnergyDepth:
         result = interpolate_energy(950, depth_df, "depth_m", "pump_energy_kw")
         assert result == pytest.approx(95.0)
 
-    def test_clamp_above_maximum_depth(self, depth_df):
-        """Depth above 1900 is clamped to 190.0 kW."""
+    def test_extrapolate_above_maximum_depth(self, depth_df):
+        """Depth above 1900 is linearly extrapolated using the last two rows' slope.
+
+        Fixture slope: (190-180)/(1900-1800) = 0.1 kW/PPM.
+        At 9999 m: 190 + 0.1 * (9999-1900) = 190 + 809.9 = 999.9 kW.
+        """
         result = interpolate_energy(9999, depth_df, "depth_m", "pump_energy_kw")
-        assert result == pytest.approx(190.0)
+        assert result == pytest.approx(999.9)
 
     def test_return_type_is_float_depth(self, depth_df):
         """Return type is Python float for depth lookup too."""

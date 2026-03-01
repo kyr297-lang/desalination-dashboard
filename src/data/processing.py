@@ -397,13 +397,15 @@ def interpolate_energy(value: float, lookup_df: pd.DataFrame, col_x: str, col_y:
     """Interpolate an energy value (kW) from a Part 2 lookup table.
 
     Uses numpy.interp() for smooth linear interpolation between the discrete
-    lookup rows. Values outside the col_x range are clamped to boundary values
-    (numpy.interp default behaviour).
+    lookup rows. Values below the table minimum are clamped (numpy.interp
+    default). Values above the table maximum are linearly extrapolated using
+    the slope of the last two rows, so sliders wider than the lookup range
+    (e.g. TDS up to 35,000 PPM) continue to reflect increasing energy demand.
 
     Parameters
     ----------
     value : float
-        Slider value (e.g. TDS in PPM or depth in m). Clamped to [min, max] of col_x.
+        Slider value (e.g. TDS in PPM or depth in m).
     lookup_df : pd.DataFrame
         20-row lookup DataFrame from load_data() (tds_lookup or depth_lookup).
     col_x : str
@@ -414,10 +416,13 @@ def interpolate_energy(value: float, lookup_df: pd.DataFrame, col_x: str, col_y:
     Returns
     -------
     float
-        Linearly interpolated energy in kW. numpy.interp clamps out-of-range values.
+        Interpolated or extrapolated energy in kW.
     """
     x_vals = pd.to_numeric(lookup_df[col_x], errors="coerce").values
     y_vals = pd.to_numeric(lookup_df[col_y], errors="coerce").values
+    if value > x_vals[-1] and len(x_vals) >= 2:
+        slope = (y_vals[-1] - y_vals[-2]) / (x_vals[-1] - x_vals[-2])
+        return float(y_vals[-1] + slope * (value - x_vals[-1]))
     return float(np.interp(value, x_vals, y_vals))
 
 
