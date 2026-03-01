@@ -32,6 +32,17 @@
     overflow: hidden;
 }
 
+/* System identity tint — print preservation
+   ─────────────────────────────────────────
+   The render_content callback applies an inline backgroundColor to
+   #page-content when a system tab is active. By default browsers strip
+   background-colors when printing. These rules force the tint to print.
+   Do NOT add display:none here — the tint is an intentional print identifier. */
+#page-content {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
 /* Print layout fix
    ─────────────────
    @page at top level (NOT inside @media print) fixes the Bootstrap/dbc

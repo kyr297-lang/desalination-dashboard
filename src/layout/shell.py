@@ -23,6 +23,21 @@ from src.layout.hybrid_builder import SLOT_STAGES
 from src.config import SYSTEM_COLORS  # available for future use by child components
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Helpers
+# ──────────────────────────────────────────────────────────────────────────────
+
+def _hex_to_rgba(hex_color: str, alpha: float) -> str:
+    """Convert a CSS hex color string to an rgba() string."""
+    hex_color = hex_color.lstrip("#")
+    r = int(hex_color[0:2], 16)
+    g = int(hex_color[2:4], 16)
+    b = int(hex_color[4:6], 16)
+    return f"rgba({r}, {g}, {b}, {alpha})"
+
+
+_BASE_CONTENT_STYLE = {"flex": "1", "padding": "1.5rem"}
+
+# ──────────────────────────────────────────────────────────────────────────────
 # Constants
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -220,13 +235,14 @@ def back_to_overview(n_clicks):
 
 @callback(
     Output("page-content", "children"),
+    Output("page-content", "style"),
     Input("active-system", "data"),
 )
 def render_content(active_system):
     """Render the main page content based on the active-system store.
 
-    - None → landing overview (create_overview_layout)
-    - string → system tab view (create_system_view_layout)
+    - None → landing overview (create_overview_layout), no tint
+    - string → system tab view (create_system_view_layout) with system-color tint
 
     Imports are deferred inside this function to avoid circular imports at
     module load time.
@@ -238,8 +254,9 @@ def render_content(active_system):
 
     Returns
     -------
-    list
-        Dash component(s) to render in the page-content area.
+    tuple[list, dict]
+        Dash component(s) to render in the page-content area, and the
+        inline style dict to apply to #page-content (tint or transparent).
     """
     # Deferred imports — layout modules import from shell.py's module scope
     # so top-level imports would create circular dependencies.
@@ -247,6 +264,10 @@ def render_content(active_system):
     from src.layout.system_view import create_system_view_layout
 
     if active_system is None:
-        return create_overview_layout()
+        no_tint = {**_BASE_CONTENT_STYLE, "backgroundColor": "transparent"}
+        return create_overview_layout(), no_tint
 
-    return create_system_view_layout(active_system, _data)
+    label = active_system.capitalize()
+    hex_color = SYSTEM_COLORS.get(label, "#6c757d")
+    tint_style = {**_BASE_CONTENT_STYLE, "backgroundColor": _hex_to_rgba(hex_color, 0.18)}
+    return create_system_view_layout(active_system, _data), tint_style
