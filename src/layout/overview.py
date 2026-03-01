@@ -112,7 +112,7 @@ def create_overview_layout() -> html.Div:
                 [
                     html.P(
                         "This dashboard was built as part of a Fall 2025\u2013Spring 2026 "
-                        "senior design class to help students compare wind-powered "
+                        "senior design class to compare wind-powered "
                         "desalination system configurations. Start by clicking Explore "
                         "on any system card below to compare costs, land use, and "
                         "energy requirements.",
