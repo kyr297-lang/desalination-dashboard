@@ -13,7 +13,7 @@ set_data(data) -> None
 build_cost_chart(years, mech_cumulative, elec_cumulative, hybrid_cumulative, visibility) -> go.Figure
 build_land_chart(mech_land, elec_land, hybrid_land, visibility) -> go.Figure
 build_turbine_chart(mech_count, elec_count, hybrid_count, visibility) -> go.Figure
-build_pie_chart(mech_energy, elec_energy, hybrid_energy, visibility) -> go.Figure
+build_energy_bar_chart(mech_energy, elec_energy, hybrid_energy, visibility) -> go.Figure
 make_chart_section() -> html.Div
 update_charts(years, battery_fraction, visibility, slots, tds_ppm, depth_m) -> tuple
 toggle_legend(n_mech, n_elec, n_hybrid, visibility) -> dict
@@ -24,7 +24,7 @@ import plotly.graph_objects as go
 from dash import html, dcc, callback, Input, Output, State, ctx
 import dash_bootstrap_components as dbc
 
-from src.config import SYSTEM_COLORS
+from src.config import SYSTEM_COLORS, STAGE_COLORS
 from src.data.processing import compute_chart_data, compute_hybrid_df, interpolate_battery_cost, battery_ratio_label, fmt_cost
 
 
@@ -250,18 +250,18 @@ def build_turbine_chart(
     return fig
 
 
-def build_pie_chart(
+def build_energy_bar_chart(
     mech_energy: dict,
     elec_energy: dict,
     hybrid_energy: dict,
     visibility: dict,
 ) -> go.Figure:
-    """Build three side-by-side pie charts showing energy breakdown by process stage.
+    """Build a stacked bar chart showing energy breakdown by process stage.
 
-    One pie per system, arranged horizontally using domain positioning. No slice
-    labels — percentages shown on hover only. Empty energy dicts (Hybrid in
-    Phase 3) render as a single grey "No data" slice to avoid go.Pie errors
-    with empty values. Each pie has a system name annotation below it.
+    One bar per visible system, stacked by process stage. Fixed per-stage
+    colors (from STAGE_COLORS) prevent color shifting when stage values drop
+    to 0 as slider parameters change. Hidden systems are excluded from the
+    data entirely so they don't affect the axis scale.
 
     Parameters
     ----------
@@ -278,59 +278,68 @@ def build_pie_chart(
     -------
     go.Figure
     """
-    fig = go.Figure()
-
-    spacing = 0.05
-    width = (1.0 - 2 * spacing) / 3
-
-    systems = [
-        ("Mechanical", mech_energy,  0),
-        ("Electrical", elec_energy,  1),
-        ("Hybrid",     hybrid_energy, 2),
+    ALL_STAGES = [
+        "Water Extraction",
+        "Pre-Treatment",
+        "Desalination",
+        "Post-Treatment",
+        "Brine Disposal",
+        "Control",
+        "Other",
     ]
 
-    annotations = []
-    for label, energy_dict, index in systems:
-        key = label.lower()
-        x_start = index * (width + spacing)
-        x_end = x_start + width
-        midpoint = x_start + width / 2
+    all_systems = [
+        ("Mechanical", mech_energy),
+        ("Electrical", elec_energy),
+        ("Hybrid",     hybrid_energy),
+    ]
 
-        # Phase 3: Hybrid has no energy data — use a grey "No data" placeholder
-        if not energy_dict:
-            labels_list = ["No data"]
-            values_list = [1]
-            marker = dict(colors=["#e0e0e0"])
-        else:
-            labels_list = list(energy_dict.keys())
-            values_list = list(energy_dict.values())
-            marker = dict()
+    # Exclude toggled-off systems so they don't appear as phantom bars
+    visible_systems = [
+        (name, energy)
+        for name, energy in all_systems
+        if visibility.get(name.lower(), True)
+    ]
 
-        fig.add_trace(go.Pie(
-            labels=labels_list,
-            values=values_list,
-            name=label,
-            domain=dict(x=[x_start, x_end], y=[0.15, 1.0]),
-            textinfo="none",
-            hovertemplate="%{label}: %{percent}<extra></extra>",
-            showlegend=False,
-            visible=_visibility(visibility, key),
-            marker=marker,
-        ))
+    fig = go.Figure()
 
-        annotations.append(dict(
-            text=label,
-            x=midpoint,
-            y=0.05,
-            showarrow=False,
-            font=dict(size=12),
+    if not visible_systems:
+        fig.update_layout(
+            uirevision="static",
+            transition=_TRANSITION,
+            margin=dict(l=40, r=10, t=10, b=10),
+        )
+        return fig
+
+    x_labels = [name for name, _ in visible_systems]
+
+    for stage in ALL_STAGES:
+        y_values = [energy_dict.get(stage, 0.0) for _, energy_dict in visible_systems]
+        if all(v == 0.0 for v in y_values):
+            continue
+        fig.add_trace(go.Bar(
+            name=stage,
+            x=x_labels,
+            y=y_values,
+            marker_color=STAGE_COLORS.get(stage, "#999999"),
+            hovertemplate="%{x} — " + stage + ": %{y:.1f} kW<extra></extra>",
         ))
 
     fig.update_layout(
-        annotations=annotations,
+        barmode="stack",
+        yaxis_title="Energy (kW)",
         uirevision="static",
         transition=_TRANSITION,
-        margin=dict(l=10, r=10, t=10, b=10),
+        margin=dict(l=40, r=10, t=10, b=10),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            font=dict(size=10),
+        ),
+        showlegend=True,
     )
     return fig
 
@@ -456,10 +465,10 @@ def make_chart_section() -> html.Div:
                         dcc.Slider(
                             id="slider-tds",
                             min=0,
-                            max=1900,
-                            step=1,
+                            max=35000,
+                            step=100,
                             value=950,
-                            marks={0: "0", 950: "950", 1900: "1900"},
+                            marks={0: "0", 10000: "10k", 20000: "20k", 35000: "35k"},
                             tooltip={"always_visible": True, "placement": "bottom"},
                             updatemode="drag",
                         ),
@@ -637,7 +646,7 @@ def update_charts(years, battery_fraction, visibility, slots, tds_ppm, depth_m):
         When all 5 slots are filled, hybrid data is computed and passed to
         compute_chart_data. When any slot is None, hybrid uses placeholder zeros.
     tds_ppm : float
-        Source water salinity in PPM from the TDS slider (0-1900, default 950).
+        Source water salinity in PPM from the TDS slider (0-35000, default 950).
     depth_m : float
         Water source depth in metres from the depth slider (0-1900, default 950).
 
@@ -678,7 +687,7 @@ def update_charts(years, battery_fraction, visibility, slots, tds_ppm, depth_m):
         cd["turbine_count"]["hybrid"],
         visibility,
     )
-    pie_fig = build_pie_chart(
+    pie_fig = build_energy_bar_chart(
         cd["energy_breakdown"]["mechanical"],
         cd["energy_breakdown"]["electrical"],
         cd["energy_breakdown"]["hybrid"],

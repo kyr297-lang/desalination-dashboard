@@ -17,6 +17,19 @@ SYSTEM_COLORS = {
     "Hybrid":     "#6BAA75",   # muted sage green
 }
 
+# Fixed per-stage colors for the energy breakdown bar chart.
+# Muted academic palette — distinct from SYSTEM_COLORS and from each other.
+# Fixed assignment prevents color shifting when stage values drop to 0.
+STAGE_COLORS = {
+    "Water Extraction": "#4AACB0",   # muted teal
+    "Pre-Treatment":    "#9975B5",   # muted purple
+    "Desalination":     "#D4A739",   # muted amber
+    "Post-Treatment":   "#7DAA5A",   # muted olive green
+    "Brine Disposal":   "#C46E5A",   # muted brick red
+    "Control":          "#7A9FBF",   # muted slate blue
+    "Other":            "#999999",   # medium grey
+}
+
 # RAG (Red / Amber / Green) traffic-light colors for the scorecard.
 # These are standard Bootstrap alert colors, kept separate from SYSTEM_COLORS
 # so neither set is confused with the other.
