@@ -102,13 +102,38 @@ def create_overview_layout() -> html.Div:
         )
         cards.append(card)
 
+    intro_card = dbc.Card(
+        [
+            dbc.CardHeader(
+                "About This Project",
+                style={"fontWeight": "600"},
+            ),
+            dbc.CardBody(
+                [
+                    html.P(
+                        "This dashboard was built as part of a Fall 2025\u2013Spring 2026 "
+                        "senior design class to help students compare wind-powered "
+                        "desalination system configurations. Start by clicking Explore "
+                        "on any system card below to compare costs, land use, and "
+                        "energy requirements.",
+                        className="mb-2 small",
+                    ),
+                    html.P(
+                        [
+                            html.Span("Contributors: ", className="fw-semibold"),
+                            "Amogh Herle, Sofia Ijazi, Kevin Ren, Kyler Sanders",
+                        ],
+                        className="mb-0 small text-muted",
+                    ),
+                ]
+            ),
+        ],
+        className="mb-3 shadow-sm",
+    )
+
     return html.Div(
         [
-            html.P(
-                "Start by clicking Explore on any system card below to compare "
-                "desalination system costs, land use, and energy requirements.",
-                className="text-muted mb-3",
-            ),
+            intro_card,
             dbc.Row(cards, className="g-3"),
         ]
     )
