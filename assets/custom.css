@@ -32,12 +32,13 @@
     overflow: hidden;
 }
 
-/* System identity tint — print preservation
-   ─────────────────────────────────────────
-   The render_content callback applies an inline backgroundColor to
-   #page-content when a system tab is active. By default browsers strip
-   background-colors when printing. These rules force the tint to print.
-   Do NOT add display:none here — the tint is an intentional print identifier. */
+/* System identity accent border — print preservation
+   ────────────────────────────────────────────────────
+   The render_content callback applies an inline borderTop to #page-content
+   when a system tab is active (4px solid in the system color). By default
+   browsers may strip border colors when printing. These rules ensure the
+   accent border prints faithfully as a system identifier.
+   Do NOT add display:none here — the border is an intentional print identifier. */
 #page-content {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

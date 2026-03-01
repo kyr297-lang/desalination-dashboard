@@ -26,15 +26,6 @@ from src.config import SYSTEM_COLORS  # available for future use by child compon
 # Helpers
 # ──────────────────────────────────────────────────────────────────────────────
 
-def _hex_to_rgba(hex_color: str, alpha: float) -> str:
-    """Convert a CSS hex color string to an rgba() string."""
-    hex_color = hex_color.lstrip("#")
-    r = int(hex_color[0:2], 16)
-    g = int(hex_color[2:4], 16)
-    b = int(hex_color[4:6], 16)
-    return f"rgba({r}, {g}, {b}, {alpha})"
-
-
 _BASE_CONTENT_STYLE = {"flex": "1", "padding": "1.5rem"}
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -241,8 +232,9 @@ def back_to_overview(n_clicks):
 def render_content(active_system):
     """Render the main page content based on the active-system store.
 
-    - None → landing overview (create_overview_layout), no tint
-    - string → system tab view (create_system_view_layout) with system-color tint
+    - None → landing overview (create_overview_layout), no accent border
+    - string → system tab view (create_system_view_layout) with a 4px
+      colored top border matching the system color
 
     Imports are deferred inside this function to avoid circular imports at
     module load time.
@@ -256,7 +248,7 @@ def render_content(active_system):
     -------
     tuple[list, dict]
         Dash component(s) to render in the page-content area, and the
-        inline style dict to apply to #page-content (tint or transparent).
+        inline style dict to apply to #page-content (border or none).
     """
     # Deferred imports — layout modules import from shell.py's module scope
     # so top-level imports would create circular dependencies.
@@ -264,10 +256,10 @@ def render_content(active_system):
     from src.layout.system_view import create_system_view_layout
 
     if active_system is None:
-        no_tint = {**_BASE_CONTENT_STYLE, "backgroundColor": "transparent"}
-        return create_overview_layout(), no_tint
+        no_border = {**_BASE_CONTENT_STYLE, "borderTop": "4px solid transparent"}
+        return create_overview_layout(), no_border
 
     label = active_system.capitalize()
     hex_color = SYSTEM_COLORS.get(label, "#6c757d")
-    tint_style = {**_BASE_CONTENT_STYLE, "backgroundColor": _hex_to_rgba(hex_color, 0.18)}
-    return create_system_view_layout(active_system, _data), tint_style
+    border_style = {**_BASE_CONTENT_STYLE, "borderTop": f"4px solid {hex_color}"}
+    return create_system_view_layout(active_system, _data), border_style
