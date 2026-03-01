@@ -28,59 +28,6 @@ from src.config import PROCESS_STAGES, RAG_COLORS
 # Formatting helpers
 # ──────────────────────────────────────────────────────────────────────────────
 
-def fmt_cost(value) -> str:
-    """Format a numeric cost value as an abbreviated dollar string.
-
-    Rules:
-      - >= 1,000,000  →  "$X.XM"   (one decimal, millions)
-      - >= 1,000      →  "$X.XK"   (one decimal, thousands)
-      - < 1,000       →  "$X,XXX"  (comma-formatted integer)
-      - Non-numeric or None → "N/A"
-
-    Uses pd.to_numeric with errors='coerce' for safe conversion.
-
-    Parameters
-    ----------
-    value : any
-        Raw value from a DataFrame cell (may be string, int, float, or None).
-
-    Returns
-    -------
-    str
-    """
-    numeric = pd.to_numeric(value, errors="coerce")
-    if pd.isna(numeric):
-        return "N/A"
-    v = float(numeric)
-    if v >= 1_000_000:
-        return f"${v / 1_000_000:.1f}M"
-    if v >= 1_000:
-        return f"${v / 1_000:.1f}K"
-    return f"${v:,.0f}"
-
-
-def fmt_num(value) -> str:
-    """Format a general numeric value with one decimal place and comma separators.
-
-    Non-numeric values are returned as str(value). None is returned as "N/A".
-
-    Parameters
-    ----------
-    value : any
-        Raw value from a DataFrame cell.
-
-    Returns
-    -------
-    str
-    """
-    if value is None:
-        return "N/A"
-    numeric = pd.to_numeric(value, errors="coerce")
-    if pd.isna(numeric):
-        return str(value)
-    return f"{float(numeric):,.1f}"
-
-
 def fmt_sig2(value) -> str:
     """Format a numeric value to 2 significant figures.
 
@@ -125,6 +72,59 @@ def fmt_sig2(value) -> str:
     if result == int(result) and abs(result) >= 1:
         return f"{int(result):,}"
     return formatted
+
+
+def fmt_cost(value) -> str:
+    """Format a numeric cost value as an abbreviated dollar string with 2 sig figs.
+
+    Rules:
+      - >= 1,000,000  →  "$X.XM"   (2 significant figures, millions)
+      - >= 1,000      →  "$XXK"    (2 significant figures, thousands)
+      - < 1,000       →  "$XXX"    (2 significant figures)
+      - Non-numeric or None → "N/A"
+
+    Uses pd.to_numeric with errors='coerce' for safe conversion.
+
+    Parameters
+    ----------
+    value : any
+        Raw value from a DataFrame cell (may be string, int, float, or None).
+
+    Returns
+    -------
+    str
+    """
+    numeric = pd.to_numeric(value, errors="coerce")
+    if pd.isna(numeric):
+        return "N/A"
+    v = float(numeric)
+    if v >= 1_000_000:
+        return f"${fmt_sig2(v / 1_000_000)}M"
+    if v >= 1_000:
+        return f"${fmt_sig2(v / 1_000)}K"
+    return f"${fmt_sig2(v)}"
+
+
+def fmt_num(value) -> str:
+    """Format a general numeric value with one decimal place and comma separators.
+
+    Non-numeric values are returned as str(value). None is returned as "N/A".
+
+    Parameters
+    ----------
+    value : any
+        Raw value from a DataFrame cell.
+
+    Returns
+    -------
+    str
+    """
+    if value is None:
+        return "N/A"
+    numeric = pd.to_numeric(value, errors="coerce")
+    if pd.isna(numeric):
+        return str(value)
+    return f"{float(numeric):,.1f}"
 
 
 def fmt(value) -> str:
