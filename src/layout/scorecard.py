@@ -30,6 +30,7 @@ from src.data.processing import (
     generate_comparison_text,
     rag_color,
     fmt_cost,
+    fmt_sig2,
 )
 from src.layout.equipment_grid import make_equipment_section
 
@@ -202,30 +203,30 @@ def make_scorecard_table(
             html.Tr([
                 html.Th("Total Land Area"),
                 _value_cell(
-                    f"{mech['land_area']:.1f} m\u00b2",
+                    f"{fmt_sig2(mech['land_area'])} m\u00b2",
                     land_colors.get("mechanical", ""),
                 ),
                 _value_cell(
-                    f"{elec['land_area']:.1f} m\u00b2",
+                    f"{fmt_sig2(elec['land_area'])} m\u00b2",
                     land_colors.get("electrical", ""),
                 ),
                 _value_cell(
-                    f"{hyb['land_area']:.1f} m\u00b2",
+                    f"{fmt_sig2(hyb['land_area'])} m\u00b2",
                     land_colors.get("hybrid", ""),
                 ),
             ]),
             html.Tr([
                 html.Th("Total Power (kW)"),
                 _value_cell(
-                    f"{mech['efficiency']:,.0f} kW",
+                    f"{fmt_sig2(mech['efficiency'])} kW",
                     energy_colors.get("mechanical", ""),
                 ),
                 _value_cell(
-                    f"{elec['efficiency']:,.0f} kW",
+                    f"{fmt_sig2(elec['efficiency'])} kW",
                     energy_colors.get("electrical", ""),
                 ),
                 _value_cell(
-                    f"{hyb['efficiency']:,.0f} kW",
+                    f"{fmt_sig2(hyb['efficiency'])} kW",
                     energy_colors.get("hybrid", ""),
                 ),
             ]),
@@ -247,22 +248,22 @@ def make_scorecard_table(
             html.Tr([
                 html.Th("Total Land Area"),
                 _value_cell(
-                    f"{mech['land_area']:.1f} m\u00b2",
+                    f"{fmt_sig2(mech['land_area'])} m\u00b2",
                     land_colors.get("mechanical", ""),
                 ),
                 _value_cell(
-                    f"{elec['land_area']:.1f} m\u00b2",
+                    f"{fmt_sig2(elec['land_area'])} m\u00b2",
                     land_colors.get("electrical", ""),
                 ),
             ]),
             html.Tr([
                 html.Th("Total Power (kW)"),
                 _value_cell(
-                    f"{mech['efficiency']:,.0f} kW",
+                    f"{fmt_sig2(mech['efficiency'])} kW",
                     energy_colors.get("mechanical", ""),
                 ),
                 _value_cell(
-                    f"{elec['efficiency']:,.0f} kW",
+                    f"{fmt_sig2(elec['efficiency'])} kW",
                     energy_colors.get("electrical", ""),
                 ),
             ]),

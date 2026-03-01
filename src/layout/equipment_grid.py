@@ -17,7 +17,7 @@ from dash import html
 import dash_bootstrap_components as dbc
 
 from src.config import EQUIPMENT_DESCRIPTIONS, PROCESS_STAGES
-from src.data.processing import fmt_cost, fmt_num, fmt, get_equipment_stage
+from src.data.processing import fmt_cost, fmt_num, fmt, fmt_sig2, get_equipment_stage
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ def _fmt_power(value) -> str:
     n = pd.to_numeric(value, errors="coerce")
     if pd.isna(n):
         return "N/A"
-    return f"{float(n):,.0f} kW"
+    return f"{fmt_sig2(float(n))} kW"
 
 
 def _fmt_land(value) -> str:
@@ -54,7 +54,7 @@ def _fmt_land(value) -> str:
     n = pd.to_numeric(value, errors="coerce")
     if pd.isna(n):
         return "N/A"
-    return f"{float(n):.2f} m\u00b2"
+    return f"{fmt_sig2(float(n))} m\u00b2"
 
 
 def _fmt_lifespan(value) -> str:
@@ -81,7 +81,7 @@ def _make_summary_badges(row: pd.Series) -> dbc.Row:
         Five small badge columns: Qty, Cost, Energy, Land, Lifespan.
     """
     badges = [
-        ("Qty", fmt(row.get("quantity"))),
+        ("Qty", fmt_sig2(row.get("quantity"))),
         ("Cost", fmt_cost(row.get("cost_usd"))),
         ("Power", _fmt_power(row.get("energy_kw"))),
         ("Land", _fmt_land(row.get("land_area_m2"))),
@@ -119,7 +119,7 @@ def _make_detail_table(row: pd.Series) -> dbc.Table:
     """
     fields = [
         ("Name", fmt(row.get("name"))),
-        ("Quantity", fmt(row.get("quantity"))),
+        ("Quantity", fmt_sig2(row.get("quantity"))),
         ("Cost", fmt_cost(row.get("cost_usd"))),
         ("Power", _fmt_power(row.get("energy_kw"))),
         ("Land Area", _fmt_land(row.get("land_area_m2"))),

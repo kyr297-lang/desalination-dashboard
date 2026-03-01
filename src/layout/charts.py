@@ -327,7 +327,7 @@ def build_energy_bar_chart(
         ))
 
     fig.update_layout(
-        barmode="stack",
+        barmode="group",
         yaxis_title="Power (kW)",
         uirevision="static",
         transition=_TRANSITION,

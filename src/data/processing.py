@@ -81,6 +81,52 @@ def fmt_num(value) -> str:
     return f"{float(numeric):,.1f}"
 
 
+def fmt_sig2(value) -> str:
+    """Format a numeric value to 2 significant figures.
+
+    Uses Python's f-string .2g format for 2 significant figures.
+    Large integer results (e.g. 1200.0) are comma-formatted. Non-numeric
+    or None values return "N/A". Zero returns "0".
+
+    Examples
+    --------
+    >>> fmt_sig2(1200)
+    '1,200'
+    >>> fmt_sig2(1234.5)
+    '1,200'
+    >>> fmt_sig2(0.00456)
+    '0.0046'
+    >>> fmt_sig2(85)
+    '85'
+    >>> fmt_sig2(0.5)
+    '0.50'
+
+    Parameters
+    ----------
+    value : any
+        Raw value from a DataFrame cell.
+
+    Returns
+    -------
+    str
+    """
+    if value is None:
+        return "N/A"
+    numeric = pd.to_numeric(value, errors="coerce")
+    if pd.isna(numeric):
+        return str(value)
+    v = float(numeric)
+    if v == 0:
+        return "0"
+    # Python's f-string with .2g gives 2 significant figures
+    formatted = f"{v:.2g}"
+    # For large integers (e.g. 1200.0 -> "1.2e+03"), convert back and use comma format
+    result = float(formatted)
+    if result == int(result) and abs(result) >= 1:
+        return f"{int(result):,}"
+    return formatted
+
+
 def fmt(value) -> str:
     """Pass-through formatter.
 
