@@ -92,7 +92,10 @@ Plans:
   2. The equipment accordion badge that previously read "Energy" now reads "Power"
   3. The power breakdown chart is a grouped bar chart, not a pie chart
   4. Numeric values in the equipment grid and scorecard display at consistent 2 significant figures (e.g., 1200 → 1200, 1234.5 → 1200, 0.00456 → 0.0046)
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 11-01-PLAN.md — Rename Energy->Power labels, switch to grouped bar chart, add 2-sig-fig formatting
 
 ## Deferred Features
 
