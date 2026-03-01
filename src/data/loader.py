@@ -59,6 +59,10 @@ BATTERY_COLUMNS = [
     "total_cost",
 ]
 
+# Column names for the Part 2 TDS and depth lookup tables.
+TDS_LOOKUP_COLUMNS = ["tds_ppm", "ro_energy_kw"]
+DEPTH_LOOKUP_COLUMNS = ["depth_m", "pump_energy_kw"]
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Private helpers
@@ -135,13 +139,56 @@ def _parse_battery_lookup(ws) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=BATTERY_COLUMNS)
 
 
+def _parse_part2_lookups(wb) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Parse both lookup tables from the 'Part 2' sheet.
+
+    Layout (confirmed from data.xlsx):
+      Row 1: headers — col A="TDS", col B="kW required (RO Desalination)",
+                       col D="Depth", col E="kW required (pump energy)"
+      Rows 2-21: 20 data rows for each table (values 0-1900 in 100-unit steps)
+
+    Returns
+    -------
+    tuple[pd.DataFrame, pd.DataFrame]
+        (tds_df, depth_df)
+        tds_df columns:   ["tds_ppm", "ro_energy_kw"]
+        depth_df columns: ["depth_m", "pump_energy_kw"]
+    """
+    if "Part 2" not in wb.sheetnames:
+        raise ValueError(
+            f"Expected sheet 'Part 2' not found. "
+            f"Available sheets: {wb.sheetnames}"
+        )
+    ws2 = wb["Part 2"]
+
+    tds_rows = []
+    depth_rows = []
+    for r in range(2, 22):   # rows 2-21 inclusive (20 data rows)
+        tds_rows.append({
+            "tds_ppm":      ws2.cell(r, 1).value,   # col A
+            "ro_energy_kw": ws2.cell(r, 2).value,   # col B
+        })
+        depth_rows.append({
+            "depth_m":        ws2.cell(r, 4).value, # col D
+            "pump_energy_kw": ws2.cell(r, 5).value, # col E
+        })
+
+    tds_df   = pd.DataFrame(tds_rows,   columns=TDS_LOOKUP_COLUMNS)
+    depth_df = pd.DataFrame(depth_rows, columns=DEPTH_LOOKUP_COLUMNS)
+
+    print(f"  [loader] TDS lookup:   {len(tds_df)} rows parsed")
+    print(f"  [loader] Depth lookup: {len(depth_df)} rows parsed")
+    return tds_df, depth_df
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Public API
 # ──────────────────────────────────────────────────────────────────────────────
 
 def load_data() -> dict[str, pd.DataFrame]:
     """
-    Load and parse data.xlsx, returning four DataFrames.
+    Load and parse data.xlsx, returning six DataFrames.
 
     Sections are located by scanning column B of Part 1 for known header
     strings.  Values are stored as-is from the Excel cells — no numeric
@@ -150,10 +197,12 @@ def load_data() -> dict[str, pd.DataFrame]:
     Returns
     -------
     dict with keys:
-        "electrical"   – pd.DataFrame (equipment rows for the electrical system)
-        "mechanical"   – pd.DataFrame (equipment rows for the mechanical system)
-        "miscellaneous"– pd.DataFrame (equipment rows for the miscellaneous/hybrid parts)
+        "electrical"    – pd.DataFrame (equipment rows for the electrical system)
+        "mechanical"    – pd.DataFrame (equipment rows for the mechanical system)
+        "miscellaneous" – pd.DataFrame (equipment rows for the miscellaneous/hybrid parts)
         "battery_lookup"– pd.DataFrame (battery fraction vs. tank fraction lookup)
+        "tds_lookup"    – pd.DataFrame with columns ["tds_ppm", "ro_energy_kw"], 20 rows (TDS 0-1900 PPM)
+        "depth_lookup"  – pd.DataFrame with columns ["depth_m", "pump_energy_kw"], 20 rows (Depth 0-1900 m)
 
     Raises
     ------
@@ -172,6 +221,10 @@ def load_data() -> dict[str, pd.DataFrame]:
 
     # ── 2. Open workbook ─────────────────────────────────────────────────────
     wb = openpyxl.load_workbook(DATA_FILE, data_only=True)
+
+    # ── 2b. Parse Part 2 lookup tables ──────────────────────────────────────
+    tds_df, depth_df = _parse_part2_lookups(wb)
+
     if "Part 1" not in wb.sheetnames:
         raise ValueError(
             f"Expected sheet 'Part 1' not found. "
@@ -220,4 +273,6 @@ def load_data() -> dict[str, pd.DataFrame]:
         "mechanical":    pd.DataFrame(mechanical_rows,    columns=EQUIPMENT_COLUMNS),
         "miscellaneous": pd.DataFrame(miscellaneous_rows, columns=EQUIPMENT_COLUMNS),
         "battery_lookup": battery_df,
+        "tds_lookup":    tds_df,
+        "depth_lookup":  depth_df,
     }
