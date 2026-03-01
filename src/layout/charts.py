@@ -328,7 +328,7 @@ def build_energy_bar_chart(
 
     fig.update_layout(
         barmode="stack",
-        yaxis_title="Energy (kW)",
+        yaxis_title="Power (kW)",
         uirevision="static",
         transition=_TRANSITION,
         margin=dict(l=40, r=10, t=10, b=10),
@@ -587,8 +587,8 @@ def make_chart_section() -> html.Div:
                 "chart-turbine",
             ),
             _chart_card(
-                "Energy Breakdown",
-                "Energy use by process stage (kW)",
+                "Power Breakdown",
+                "Power use by process stage (kW)",
                 "chart-pie",
             ),
         ],

@@ -215,7 +215,7 @@ def make_scorecard_table(
                 ),
             ]),
             html.Tr([
-                html.Th("Total Energy (kW)"),
+                html.Th("Total Power (kW)"),
                 _value_cell(
                     f"{mech['efficiency']:,.0f} kW",
                     energy_colors.get("mechanical", ""),
@@ -256,7 +256,7 @@ def make_scorecard_table(
                 ),
             ]),
             html.Tr([
-                html.Th("Total Energy (kW)"),
+                html.Th("Total Power (kW)"),
                 _value_cell(
                     f"{mech['efficiency']:,.0f} kW",
                     energy_colors.get("mechanical", ""),

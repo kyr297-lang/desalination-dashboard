@@ -41,8 +41,8 @@ _STAGE_ORDER = [
 # Private helpers
 # ──────────────────────────────────────────────────────────────────────────────
 
-def _fmt_energy(value) -> str:
-    """Format energy value with kW unit, or 'N/A'."""
+def _fmt_power(value) -> str:
+    """Format power value with kW unit, or 'N/A'."""
     n = pd.to_numeric(value, errors="coerce")
     if pd.isna(n):
         return "N/A"
@@ -83,7 +83,7 @@ def _make_summary_badges(row: pd.Series) -> dbc.Row:
     badges = [
         ("Qty", fmt(row.get("quantity"))),
         ("Cost", fmt_cost(row.get("cost_usd"))),
-        ("Energy", _fmt_energy(row.get("energy_kw"))),
+        ("Power", _fmt_power(row.get("energy_kw"))),
         ("Land", _fmt_land(row.get("land_area_m2"))),
         ("Lifespan", _fmt_lifespan(row.get("lifespan_years"))),
     ]
@@ -121,7 +121,7 @@ def _make_detail_table(row: pd.Series) -> dbc.Table:
         ("Name", fmt(row.get("name"))),
         ("Quantity", fmt(row.get("quantity"))),
         ("Cost", fmt_cost(row.get("cost_usd"))),
-        ("Energy", _fmt_energy(row.get("energy_kw"))),
+        ("Power", _fmt_power(row.get("energy_kw"))),
         ("Land Area", _fmt_land(row.get("land_area_m2"))),
         ("Lifespan", _fmt_lifespan(row.get("lifespan_years"))),
     ]
@@ -178,7 +178,7 @@ def _make_cross_system_comparison(
             "System": system.capitalize(),
             "Name": str(r.get("name", "N/A")),
             "Cost": r.get("cost_usd"),
-            "Energy": r.get("energy_kw"),
+            "Power": r.get("energy_kw"),
             "Land Area": r.get("land_area_m2"),
         })
 
@@ -194,7 +194,7 @@ def _make_cross_system_comparison(
                     "System": other_sys.capitalize(),
                     "Name": str(other_row.get("name", "N/A")),
                     "Cost": other_row.get("cost_usd"),
-                    "Energy": other_row.get("energy_kw"),
+                    "Power": other_row.get("energy_kw"),
                     "Land Area": other_row.get("land_area_m2"),
                 })
 
@@ -208,7 +208,7 @@ def _make_cross_system_comparison(
         )
 
     # Determine best (lowest) numeric value per metric column
-    metric_cols = ["Cost", "Energy", "Land Area"]
+    metric_cols = ["Cost", "Power", "Land Area"]
     best_vals: dict[str, float] = {}
     for col in metric_cols:
         numeric_vals = [
@@ -225,7 +225,7 @@ def _make_cross_system_comparison(
             html.Th("System"),
             html.Th("Name"),
             html.Th("Cost"),
-            html.Th("Energy"),
+            html.Th("Power"),
             html.Th("Land Area"),
         ])
     )
@@ -237,7 +237,7 @@ def _make_cross_system_comparison(
         ]
         for col, fmt_fn, unit in [
             ("Cost", fmt_cost, ""),
-            ("Energy", _fmt_energy, ""),
+            ("Power", _fmt_power, ""),
             ("Land Area", _fmt_land, ""),
         ]:
             raw = comp_row[col]
