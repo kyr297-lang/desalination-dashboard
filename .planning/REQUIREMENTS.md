@@ -17,7 +17,7 @@ Requirements for milestone v1.2. Each maps to roadmap phases.
 
 - [x] **SLDR-01**: User can adjust salinity (TDS, 0–1900 PPM) with a slider to see how it affects RO desalination energy requirement
 - [x] **SLDR-02**: User can adjust water source depth (0–1900 m) with a slider to see how it affects pump energy requirement
-- [ ] **SLDR-03**: Salinity and depth slider values are reflected live in the power breakdown chart
+- [x] **SLDR-03**: Salinity and depth slider values are reflected live in the power breakdown chart
 
 ### System Page Differentiation
 
@@ -71,7 +71,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-03 | Phase 7 | Complete |
 | SLDR-01 | Phase 8 | Complete |
 | SLDR-02 | Phase 8 | Complete |
-| SLDR-03 | Phase 8 | Pending |
+| SLDR-03 | Phase 8 | Complete |
 | DIFF-01 | Phase 9 | Pending |
 | DIFF-02 | Phase 9 | Pending |
 | LAND-01 | Phase 10 | Pending |

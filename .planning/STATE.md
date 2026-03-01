@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-28)
 
 **Core value:** Students can visually compare mechanical, electrical, and custom hybrid desalination systems side-by-side to understand cost, land, and efficiency tradeoffs
-**Current focus:** v1.2 — Phase 8: Slider Wiring (Plan 01 complete, Plan 02 next)
+**Current focus:** v1.2 — Phase 8: Slider Wiring (Plans 01 and 02 complete — checkpoint awaiting human verification)
 
 ## Current Position
 
 Phase: 8 of 11 (Parameter Sliders) — In Progress
-Plan: 1 of 2 in Phase 8 — COMPLETE
-Status: In progress — Phase 8 Plan 02 next
-Last activity: 2026-03-01 — 08-01 complete: interpolate_energy TDD — 12/12 tests GREEN
+Plan: 2 of 2 in Phase 8 — COMPLETE (awaiting human-verify checkpoint)
+Status: In progress — Phase 8 checkpoint awaiting human visual verification
+Last activity: 2026-03-01 — 08-02 complete: TDS/depth slider wiring — 24/24 tests GREEN, checkpoint pending
 
 Progress: [███░░░░░░░░░░░░░░░░░] 7/11 phases complete (v1.0 + v1.1 + Phase 7)
 
@@ -42,7 +42,7 @@ Progress: [███░░░░░░░░░░░░░░░░░] 7/11 ph
 | 1-5 (v1.0) | 10/10 | Complete |
 | 6 (v1.1) | 2/2 | Complete |
 | 7 (v1.2) | 2/2 | Complete |
-| 8 (v1.2) | 1/2 | In Progress |
+| 8 (v1.2) | 2/2 | Checkpoint (human-verify) |
 | 9-11 (v1.2) | 0/TBD | Not started |
 
 ## Accumulated Context
@@ -58,6 +58,9 @@ Recent decisions affecting current work:
 - 07-02 verification: automated smoke test + human visual check both passed; Phase 7 complete (2026-02-28)
 - Human visual verification approved: app loads without error page, equipment data visible in Electrical and Mechanical tabs
 - [Phase 08]: interpolate_energy mirrors interpolate_battery_cost pattern: pd.to_numeric + np.interp + float() cast, generic col_x/col_y params support both tds and depth lookups
+- [Phase 08-02]: TDS and depth offsets applied to BOTH mechanical and electrical energy breakdowns (both drive types have RO and pumping stages)
+- [Phase 08-02]: Energy stage offset pattern: mech_energy['Stage'] = mech_energy.get('Stage', 0.0) + interpolated_kw
+- [Phase 08-02]: Callback expansion: guard clause must return N-tuple matching output count; add Inputs and Outputs in matching order
 
 ### Pending Todos
 
@@ -71,5 +74,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-01
-Stopped at: Completed 08-01-PLAN.md — interpolate_energy TDD (12/12 tests GREEN)
+Stopped at: Checkpoint 08-02 (human-verify) — TDS/depth sliders wired; awaiting human visual verification at http://127.0.0.1:8050
 Resume file: None

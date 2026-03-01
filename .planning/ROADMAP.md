@@ -31,7 +31,7 @@
 **Milestone Goal:** Add salinity/depth energy tradeoff sliders from Part 2 data, differentiate system page designs, add a project landing section, and correct terminology and chart type throughout.
 
 - [x] **Phase 7: Data Layer** — Update sheet loader and ingest Part 2 lookup tables (completed 2026-02-28)
-- [ ] **Phase 8: Parameter Sliders** — Salinity (TDS) and depth sliders wired to power breakdown chart
+- [~] **Phase 8: Parameter Sliders** — Salinity (TDS) and depth sliders wired to power breakdown chart (checkpoint awaiting human verification)
 - [ ] **Phase 9: System Page Differentiation** — Distinct visual treatment for Mechanical vs Electrical pages
 - [ ] **Phase 10: Landing Page** — Project introduction section with contributors and course context
 - [ ] **Phase 11: Terminology and Display Polish** — Power labels, pie-to-bar chart, 2 significant figures
@@ -112,7 +112,7 @@ Use `/gsd:new-milestone` to start a new milestone incorporating any of these.
 | 5. Polish and Deployment | v1.0 | 2/2 | Complete | 2026-02-23 |
 | 6. Render Deployment | v1.1 | 2/2 | Complete | 2026-02-24 |
 | 7. Data Layer | v1.2 | 2/2 | Complete | 2026-02-28 |
-| 8. Parameter Sliders | 1/2 | In Progress|  | - |
+| 8. Parameter Sliders | v1.2 | 2/2 | Checkpoint (human-verify) | - |
 | 9. System Page Differentiation | v1.2 | 0/TBD | Not started | - |
 | 10. Landing Page | v1.2 | 0/TBD | Not started | - |
 | 11. Terminology and Display Polish | v1.2 | 0/TBD | Not started | - |
