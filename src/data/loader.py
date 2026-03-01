@@ -3,7 +3,7 @@ src/data/loader.py
 ==================
 Section-based Excel parser for data.xlsx.
 
-data.xlsx uses a single sheet ("Sheet1") with three logically separate
+data.xlsx uses a single sheet ("Part 1") with three logically separate
 sections stacked vertically — NOT three separate Excel sheets.  Each section
 begins with a named header row in column B:
 
@@ -29,7 +29,7 @@ from src.config import DATA_FILE
 # Constants
 # ──────────────────────────────────────────────────────────────────────────────
 
-# Exact header strings as they appear in column B of Sheet1.
+# Exact header strings as they appear in column B of Part 1.
 # Key is the header text; value is the canonical dict key we expose.
 # "Miscalleneous" is a typo in the actual file — match it exactly.
 SECTION_HEADERS: dict[str, str] = {
@@ -143,7 +143,7 @@ def load_data() -> dict[str, pd.DataFrame]:
     """
     Load and parse data.xlsx, returning four DataFrames.
 
-    Sections are located by scanning column B of Sheet1 for known header
+    Sections are located by scanning column B of Part 1 for known header
     strings.  Values are stored as-is from the Excel cells — no numeric
     coercion is applied.
 
@@ -160,7 +160,7 @@ def load_data() -> dict[str, pd.DataFrame]:
     FileNotFoundError
         If data.xlsx does not exist at the configured path.
     ValueError
-        If one or more expected section headers are missing from Sheet1,
+        If one or more expected section headers are missing from 'Part 1',
         or if parsing otherwise fails.
     """
     # ── 1. File existence check ──────────────────────────────────────────────
@@ -172,12 +172,12 @@ def load_data() -> dict[str, pd.DataFrame]:
 
     # ── 2. Open workbook ─────────────────────────────────────────────────────
     wb = openpyxl.load_workbook(DATA_FILE, data_only=True)
-    if "Sheet1" not in wb.sheetnames:
+    if "Part 1" not in wb.sheetnames:
         raise ValueError(
-            f"Expected sheet 'Sheet1' not found. "
+            f"Expected sheet 'Part 1' not found. "
             f"Available sheets: {wb.sheetnames}"
         )
-    ws = wb["Sheet1"]
+    ws = wb["Part 1"]
 
     # ── 3. Scan for section header rows ──────────────────────────────────────
     section_row_map: dict[str, int] = {}
@@ -193,7 +193,7 @@ def load_data() -> dict[str, pd.DataFrame]:
     missing = required - set(section_row_map.keys())
     if missing:
         raise ValueError(
-            f"Missing section(s) in Sheet1: {sorted(missing)}. "
+            f"Missing section(s) in 'Part 1': {sorted(missing)}. "
             f"Found: {sorted(section_row_map.keys())}. "
             "Check that data.xlsx has not been modified."
         )
