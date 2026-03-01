@@ -58,7 +58,7 @@ completed: 2026-03-01
 - **Duration:** ~10 min
 - **Started:** 2026-03-01T09:23:00Z
 - **Completed:** 2026-03-01T09:33:00Z
-- **Tasks:** 2 automated complete + 1 human-verify checkpoint pending
+- **Tasks:** 3 (2 automated + 1 human-verify — APPROVED)
 - **Files modified:** 4
 
 ## Accomplishments
@@ -74,7 +74,9 @@ Each task was committed atomically:
 
 1. **Task 1: Rename "Energy" labels to "Power"** - `4cb7c4c` (feat)
 2. **Task 2: Grouped bar chart and 2-sig-fig formatting** - `b8fe310` (feat)
-3. **Task 3: Visual verification** - PENDING (checkpoint:human-verify)
+3. **Task 3: Visual verification — APPROVED** - `0e7d612` (fix: cost formatting correction found during verification)
+
+**Plan metadata:** `1faf126` (docs: checkpoint commit), final summary commit TBD
 
 ## Files Created/Modified
 - `src/data/processing.py` - Added fmt_sig2() function for 2-significant-figure formatting
@@ -90,18 +92,42 @@ Each task was committed atomically:
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+### Auto-fixed Issues
+
+**1. [Rule 1 - Bug] Applied 2-sig-fig formatting to cost display values in scorecard**
+- **Found during:** Task 3 (visual verification)
+- **Issue:** Cost values in the scorecard were not rendering at 2 significant figures as the plan intended
+- **Fix:** Updated cost display formatting to apply fmt_sig2 to numeric cost quantities
+- **Files modified:** src/layout/scorecard.py
+- **Verification:** Visual check post-fix confirmed cost values display at 2 sig figs
+- **Committed in:** 0e7d612
+
+---
+
+**Total deviations:** 1 auto-fixed (Rule 1 - Bug)
+**Impact on plan:** Necessary correction caught during visual verification. No scope creep.
 
 ## Issues Encountered
-None.
+None beyond the cost formatting deviation auto-fixed above.
 
 ## User Setup Required
 None - no external service configuration required.
 
 ## Next Phase Readiness
-- Tasks 1 and 2 complete and committed; human visual verification (Task 3) is the final gate
-- After human approval, Phase 11 (and v1.2 milestone) is complete
-- POLISH-01 through POLISH-04 requirements satisfied pending visual confirmation
+- Phase 11 complete — human visual verification approved, all 4 POLISH requirements satisfied
+- v1.2 milestone (Parameter Exploration & Presentation) is now feature-complete: all 15 requirements satisfied
+- No blocking concerns; future milestones can proceed from a clean, correctly-labeled dashboard
+
+## Self-Check: PASSED
+
+- src/data/processing.py — FOUND
+- src/layout/scorecard.py — FOUND
+- src/layout/equipment_grid.py — FOUND
+- src/layout/charts.py — FOUND
+- 11-01-SUMMARY.md — FOUND
+- Commit 4cb7c4c — FOUND
+- Commit b8fe310 — FOUND
+- Commit 0e7d612 — FOUND
 
 ---
 *Phase: 11-terminology-and-display-polish*

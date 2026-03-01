@@ -95,7 +95,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 11-01-PLAN.md — Rename Energy->Power labels, switch to grouped bar chart, add 2-sig-fig formatting
+- [x] 11-01-PLAN.md — Rename Energy->Power labels, switch to grouped bar chart, add 2-sig-fig formatting
 
 ## Deferred Features
 
