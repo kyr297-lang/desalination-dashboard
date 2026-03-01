@@ -121,4 +121,4 @@ Use `/gsd:new-milestone` to start a new milestone incorporating any of these.
 | 8. Parameter Sliders | v1.2 | 2/2 | Checkpoint (human-verify) | - |
 | 9. System Page Differentiation | 1/1 | Complete   | 2026-03-01 | - |
 | 10. Landing Page | 1/1 | Complete    | 2026-03-01 | - |
-| 11. Terminology and Display Polish | 1/1 | Complete   | 2026-03-01 | - |
+| 11. Terminology and Display Polish | 1/1 | Complete    | 2026-03-01 | - |
