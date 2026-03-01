@@ -213,9 +213,23 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         equipment_card,
     ]
 
+    # ── 3b. System badge (inserted after tab_bar, visible in print) ──────────
+    label = active_system.capitalize()
+    color = SYSTEM_COLORS.get(label, "#6c757d")
+    system_badge = html.Div(
+        dbc.Badge(
+            label,
+            pill=True,
+            style={"backgroundColor": color, "fontSize": "0.85rem"},
+        ),
+        className="mt-2 mb-1",
+        # NOTE: do NOT add no-print class — badge must appear in PDF export
+    )
+
     top_level_children = [
         breadcrumb,
         tab_bar,
+        system_badge,
     ]
 
     if hybrid_builder_section is not None:
