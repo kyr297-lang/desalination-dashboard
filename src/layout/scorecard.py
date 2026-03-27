@@ -8,31 +8,25 @@ Exports
 set_data(data) -> None
 make_scorecard_table(mechanical_df, electrical_df, hybrid_df=None)
     Returns an html.Div containing the formatted comparison table with RAG
-    traffic-light dots. Accepts an optional hybrid_df for 3-column display.
+    traffic-light dots. Always renders 3 columns when hybrid_df is provided.
 
 Callbacks registered here
 --------------------------
-update_scorecard  -- Output("scorecard-container", "children"),
-                     Output("comparison-text", "children")
-                     triggered by Input("store-hybrid-slots", "data")
-update_gate_overlay -- Output("hybrid-gate-overlay", "style")
-                       triggered by Input("store-hybrid-slots", "data")
+(export button only — no slot-based callbacks; scorecard is always 3-column)
 """
 
 import pandas as pd
-from dash import html, callback, clientside_callback, Input, Output
+from dash import html, clientside_callback, Input, Output
 import dash_bootstrap_components as dbc
 
 from src.config import RAG_COLORS
 from src.data.processing import (
     compute_scorecard_metrics,
-    compute_hybrid_df,
     generate_comparison_text,
     rag_color,
     fmt_cost,
     fmt_sig2,
 )
-from src.layout.equipment_grid import make_equipment_section
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -137,7 +131,7 @@ def make_scorecard_table(
     electrical_df : pd.DataFrame
         Equipment DataFrame for the electrical system.
     hybrid_df : pd.DataFrame or None, optional
-        Equipment DataFrame for the hybrid system (from compute_hybrid_df()).
+        Equipment DataFrame for the hybrid system (from data["hybrid"]).
         When provided, a Hybrid column is added with RAG indicators.
 
     Returns
@@ -314,144 +308,5 @@ def make_scorecard_table(
 # ──────────────────────────────────────────────────────────────────────────────
 # Callbacks
 # ──────────────────────────────────────────────────────────────────────────────
-
-@callback(
-    Output("scorecard-container", "children"),
-    Output("comparison-text", "children"),
-    Input("store-hybrid-slots", "data"),
-)
-def update_scorecard(slots):
-    """Update the scorecard table and comparison text when hybrid slots change.
-
-    When all 5 slots are filled (gate open): builds hybrid_df, renders a
-    3-column scorecard with hybrid RAG indicators, and generates comparison text.
-
-    When any slot is None (gate closed): renders the 2-system scorecard and
-    returns no comparison text.
-
-    Parameters
-    ----------
-    slots : dict or None
-        Current hybrid slot store data mapping stage names to equipment names.
-
-    Returns
-    -------
-    tuple
-        (scorecard_children, comparison_text_children)
-    """
-    if _data is None:
-        return [], None
-
-    mech_df = _data["mechanical"]
-    elec_df = _data["electrical"]
-
-    # Check if gate is open (all 5 slots filled)
-    gate_open = (
-        slots is not None
-        and all(v is not None for v in slots.values())
-    )
-
-    if gate_open:
-        hybrid_df = compute_hybrid_df(slots, _data)
-        if hybrid_df is not None:
-            # Build 3-column scorecard
-            scorecard = make_scorecard_table(mech_df, elec_df, hybrid_df)
-
-            # Build comparison text
-            metrics = compute_scorecard_metrics(mech_df, elec_df, hybrid_df)
-            comparison_str = generate_comparison_text(
-                metrics["hybrid"],
-                metrics["mechanical"],
-                metrics["electrical"],
-            )
-            comparison_content = html.P(
-                comparison_str,
-                className="text-muted small mt-2",
-                style={"fontStyle": "italic"},
-            )
-            return scorecard, comparison_content
-
-    # Gate closed or hybrid_df failed — 2-system scorecard, no comparison text
-    scorecard = make_scorecard_table(mech_df, elec_df)
-    return scorecard, None
-
-
-@callback(
-    Output("hybrid-gate-overlay", "style"),
-    Input("store-hybrid-slots", "data"),
-)
-def update_gate_overlay(slots):
-    """Show or hide the hybrid gate overlay based on slot completion.
-
-    Returns a complete style dict (never partial) to ensure consistent
-    overlay behavior. The overlay is hidden when all 5 slots are filled;
-    visible otherwise.
-
-    Parameters
-    ----------
-    slots : dict or None
-        Current hybrid slot store data.
-
-    Returns
-    -------
-    dict
-        Complete CSS style dict for the overlay div.
-    """
-    gate_open = (
-        slots is not None
-        and all(v is not None for v in slots.values())
-    )
-
-    if gate_open:
-        return {"display": "none"}
-
-    return {
-        "display": "flex",
-        "position": "absolute",
-        "top": "0",
-        "left": "0",
-        "right": "0",
-        "bottom": "0",
-        "backgroundColor": "rgba(255,255,255,0.85)",
-        "zIndex": "10",
-        "alignItems": "center",
-        "justifyContent": "center",
-        "borderRadius": "4px",
-    }
-
-
-@callback(
-    Output("hybrid-equipment-container", "children"),
-    Input("store-hybrid-slots", "data"),
-)
-def update_hybrid_equipment(slots):
-    """Update the hybrid equipment detail section when slots change.
-
-    When all 5 slots are filled: builds hybrid_df and renders equipment
-    accordion items. When any slot is empty: shows gate message.
-
-    Parameters
-    ----------
-    slots : dict or None
-        Current hybrid slot store data.
-
-    Returns
-    -------
-    dash component
-        Equipment section or gate message.
-    """
-    if _data is None:
-        return []
-
-    gate_open = (
-        slots is not None
-        and all(v is not None for v in slots.values())
-    )
-
-    if gate_open:
-        hybrid_df = compute_hybrid_df(slots, _data)
-        if hybrid_df is not None:
-            data_with_hybrid = {**_data, "hybrid_selected": hybrid_df}
-            return make_equipment_section(hybrid_df, "hybrid", data_with_hybrid)
-
-    return make_equipment_section(None, "hybrid", _data)
+# Note: scorecard and comparison text are rendered statically in system_view.py
+# using BOM data from load_data(). No slot-based callbacks are needed.

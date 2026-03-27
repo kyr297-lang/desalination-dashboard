@@ -10,8 +10,8 @@ Provides:
   - Process-stage lookup for equipment items (get_equipment_stage)
   - Energy interpolation against Part 2 lookup tables (interpolate_energy)
   - Aggregate chart data computation (compute_chart_data(data, battery_fraction,
-    years, hybrid_df, tds_ppm, depth_m)) — applies TDS and depth energy offsets
-    from Part 2 lookup tables to both mechanical and electrical energy breakdowns
+    years, tds_ppm, depth_m)) — applies TDS and depth energy offsets from Part 2
+    lookup tables; hybrid data read directly from data["hybrid"] BOM
 
 This module is a pure data/logic layer. It does NOT import from any layout
 or UI module. All formatting uses pandas for safe numeric coercion.
@@ -236,7 +236,7 @@ def compute_scorecard_metrics(
     electrical_df : pd.DataFrame
         Equipment DataFrame for the electrical system (from load_data()).
     hybrid_df : pd.DataFrame or None, optional
-        Equipment DataFrame for the hybrid system (from compute_hybrid_df()).
+        Equipment DataFrame for the hybrid system (from data["hybrid"]).
         When provided and not None, a "hybrid" key is included in the result.
 
     Returns
@@ -268,56 +268,6 @@ def compute_scorecard_metrics(
         result["hybrid"] = _aggregate(hybrid_df)
 
     return result
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Hybrid system helpers
-# ──────────────────────────────────────────────────────────────────────────────
-
-def compute_hybrid_df(slots: dict, data: dict) -> pd.DataFrame | None:
-    """Build a 5-row DataFrame for the hybrid system from slot selections.
-
-    For each stage slot, searches data["miscellaneous"], then data["mechanical"],
-    then data["electrical"] for a matching equipment row (by name). Returns None
-    if any slot is unfilled or any lookup fails.
-
-    Parameters
-    ----------
-    slots : dict
-        Mapping of stage name to selected equipment name (or None).
-        Keys: "Water Extraction", "Pre-Treatment", "Desalination",
-              "Post-Treatment", "Brine Disposal".
-    data : dict
-        Full data dict from load_data() with keys "miscellaneous", "mechanical",
-        "electrical".
-
-    Returns
-    -------
-    pd.DataFrame or None
-        A 5-row DataFrame with the same columns as equipment DataFrames
-        (name, quantity, cost_usd, energy_kw, land_area_m2, lifespan_years),
-        or None if any slot is None or any equipment name cannot be found.
-    """
-    # Gate: all slots must be filled
-    if any(v is None for v in slots.values()):
-        return None
-
-    search_order = ["miscellaneous", "mechanical", "electrical"]
-    matched_rows: list[dict] = []
-
-    for stage, equipment_name in slots.items():
-        found = False
-        for source_key in search_order:
-            source_df: pd.DataFrame = data[source_key]
-            match = source_df[source_df["name"] == equipment_name]
-            if not match.empty:
-                matched_rows.append(match.iloc[0].to_dict())
-                found = True
-                break
-        if not found:
-            return None
-
-    return pd.DataFrame(matched_rows)
 
 
 def generate_comparison_text(
@@ -552,7 +502,6 @@ def compute_chart_data(
     data: dict,
     battery_fraction: float = 0.5,
     years: int = 50,
-    hybrid_df: pd.DataFrame | None = None,
     tds_ppm: float = 950,
     depth_m: float = 950,
 ) -> dict:
@@ -562,19 +511,19 @@ def compute_chart_data(
     It returns pre-computed arrays and scalars so that callbacks remain fast
     (no DataFrame iteration inside callbacks).
 
+    Hybrid data is read directly from data["hybrid"] — a pre-defined BOM
+    loaded from data.xlsx (not user-assembled via slot dropdowns).
+
     Parameters
     ----------
     data : dict
         Full data dict from load_data() with keys:
-        "mechanical", "electrical", "miscellaneous", "battery_lookup",
+        "mechanical", "electrical", "hybrid", "battery_lookup",
         "tds_lookup", "depth_lookup".
     battery_fraction : float
         Current battery/tank slider value, 0.0 (all tank) to 1.0 (all battery).
     years : int
         Time horizon in years for cost-over-time computation.
-    hybrid_df : pd.DataFrame or None, optional
-        When provided and not None, hybrid chart values are computed from this
-        DataFrame instead of using placeholder zeros. Comes from compute_hybrid_df().
     tds_ppm : float, optional
         Source water salinity in PPM from the TDS slider (default 950).
         Used to interpolate ro_energy_kw from data["tds_lookup"] and add it to
@@ -597,13 +546,15 @@ def compute_chart_data(
             {"mechanical": int, "electrical": int, "hybrid": int}
             Number of wind turbines per system.
         energy_breakdown : dict[str, dict[str, float]]
-            {"mechanical": {stage: kw, ...}, "electrical": {stage: kw, ...}, "hybrid": {}}
+            {"mechanical": {stage: kw, ...}, "electrical": {stage: kw, ...},
+             "hybrid": {stage: kw, ...}}
             Energy use per process stage for each system.
         electrical_total_cost : float
             Live electrical total cost at current battery_fraction (USD).
     """
     mechanical_df = data["mechanical"]
     electrical_df = data["electrical"]
+    hybrid_df = data["hybrid"]
     battery_lookup = data["battery_lookup"]
 
     # ── Battery interpolation ─────────────────────────────────────────────────
@@ -623,19 +574,13 @@ def compute_chart_data(
         override_costs={"Battery (1 day of power)": interpolated_cost},
     )
 
-    # Hybrid: use real data when hybrid_df is provided; zeros otherwise
-    if hybrid_df is not None:
-        hybrid_cumulative = compute_cost_over_time(hybrid_df, years)
-    else:
-        hybrid_cumulative = np.zeros(years + 1)
+    # Hybrid: read directly from data["hybrid"] BOM
+    hybrid_cumulative = compute_cost_over_time(hybrid_df, years)
 
     # ── Land area ─────────────────────────────────────────────────────────────
     mech_land = float(pd.to_numeric(mechanical_df["land_area_m2"], errors="coerce").sum())
     elec_land = float(pd.to_numeric(electrical_df["land_area_m2"], errors="coerce").sum())
-    if hybrid_df is not None:
-        hybrid_land = float(pd.to_numeric(hybrid_df["land_area_m2"], errors="coerce").sum())
-    else:
-        hybrid_land = 0.0
+    hybrid_land = float(pd.to_numeric(hybrid_df["land_area_m2"], errors="coerce").sum())
 
     # ── Turbine count ─────────────────────────────────────────────────────────
     # Mechanical system uses the "250kW aeromotor turbine " row for turbine count
@@ -646,8 +591,9 @@ def compute_chart_data(
     elec_turbine_rows = electrical_df[electrical_df["name"] == "Turbine"]["quantity"]
     elec_turbines = int(pd.to_numeric(elec_turbine_rows, errors="coerce").sum()) if len(elec_turbine_rows) > 0 else 0
 
-    # Hybrid: miscellaneous items don't include turbines
-    hybrid_turbines = 0
+    # Hybrid: count turbines from hybrid BOM
+    hybrid_turbine_rows = hybrid_df[hybrid_df["name"].str.contains("turbine", case=False, na=False)]["quantity"]
+    hybrid_turbines = int(pd.to_numeric(hybrid_turbine_rows, errors="coerce").sum()) if len(hybrid_turbine_rows) > 0 else 0
 
     # ── Energy breakdown by process stage ────────────────────────────────────
     def _energy_by_stage(df: pd.DataFrame, system: str) -> dict[str, float]:
@@ -677,11 +623,8 @@ def compute_chart_data(
     mech_energy["Water Extraction"] = mech_energy.get("Water Extraction", 0.0) + pump_kw
     elec_energy["Water Extraction"] = elec_energy.get("Water Extraction", 0.0) + pump_kw
 
-    # Hybrid energy: built directly from the hybrid_df rows using miscellaneous stage mapping
-    if hybrid_df is not None:
-        hybrid_energy = _energy_by_stage(hybrid_df, "miscellaneous")
-    else:
-        hybrid_energy = {}
+    # Hybrid energy: built from hybrid BOM rows using hybrid stage mapping
+    hybrid_energy = _energy_by_stage(hybrid_df, "hybrid")
 
     # ── Electrical total cost (live readout for slider label) ─────────────────
     # Sum all electrical costs EXCLUDING the battery row, then add interpolated cost.

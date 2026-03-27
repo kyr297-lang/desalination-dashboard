@@ -166,7 +166,7 @@ def _make_cross_system_comparison(
     this_stage = get_equipment_stage(equipment_name, system)
 
     # Collect equivalents from other systems (same process stage)
-    other_systems = [s for s in ("mechanical", "electrical") if s != system]
+    other_systems = [s for s in ("mechanical", "electrical", "hybrid") if s != system]
 
     comparison_rows: list[dict] = []
     # Include current item
@@ -352,10 +352,8 @@ def make_equipment_section(
     dbc.Accordion.  Each accordion item shows collapsed summary (name + cost)
     and expanded detail (description, badges, data table, cross-system comparison).
 
-    For the Hybrid system: when hybrid equipment is available (via
-    all_data["hybrid_selected"]), renders 5 accordion items for the selected
-    equipment. When hybrid data is unavailable, returns a gate message prompting
-    the user to fill all 5 slots.
+    All three systems (mechanical, electrical, hybrid) use the same rendering
+    path — grouped by process stage via get_equipment_stage().
 
     Parameters
     ----------
@@ -365,42 +363,20 @@ def make_equipment_section(
         System key: "mechanical", "electrical", or "hybrid".
     all_data : dict
         Full data dictionary from load_data() — passed to cross-system comparison.
-        For hybrid, all_data may contain "hybrid_selected" key with the hybrid_df.
 
     Returns
     -------
     html.Div
         Equipment grid component tree.
     """
-    # Hybrid: check if gate is open (hybrid_df provided in all_data)
-    if system == "hybrid":
-        hybrid_df = all_data.get("hybrid_selected")
-        if hybrid_df is None:
-            # Gate closed — show placeholder message
-            return html.Div([
-                html.H5("Hybrid System Equipment"),
-                html.P(
-                    "Fill all 5 slots to see equipment details.",
-                    className="text-muted fst-italic",
-                ),
-            ])
-
-        # Gate open — render accordion items for each selected equipment row
-        accordion_items = []
-        for idx, row in hybrid_df.iterrows():
-            accordion_items.append(
-                _make_accordion_item(row, "miscellaneous", idx, all_data)
+    # Guard: no DataFrame provided
+    if df is None or (hasattr(df, 'empty') and df.empty):
+        return html.Div(
+            html.P(
+                "No equipment data available for this system.",
+                className="text-muted fst-italic",
             )
-
-        return html.Div([
-            html.H5("Hybrid System Equipment", className="mt-2 mb-2"),
-            dbc.Accordion(
-                accordion_items,
-                always_open=False,
-                active_item=None,
-                className="shadow-sm",
-            ),
-        ])
+        )
 
     # ── Group equipment by process stage ──────────────────────────────────────
     stage_groups: dict[str, list[tuple[int, pd.Series]]] = {
