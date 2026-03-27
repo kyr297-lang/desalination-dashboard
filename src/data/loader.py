@@ -8,11 +8,14 @@ sections stacked vertically — NOT three separate Excel sheets.  Each section
 begins with a named header row in column B:
 
   Row  1 – "Electrical Components"  (data rows 2-11, total row 12)
-  Row 15 – "Mechanical Components"  (data rows 16-24, total row 25)
-  Row 27 – "Miscalleneous"          (NOTE: deliberate typo in source file)
+  Row 15 – "Mechanical Components"  (data rows 16-30, total row 31)
+  Row 33 – "Hybrid Components"      (data rows 34-49, total row 50)
 
-A battery/tank lookup table occupies columns J-P, rows 3-14 (header row 3,
+A battery/tank lookup table occupies columns L-R, rows 3-14 (header row 3,
 data rows 4-14).
+
+An "Energy" sheet provides per-subsystem shaft power, drive type, drivetrain
+efficiency, and selected turbine size for all three systems.
 
 Non-numeric values ("indefinite", "~15 tons", "$ 2500 per ton", etc.) are
 stored as-is.  No coercion is performed here; downstream modules handle it.
@@ -31,11 +34,10 @@ from src.config import DATA_FILE
 
 # Exact header strings as they appear in column B of Part 1.
 # Key is the header text; value is the canonical dict key we expose.
-# "Miscalleneous" is a typo in the actual file — match it exactly.
 SECTION_HEADERS: dict[str, str] = {
     "Electrical Components": "electrical",
     "Mechanical Components": "mechanical",
-    "Miscalleneous": "miscellaneous",
+    "Hybrid Components": "hybrid",
 }
 
 # Ordered column names for the equipment rows (columns B-G, positions 2-7).
@@ -116,9 +118,9 @@ def _parse_section(ws, header_row: int, stop_rows: set) -> list[dict]:
 
 def _parse_battery_lookup(ws) -> pd.DataFrame:
     """
-    Parse the battery/tank lookup table from the fixed range J3:P14.
+    Parse the battery/tank lookup table from the fixed range L3:R14.
 
-    Header labels are at row 3 (cols J-P); data occupies rows 4-14
+    Header labels are at row 3 (cols L-R); data occupies rows 4-14
     (11 rows: battery_fraction 0.0 to 1.0 in 0.1 steps).
 
     Returns
@@ -128,13 +130,13 @@ def _parse_battery_lookup(ws) -> pd.DataFrame:
     rows = []
     for r in range(4, 15):   # rows 4–14 inclusive
         rows.append({
-            "battery_fraction": ws.cell(r, 10).value,
-            "tank_fraction":    ws.cell(r, 11).value,
-            "battery_kwh":      ws.cell(r, 12).value,
-            "tank_gal":         ws.cell(r, 13).value,
-            "battery_cost":     ws.cell(r, 14).value,
-            "tank_cost":        ws.cell(r, 15).value,
-            "total_cost":       ws.cell(r, 16).value,
+            "battery_fraction": ws.cell(r, 12).value,
+            "tank_fraction":    ws.cell(r, 13).value,
+            "battery_kwh":      ws.cell(r, 14).value,
+            "tank_gal":         ws.cell(r, 15).value,
+            "battery_cost":     ws.cell(r, 16).value,
+            "tank_cost":        ws.cell(r, 17).value,
+            "total_cost":       ws.cell(r, 18).value,
         })
     return pd.DataFrame(rows, columns=BATTERY_COLUMNS)
 
@@ -182,13 +184,143 @@ def _parse_part2_lookups(wb) -> tuple[pd.DataFrame, pd.DataFrame]:
     return tds_df, depth_df
 
 
+def _parse_energy_sheet(wb) -> dict:
+    """
+    Parse the Energy sheet into a structured dict grouped by system.
+
+    The Energy sheet has the following row structure:
+      - System header rows (e.g., "Mechanical System") in column A
+      - Subsystem rows with shaft power, drive type, efficiency, turbine input
+      - Summary rows: "Total Shaft Power", "Total at Turbine Shaft" (or variant),
+        "Design Power (+10% margin)", "Selected Turbine (kW)"
+
+    Column mapping (1-based):
+      A (1) = system/subsystem label
+      B (2) = shaft_power_kw
+      C (3) = drive_type
+      D (4) = drivetrain_efficiency
+      E (5) = turbine_input_kw
+      F (6) = notes
+
+    Returns
+    -------
+    dict with keys "mechanical", "electrical", "hybrid", each containing:
+        "subsystems"          – list of dicts with subsystem data
+        "total_shaft_power"   – float
+        "total_turbine_input" – float  (total at turbine shaft before margin)
+        "selected_turbine_kw" – float
+
+    Raises
+    ------
+    ValueError
+        If "Energy" sheet not found in data.xlsx.
+    """
+    if "Energy" not in wb.sheetnames:
+        raise ValueError(
+            "Energy sheet not found in data.xlsx. "
+            "Power breakdown and turbine charts require this sheet."
+        )
+
+    ws = wb["Energy"]
+
+    # Canonical system header strings → internal keys
+    SYSTEM_HEADER_MAP = {
+        "Mechanical System": "mechanical",
+        "Electrical System": "electrical",
+        "Hybrid System":     "hybrid",
+    }
+
+    # Summary row labels we capture (partial match using startswith)
+    SUMMARY_TOTAL_SHAFT   = "Total Shaft Power"
+    SUMMARY_TOTAL_TURBINE = "Total at Turbine"   # covers both variants
+    SUMMARY_SELECTED      = "Selected Turbine (kW)"
+
+    result: dict = {}
+    current_system: str | None = None
+    current_subsystems: list = []
+    current_total_shaft: float = 0.0
+    current_total_turbine: float = 0.0
+    current_selected: float = 0.0
+
+    def _flush(system_key: str) -> None:
+        result[system_key] = {
+            "subsystems":          list(current_subsystems),
+            "total_shaft_power":   current_total_shaft,
+            "total_turbine_input": current_total_turbine,
+            "selected_turbine_kw": current_selected,
+        }
+
+    for r in range(1, ws.max_row + 1):
+        label = ws.cell(r, 1).value
+        if label is None:
+            continue
+
+        label_str = str(label).strip()
+
+        # ── System header row ──────────────────────────────────────────────
+        if label_str in SYSTEM_HEADER_MAP:
+            if current_system is not None:
+                _flush(current_system)
+            current_system = SYSTEM_HEADER_MAP[label_str]
+            current_subsystems = []
+            current_total_shaft = 0.0
+            current_total_turbine = 0.0
+            current_selected = 0.0
+            continue
+
+        if current_system is None:
+            continue
+
+        # ── Summary rows ───────────────────────────────────────────────────
+        if label_str.startswith(SUMMARY_TOTAL_SHAFT):
+            val = ws.cell(r, 2).value
+            if val is not None:
+                current_total_shaft = float(val)
+            continue
+
+        if label_str.startswith(SUMMARY_TOTAL_TURBINE):
+            val = ws.cell(r, 5).value
+            if val is not None:
+                current_total_turbine = float(val)
+            continue
+
+        if label_str.startswith(SUMMARY_SELECTED):
+            val = ws.cell(r, 5).value
+            if val is not None:
+                current_selected = float(val)
+            continue
+
+        # Skip other summary rows (Design Power, etc.)
+        if label_str.startswith("Design Power") or label_str.startswith("Total Electrical"):
+            continue
+
+        # ── Subsystem data row ─────────────────────────────────────────────
+        shaft_val   = ws.cell(r, 2).value
+        turbine_val = ws.cell(r, 5).value
+        current_subsystems.append({
+            "name":                  label_str,
+            "shaft_power_kw":        float(shaft_val)   if shaft_val   is not None else None,
+            "drive_type":            ws.cell(r, 3).value,
+            "drivetrain_efficiency": ws.cell(r, 4).value,
+            "turbine_input_kw":      float(turbine_val) if turbine_val is not None else None,
+            "notes":                 ws.cell(r, 6).value,
+        })
+
+    # Flush the last system
+    if current_system is not None:
+        _flush(current_system)
+
+    print(f"  [loader] Energy sheet: {list(result.keys())} systems parsed")
+    return result
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Public API
 # ──────────────────────────────────────────────────────────────────────────────
 
-def load_data() -> dict[str, pd.DataFrame]:
+def load_data() -> dict:
     """
-    Load and parse data.xlsx, returning six DataFrames.
+    Load and parse data.xlsx, returning BOM DataFrames plus energy data.
 
     Sections are located by scanning column B of Part 1 for known header
     strings.  Values are stored as-is from the Excel cells — no numeric
@@ -197,12 +329,15 @@ def load_data() -> dict[str, pd.DataFrame]:
     Returns
     -------
     dict with keys:
-        "electrical"    – pd.DataFrame (equipment rows for the electrical system)
-        "mechanical"    – pd.DataFrame (equipment rows for the mechanical system)
-        "miscellaneous" – pd.DataFrame (equipment rows for the miscellaneous/hybrid parts)
-        "battery_lookup"– pd.DataFrame (battery fraction vs. tank fraction lookup)
-        "tds_lookup"    – pd.DataFrame with columns ["tds_ppm", "ro_energy_kw"], 20 rows (TDS 0-1900 PPM)
-        "depth_lookup"  – pd.DataFrame with columns ["depth_m", "pump_energy_kw"], 20 rows (Depth 0-1900 m)
+        "electrical"     – pd.DataFrame (equipment rows for the electrical system)
+        "mechanical"     – pd.DataFrame (equipment rows for the mechanical system)
+        "hybrid"         – pd.DataFrame (equipment rows for the hybrid system)
+        "battery_lookup" – pd.DataFrame (battery fraction vs. tank fraction lookup)
+        "tds_lookup"     – pd.DataFrame with columns ["tds_ppm", "ro_energy_kw"], 20 rows
+        "depth_lookup"   – pd.DataFrame with columns ["depth_m", "pump_energy_kw"], 20 rows
+        "energy"         – dict grouped by system ("mechanical", "electrical", "hybrid"),
+                           each containing subsystems list, total_shaft_power,
+                           total_turbine_input, and selected_turbine_kw
 
     Raises
     ------
@@ -210,7 +345,7 @@ def load_data() -> dict[str, pd.DataFrame]:
         If data.xlsx does not exist at the configured path.
     ValueError
         If one or more expected section headers are missing from 'Part 1',
-        or if parsing otherwise fails.
+        or if the Energy sheet is absent, or if parsing otherwise fails.
     """
     # ── 1. File existence check ──────────────────────────────────────────────
     if not DATA_FILE.exists():
@@ -242,7 +377,7 @@ def load_data() -> dict[str, pd.DataFrame]:
             print(f"  [loader] Found section '{cell.value}' at row {cell.row}")
 
     # ── 4. Validate all sections present ─────────────────────────────────────
-    required = {"electrical", "mechanical", "miscellaneous"}
+    required = {"electrical", "mechanical", "hybrid"}
     missing = required - set(section_row_map.keys())
     if missing:
         raise ValueError(
@@ -252,27 +387,31 @@ def load_data() -> dict[str, pd.DataFrame]:
         )
 
     # ── 5. Parse equipment sections ──────────────────────────────────────────
-    elec_start = section_row_map["electrical"]
-    mech_start = section_row_map["mechanical"]
-    misc_start = section_row_map["miscellaneous"]
+    elec_start   = section_row_map["electrical"]
+    mech_start   = section_row_map["mechanical"]
+    hybrid_start = section_row_map["hybrid"]
 
-    electrical_rows   = _parse_section(ws, elec_start,  stop_rows={mech_start})
-    mechanical_rows   = _parse_section(ws, mech_start,  stop_rows={misc_start})
-    miscellaneous_rows = _parse_section(ws, misc_start, stop_rows=set())
+    electrical_rows = _parse_section(ws, elec_start,   stop_rows={mech_start})
+    mechanical_rows = _parse_section(ws, mech_start,   stop_rows={hybrid_start})
+    hybrid_rows     = _parse_section(ws, hybrid_start, stop_rows=set())
 
-    print(f"  [loader] Electrical:    {len(electrical_rows)} equipment rows parsed")
-    print(f"  [loader] Mechanical:    {len(mechanical_rows)} equipment rows parsed")
-    print(f"  [loader] Miscellaneous: {len(miscellaneous_rows)} equipment rows parsed")
+    print(f"  [loader] Electrical: {len(electrical_rows)} equipment rows parsed")
+    print(f"  [loader] Mechanical: {len(mechanical_rows)} equipment rows parsed")
+    print(f"  [loader] Hybrid:     {len(hybrid_rows)} equipment rows parsed")
 
     # ── 6. Parse battery/tank lookup ─────────────────────────────────────────
     battery_df = _parse_battery_lookup(ws)
     print(f"  [loader] Battery lookup: {len(battery_df)} rows parsed")
 
+    # ── 7. Parse Energy sheet ─────────────────────────────────────────────────
+    energy_data = _parse_energy_sheet(wb)
+
     return {
-        "electrical":    pd.DataFrame(electrical_rows,    columns=EQUIPMENT_COLUMNS),
-        "mechanical":    pd.DataFrame(mechanical_rows,    columns=EQUIPMENT_COLUMNS),
-        "miscellaneous": pd.DataFrame(miscellaneous_rows, columns=EQUIPMENT_COLUMNS),
+        "electrical":    pd.DataFrame(electrical_rows, columns=EQUIPMENT_COLUMNS),
+        "mechanical":    pd.DataFrame(mechanical_rows, columns=EQUIPMENT_COLUMNS),
+        "hybrid":        pd.DataFrame(hybrid_rows,     columns=EQUIPMENT_COLUMNS),
         "battery_lookup": battery_df,
         "tds_lookup":    tds_df,
         "depth_lookup":  depth_df,
+        "energy":        energy_data,
     }
