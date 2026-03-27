@@ -126,7 +126,7 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         dbc.CardBody(
             html.Img(
                 src=diagram_src,
-                style={"width": "100%", "height": "auto"},
+                style={"width": "100%", "maxWidth": "820px", "height": "auto", "margin": "0 auto"},
                 className="d-block",
                 alt=f"{active_system.capitalize()} system layout diagram",
             )
