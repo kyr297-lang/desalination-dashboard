@@ -34,6 +34,18 @@ _SYSTEMS = [
     {"key": "hybrid",      "label": "Hybrid"},
 ]
 
+_DIAGRAM_FILES = {
+    "mechanical": "/assets/mechanical-layout.png",
+    "electrical": "/assets/electrical-layout.png",
+    "hybrid": "/assets/hybrid-layout.png",
+}
+
+_DIAGRAM_CARD_CLASSES = {
+    "mechanical": "shadow-sm mb-3 system-card-mechanical",
+    "electrical": "shadow-sm mb-3 system-card-electrical",
+    "hybrid": "shadow-sm mb-3",
+}
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Layout factory
@@ -108,6 +120,20 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         active_tab=active_system,
     )
 
+    # ── Diagram card ────────────────────────────────────────────────────────
+    diagram_src = _DIAGRAM_FILES.get(active_system, "")
+    diagram_card = dbc.Card(
+        dbc.CardBody(
+            html.Img(
+                src=diagram_src,
+                style={"width": "100%", "height": "auto"},
+                className="d-block",
+                alt=f"{active_system.capitalize()} system layout diagram",
+            )
+        ),
+        className=_DIAGRAM_CARD_CLASSES.get(active_system, "shadow-sm mb-3"),
+    )
+
     # ── 3. Scorecard — always 3-column from BOM data ──────────────────────────
     # All three DataFrames are available from load_data(); no gating required.
     initial_scorecard = make_scorecard_table(
@@ -171,6 +197,7 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
     )
 
     main_content_children = [
+        diagram_card,
         scorecard_card,
         equipment_card,
     ]
