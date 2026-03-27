@@ -19,6 +19,7 @@ or UI module. All formatting uses pandas for safe numeric coercion.
 
 from __future__ import annotations
 
+import math
 import numpy as np
 import pandas as pd
 
@@ -637,20 +638,42 @@ def compute_chart_data(
     else:
         hybrid_land = 0.0
 
-    # ── Turbine count ─────────────────────────────────────────────────────────
-    # Mechanical system uses the "250kW aeromotor turbine " row for turbine count
-    mech_turbine_rows = mechanical_df[mechanical_df["name"] == "250kW aeromotor turbine "]["quantity"]
-    mech_turbines = int(pd.to_numeric(mech_turbine_rows, errors="coerce").sum()) if len(mech_turbine_rows) > 0 else 0
+    # ── Energy sheet data ──────────────────────────────────────────────────────
+    energy_data = data.get("energy")
 
-    # Electrical system uses the "Turbine" row
-    elec_turbine_rows = electrical_df[electrical_df["name"] == "Turbine"]["quantity"]
-    elec_turbines = int(pd.to_numeric(elec_turbine_rows, errors="coerce").sum()) if len(elec_turbine_rows) > 0 else 0
+    # Subsystem name → STAGE_COLORS key mapping.
+    # Energy sheet names are descriptive; map to canonical stage keys by keyword.
+    def _subsystem_name_to_stage(name: str) -> str:
+        """Map an Energy sheet subsystem name to a STAGE_COLORS key."""
+        name_lower = name.lower()
+        if "gw extraction" in name_lower or "groundwater" in name_lower:
+            return "Water Extraction"
+        if "ro feed" in name_lower or "high pressure pump" in name_lower or "booster pump" in name_lower:
+            return "Desalination"
+        if "brine" in name_lower:
+            return "Brine Disposal"
+        if "pre-treatment" in name_lower or "pre treatment" in name_lower or "filtration" in name_lower:
+            return "Pre-Treatment"
+        if "post-treatment" in name_lower or "post treatment" in name_lower:
+            return "Post-Treatment"
+        if "control" in name_lower or "plc" in name_lower or "scada" in name_lower:
+            return "Control"
+        return "Other"
 
-    # Hybrid: miscellaneous items don't include turbines
-    hybrid_turbines = 0
+    def _energy_from_energy_sheet(energy_sys: dict) -> dict[str, float]:
+        """Build stage->kW dict from Energy sheet subsystem rows."""
+        result: dict[str, float] = {}
+        for sub in energy_sys.get("subsystems", []):
+            name = sub.get("name", "Other")
+            kw = sub.get("shaft_power_kw")
+            if kw is None or kw <= 0:
+                continue
+            stage = _subsystem_name_to_stage(name)
+            result[stage] = result.get(stage, 0.0) + float(kw)
+        return result
 
-    # ── Energy breakdown by process stage ────────────────────────────────────
     def _energy_by_stage(df: pd.DataFrame, system: str) -> dict[str, float]:
+        """Fallback: build stage->kW dict from BOM energy_kw columns."""
         stage_energy: dict[str, float] = {}
         for _, row in df.iterrows():
             kw = pd.to_numeric(row["energy_kw"], errors="coerce")
@@ -660,8 +683,49 @@ def compute_chart_data(
             stage_energy[stage] = stage_energy.get(stage, 0.0) + float(kw)
         return stage_energy
 
-    mech_energy = _energy_by_stage(mechanical_df, "mechanical")
-    elec_energy = _energy_by_stage(electrical_df, "electrical")
+    if energy_data is not None:
+        # ── Turbine count from Energy sheet ───────────────────────────────────
+        # total_turbine_input / selected_turbine_kw, rounded up.
+        # If total_turbine_input is 0 (e.g. electrical system uses "Total Electrical Demand"
+        # label that the loader may not capture), fall back to sum of subsystem turbine_input_kw.
+        turbine_counts: dict[str, int] = {}
+        for sys_key in ["mechanical", "electrical", "hybrid"]:
+            sys_energy = energy_data.get(sys_key, {})
+            total_input = sys_energy.get("total_turbine_input") or 0
+            if total_input == 0:
+                # Fallback: sum subsystem turbine_input_kw values
+                total_input = sum(
+                    float(sub.get("turbine_input_kw") or 0)
+                    for sub in sys_energy.get("subsystems", [])
+                    if sub.get("turbine_input_kw") is not None
+                )
+            turbine_size = sys_energy.get("selected_turbine_kw") or 1
+            turbine_counts[sys_key] = math.ceil(total_input / turbine_size) if turbine_size > 0 and total_input > 0 else 0
+        mech_turbines = turbine_counts["mechanical"]
+        elec_turbines = turbine_counts["electrical"]
+        hybrid_turbines = turbine_counts["hybrid"]
+
+        # ── Energy breakdown from Energy sheet ────────────────────────────────
+        mech_energy = _energy_from_energy_sheet(energy_data.get("mechanical", {}))
+        elec_energy = _energy_from_energy_sheet(energy_data.get("electrical", {}))
+        hybrid_energy = _energy_from_energy_sheet(energy_data.get("hybrid", {}))
+    else:
+        # ── Fallback: BOM-based calculation ───────────────────────────────────
+        print("[WARN] Energy sheet data not available, using BOM-based energy estimates")
+
+        # Turbine count from BOM row names
+        mech_turbine_rows = mechanical_df[mechanical_df["name"] == "250kW aeromotor turbine "]["quantity"]
+        mech_turbines = int(pd.to_numeric(mech_turbine_rows, errors="coerce").sum()) if len(mech_turbine_rows) > 0 else 0
+
+        elec_turbine_rows = electrical_df[electrical_df["name"] == "Turbine"]["quantity"]
+        elec_turbines = int(pd.to_numeric(elec_turbine_rows, errors="coerce").sum()) if len(elec_turbine_rows) > 0 else 0
+
+        hybrid_turbines = 0
+
+        # Energy breakdown from BOM energy_kw columns
+        mech_energy = _energy_by_stage(mechanical_df, "mechanical")
+        elec_energy = _energy_by_stage(electrical_df, "electrical")
+        hybrid_energy = {} if hybrid_df is None else _energy_by_stage(hybrid_df, "miscellaneous")
 
     # ── TDS and depth energy offsets ──────────────────────────────────────────
     # Interpolate RO desalination energy from Part 2 TDS lookup table
@@ -669,19 +733,15 @@ def compute_chart_data(
     # Interpolate pump energy from Part 2 depth lookup table
     pump_kw = interpolate_energy(depth_m, data["depth_lookup"], "depth_m", "pump_energy_kw")
 
-    # Apply offsets to both mechanical and electrical systems.
+    # Apply offsets to all three systems.
     # TDS affects desalination energy demand (RO membranes) regardless of drive type.
     # Depth affects water extraction energy demand (pump lift) regardless of drive type.
     mech_energy["Desalination"] = mech_energy.get("Desalination", 0.0) + ro_kw
     elec_energy["Desalination"] = elec_energy.get("Desalination", 0.0) + ro_kw
+    hybrid_energy["Desalination"] = hybrid_energy.get("Desalination", 0.0) + ro_kw
     mech_energy["Water Extraction"] = mech_energy.get("Water Extraction", 0.0) + pump_kw
     elec_energy["Water Extraction"] = elec_energy.get("Water Extraction", 0.0) + pump_kw
-
-    # Hybrid energy: built directly from the hybrid_df rows using miscellaneous stage mapping
-    if hybrid_df is not None:
-        hybrid_energy = _energy_by_stage(hybrid_df, "miscellaneous")
-    else:
-        hybrid_energy = {}
+    hybrid_energy["Water Extraction"] = hybrid_energy.get("Water Extraction", 0.0) + pump_kw
 
     # ── Electrical total cost (live readout for slider label) ─────────────────
     # Sum all electrical costs EXCLUDING the battery row, then add interpolated cost.
