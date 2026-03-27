@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Systems Overhaul & UX Redesign
 status: executing
-stopped_at: Completed 12-01-PLAN.md
-last_updated: "2026-03-27T00:29:22.179Z"
+stopped_at: Completed 12-02-PLAN.md
+last_updated: "2026-03-27T00:37:37.592Z"
 last_activity: 2026-03-27
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-26)
 ## Current Position
 
 Phase: 12 (data-layer-hybrid-builder-removal) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-03-27
 
@@ -48,6 +48,7 @@ Progress: [░░░░░░░░░░] 0%
 | v1.2 Parameter Exploration | 7-11 | 7 | 2026-03-01 |
 | v1.3 Systems Overhaul | 12-15 | TBD | — |
 | Phase 12-data-layer-hybrid-builder-removal P01 | 18 | 2 tasks | 2 files |
+| Phase 12-data-layer-hybrid-builder-removal P02 | 5 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -57,6 +58,8 @@ All decisions logged in PROJECT.md Key Decisions table.
 
 - [Phase 12-data-layer-hybrid-builder-removal]: Battery lookup table column positions shifted from J-P to L-R in updated data.xlsx — auto-fixed in loader.py
 - [Phase 12-data-layer-hybrid-builder-removal]: load_data() now returns 7 keys including hybrid and energy; energy dict grouped by system with subsystems, total_shaft_power, total_turbine_input, selected_turbine_kw
+- [Phase 12-data-layer-hybrid-builder-removal]: Hybrid system rendered as static equipment table — identical code path to mechanical/electrical; scorecard always 3-column from BOM data without slot-fill gating
+- [Phase 12-data-layer-hybrid-builder-removal]: compute_chart_data signature simplified: hybrid_df parameter removed; reads data['hybrid'] directly from load_data() return value
 
 ### Pending Todos
 
@@ -70,6 +73,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-27T00:29:22.176Z
-Stopped at: Completed 12-01-PLAN.md
+Last session: 2026-03-27T00:37:37.589Z
+Stopped at: Completed 12-02-PLAN.md
 Resume file: None

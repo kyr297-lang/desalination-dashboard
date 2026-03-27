@@ -6,14 +6,14 @@
 
 - [x] **DATA-01**: App loads without crashing after data.xlsx schema change — loader SECTION_HEADERS updated to match new Part 1 layout (no 'miscellaneous' section, updated mechanical/hybrid headers)
 - [x] **DATA-02**: Mechanical BOM reflects hydraulic system — components include HPU, manifold, hydraulic motors, vertical turbine pump, plunger pump with correct names, costs, and quantities from data.xlsx
-- [ ] **DATA-03**: Hybrid BOM reflects fixed preset — hybrid section reads the fixed component list from data.xlsx Part 1 (no user-assembled slots)
+- [x] **DATA-03**: Hybrid BOM reflects fixed preset — hybrid section reads the fixed component list from data.xlsx Part 1 (no user-assembled slots)
 - [x] **DATA-04**: Energy sheet parsed — shaft power and turbine sizing values for all three systems read from data.xlsx Energy sheet and displayed correctly in the dashboard
 
 ### System Content
 
 - [ ] **CONTENT-01**: Landing page intro rewritten — clearly explains what wind-powered desalination is, what the three systems represent, and what students are meant to explore and compare; no references to AI or automated tools
 - [ ] **CONTENT-02**: Mechanical system process stages and equipment descriptions updated — reflect hydraulic drive architecture (HPU → manifold → hydraulic motors driving pumps)
-- [ ] **CONTENT-03**: Hybrid builder replaced with static preset display — hybrid system shown as a fixed configuration matching the preset BOM; builder dropdowns and slot selection removed entirely
+- [x] **CONTENT-03**: Hybrid builder replaced with static preset display — hybrid system shown as a fixed configuration matching the preset BOM; builder dropdowns and slot selection removed entirely
 
 ### Visual Design
 
@@ -60,11 +60,11 @@
 |-------------|-------|--------|
 | DATA-01 | Phase 12 | Complete |
 | DATA-02 | Phase 12 | Complete |
-| DATA-03 | Phase 12 | Pending |
+| DATA-03 | Phase 12 | Complete |
 | DATA-04 | Phase 12 | Complete |
 | CONTENT-01 | Phase 14 | Pending |
 | CONTENT-02 | Phase 14 | Pending |
-| CONTENT-03 | Phase 12 | Pending |
+| CONTENT-03 | Phase 12 | Complete |
 | VISUAL-01 | Phase 13 | Pending |
 | VISUAL-02 | Phase 13 | Pending |
 | VISUAL-03 | Phase 13 | Pending |

@@ -63,11 +63,11 @@
   3. Hybrid page displays a fixed preset configuration — no builder dropdowns, no slot selection UI, no "build your own" interaction
   4. Energy/power data from the Energy sheet appears correctly in the dashboard for all three systems
   5. Scorecard renders all three system columns on initial page load without requiring any user interaction
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [x] 12-01-PLAN.md — Fix loader SECTION_HEADERS, rename miscellaneous to hybrid, parse Energy sheet
-- [ ] 12-02-PLAN.md — Delete hybrid builder, remove all references, wire static hybrid equipment table and ungated scorecard
+- [x] 12-02-PLAN.md — Delete hybrid builder, remove all references, wire static hybrid equipment table and ungated scorecard
 - [ ] 12-03-PLAN.md — Wire Energy sheet data into power breakdown and turbine count charts
 
 ### Phase 13: System Layout Images & Creative Differentiation
@@ -135,7 +135,7 @@ Phases execute in numeric order: 12 → 13 → 14 → 15
 | 9. System Page Differentiation | v1.2 | 1/1 | Complete | 2026-03-01 |
 | 10. Landing Page | v1.2 | 1/1 | Complete | 2026-03-01 |
 | 11. Terminology and Display Polish | v1.2 | 1/1 | Complete | 2026-03-01 |
-| 12. Data Layer & Hybrid Builder Removal | v1.3 | 1/3 | In Progress|  |
+| 12. Data Layer & Hybrid Builder Removal | v1.3 | 2/3 | In Progress|  |
 | 13. System Layout Images & Creative Differentiation | v1.3 | 0/0 | Not started | - |
 | 14. UX Quality & Content Rewrite | v1.3 | 0/0 | Not started | - |
 | 15. Polish & GitHub Push | v1.3 | 0/0 | Not started | - |
