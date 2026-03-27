@@ -68,7 +68,7 @@
 Plans:
 - [x] 12-01-PLAN.md — Fix loader SECTION_HEADERS, rename miscellaneous to hybrid, parse Energy sheet
 - [x] 12-02-PLAN.md — Delete hybrid builder, remove all references, wire static hybrid equipment table and ungated scorecard
-- [ ] 12-03-PLAN.md — Wire Energy sheet data into power breakdown and turbine count charts
+- [x] 12-03-PLAN.md — Wire Energy sheet data into power breakdown and turbine count charts
 
 ### Phase 13: System Layout Images & Creative Differentiation
 **Goal**: Each system page features its architecture diagram prominently and the mechanical and electrical pages have visually distinct layouts that reflect each system's character

@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Systems Overhaul & UX Redesign
 status: executing
-stopped_at: Completed 12-02-PLAN.md
+stopped_at: Completed 12-03-PLAN.md
 last_updated: "2026-03-27T00:37:37.592Z"
 last_activity: 2026-03-27
 progress:
@@ -49,6 +49,7 @@ Progress: [░░░░░░░░░░] 0%
 | v1.3 Systems Overhaul | 12-15 | TBD | — |
 | Phase 12-data-layer-hybrid-builder-removal P01 | 18 | 2 tasks | 2 files |
 | Phase 12-data-layer-hybrid-builder-removal P02 | 5 | 2 tasks | 7 files |
+| Phase 12-data-layer-hybrid-builder-removal P03 | 25 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -60,6 +61,8 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 12-data-layer-hybrid-builder-removal]: load_data() now returns 7 keys including hybrid and energy; energy dict grouped by system with subsystems, total_shaft_power, total_turbine_input, selected_turbine_kw
 - [Phase 12-data-layer-hybrid-builder-removal]: Hybrid system rendered as static equipment table — identical code path to mechanical/electrical; scorecard always 3-column from BOM data without slot-fill gating
 - [Phase 12-data-layer-hybrid-builder-removal]: compute_chart_data signature simplified: hybrid_df parameter removed; reads data['hybrid'] directly from load_data() return value
+- [Phase 12-data-layer-hybrid-builder-removal]: Energy sheet subsystem names mapped to STAGE_COLORS keys via keyword matching rather than exact string lookup
+- [Phase 12-data-layer-hybrid-builder-removal]: Electrical turbine count uses fallback sum of subsystem turbine_input_kw when total_turbine_input=0 due to Total Electrical Demand label mismatch in loader
 
 ### Pending Todos
 
@@ -74,5 +77,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-27T00:37:37.589Z
-Stopped at: Completed 12-02-PLAN.md
+Stopped at: Completed 12-03-PLAN.md
 Resume file: None

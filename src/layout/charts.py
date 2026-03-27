@@ -15,7 +15,7 @@ build_land_chart(mech_land, elec_land, hybrid_land, visibility) -> go.Figure
 build_turbine_chart(mech_count, elec_count, hybrid_count, visibility) -> go.Figure
 build_energy_bar_chart(mech_energy, elec_energy, hybrid_energy, visibility) -> go.Figure
 make_chart_section() -> html.Div
-update_charts(years, battery_fraction, visibility, slots, tds_ppm, depth_m) -> tuple
+update_charts(years, battery_fraction, visibility, tds_ppm, depth_m) -> tuple
 toggle_legend(n_mech, n_elec, n_hybrid, visibility) -> dict
 update_badge_styles(visibility) -> tuple
 """
@@ -629,9 +629,8 @@ def update_charts(years, battery_fraction, visibility, tds_ppm, depth_m):
     """Master chart update callback.
 
     Fires whenever the time horizon slider, battery/tank slider, TDS slider,
-    depth slider, or legend visibility store changes.
-    Computes all chart data in one call and returns four updated figures plus
-    five live label strings.
+    depth slider, or legend visibility store changes. Computes all chart data
+    in one call and returns four updated figures plus five live label strings.
 
     Parameters
     ----------
