@@ -1,5 +1,24 @@
 # Milestones
 
+## v1.3 Systems Overhaul & UX Redesign (Shipped: 2026-03-27)
+
+**Delivered:** Rewrote the data layer for the hydraulic mechanical system and fixed hybrid preset, embedded system architecture diagrams, removed the hybrid builder, and overhauled UX — slider fixes, guidance banner, landing page rewrite, and mechanical content update.
+
+**Stats:** 3 phases, 8 plans | 11 Python files changed (+617/-825) | 1 day (2026-03-27)
+**Git range:** 2db69b0 → 94ed1fa
+
+**Key accomplishments:**
+1. Data layer overhaul — loader updated for renamed sections, hydraulic mechanical BOM, fixed hybrid preset, Energy sheet parsed for all three systems
+2. Hybrid builder removed — fully replaced with static preset display; all slot-based callbacks and UI deleted
+3. System layout PNG diagrams embedded on all three system pages with creative CSS differentiation (mechanical: left-bar accents; electrical: top/bottom-line accents)
+4. Slider UX fixes — mouseup updatemode, no direct-input boxes, battery endpoint labels, first-visit guidance banner
+5. Full content rewrite — landing page intro, system card descriptions, mechanical PROCESS_STAGES and EQUIPMENT_DESCRIPTIONS updated for hydraulic drive architecture
+
+**Requirements:** 16/20 v1.3 requirements satisfied (POLISH-01–04 deferred to next milestone)
+**Deferred:** POLISH-01–04 (sidebar link, heading hierarchy, error messages, print verify); GitHub push (user preference)
+
+---
+
 ## v1.2 Parameter Exploration & Presentation (Shipped: 2026-03-01)
 
 **Delivered:** Added interactive salinity/depth energy tradeoff sliders, visual system page differentiation, project landing section, and terminology/display polish across the dashboard.

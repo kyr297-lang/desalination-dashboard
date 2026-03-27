@@ -1,16 +1,13 @@
 # Wind-Powered Desalination Dashboard
 
-## Current Milestone: v1.3 Systems Overhaul & UX Redesign
+## Current State: v1.3 Shipped (2026-03-27)
 
-**Goal:** Reflect the redesigned hydraulic mechanical system and fixed hybrid preset, embed system diagrams, overhaul the UI/UX for clarity and system distinctiveness, and push the updated dashboard to GitHub.
+**Shipped:** Hydraulic mechanical system reflected end-to-end, hybrid builder removed, system diagrams embedded, UX polished with slider fixes, guidance banner, and full content rewrite.
 
-**Target features:**
-- Data layer: Updated data.xlsx with hydraulic mechanical components, fixed hybrid preset, new Energy sheet; fix loader crash (miscellaneous sheet removed)
-- Mechanical system: Full content overhaul — hydraulic components (HPU, manifold, motors, VTP, plunger pump), updated process stages, equipment descriptions, energy data
-- Hybrid system: Replace "build your own" builder with static preset display (remove hybrid_builder)
-- System layout images: Embed mechanical, electrical, and hybrid PNG diagrams on their respective pages
-- Landing page: Rewrite intro to clearly explain project purpose and what students are meant to explore
-- UI/UX overhaul: Interactive element clarity (slider labels, live feedback), loading spinners, creative layout differentiation between mechanical and electrical, better heading hierarchy, user-friendly error messages
+**Next milestone options:**
+- Polish pass: sidebar link, heading hierarchy, error messages, print/export verify (POLISH-01–04 deferred from v1.3)
+- GitHub push / Render redeploy
+- New features: NPV analysis, equipment comparison table, chart PNG export
 
 ## What This Is
 
@@ -111,4 +108,4 @@ Contributors: Amogh Herle, Sofia Ijazi, Kevin Ren, Kyler Sanders — Fall 2025/S
 | Internal data keys unchanged (energy_kw) | Only user-facing labels renamed to Power; minimizes regression risk | ✓ Good — safe refactor boundary |
 
 ---
-*Last updated: 2026-03-27 after Phase 13 (system layout images & creative differentiation)*
+*Last updated: 2026-03-27 — v1.3 shipped (phases 12–14 complete)*
