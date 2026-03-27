@@ -26,8 +26,9 @@ _SYSTEM_CARDS = [
         "key": "mechanical",
         "description": (
             "Click Explore to view cost, land area, and energy data for the "
-            "mechanical system. Uses wind-driven pumps to pressurize seawater "
-            "through reverse osmosis membranes — no electrical conversion losses."
+            "mechanical system. A wind turbine powers a hydraulic power unit (HPU) "
+            "that drives vertical turbine and plunger pumps through a manifold and "
+            "hydraulic motors — no electrical conversion losses."
         ),
     },
     {
@@ -43,9 +44,10 @@ _SYSTEM_CARDS = [
         "label": "Hybrid",
         "key": "hybrid",
         "description": (
-            "Click Explore to build a custom system. Select one piece of equipment "
-            "for each process stage to see its combined cost, land, and energy "
-            "performance compared with the two standard systems."
+            "Click Explore to view cost, land area, and energy data for the "
+            "hybrid system. A fixed preset configuration that combines a hydraulic "
+            "drivetrain for RO pressurization with battery-powered electrical "
+            "subsystems alongside the mechanical approach."
         ),
     },
 ]
@@ -111,11 +113,30 @@ def create_overview_layout() -> html.Div:
             dbc.CardBody(
                 [
                     html.P(
-                        "This dashboard was built as part of a Fall 2025\u2013Spring 2026 "
-                        "senior design class to compare wind-powered "
-                        "desalination system configurations. Start by clicking Explore "
-                        "on any system card below to compare costs, land use, and "
-                        "energy requirements.",
+                        "Wind-powered desalination uses wind energy to drive the "
+                        "desalination process — either mechanically through a hydraulic "
+                        "drivetrain or electrically via a generator and battery storage.",
+                        className="mb-2 small",
+                    ),
+                    html.P(
+                        "This dashboard was developed as part of a Fall 2025\u2013Spring 2026 "
+                        "senior design project. The design scenario is a coastal municipality "
+                        "of approximately 10,000 people requiring a reliable freshwater supply "
+                        "from seawater.",
+                        className="mb-2 small",
+                    ),
+                    html.P(
+                        "Three system configurations are compared: the mechanical system uses a "
+                        "hydraulic power unit (HPU), manifold, and hydraulic motors to drive "
+                        "pumps directly from wind energy. The electrical system converts wind to "
+                        "electricity with adjustable battery and tank storage. The hybrid system "
+                        "is a fixed preset configuration combining hydraulic and electrical "
+                        "approaches.",
+                        className="mb-2 small",
+                    ),
+                    html.P(
+                        "Click Explore on any system card below to compare costs, land area, "
+                        "and energy requirements across the three approaches.",
                         className="mb-2 small",
                     ),
                     html.P(

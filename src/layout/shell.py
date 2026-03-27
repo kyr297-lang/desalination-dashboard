@@ -85,6 +85,9 @@ def create_layout(data: dict) -> html.Div:
         # Active system store — None = landing overview, string = system key
         dcc.Store(id="active-system", data=None),
 
+        # Banner dismissed-state store — session-scoped first-visit guidance banner
+        dcc.Store(id="store-banner-dismissed", data={"dismissed": False}),
+
         # ── Top header bar ─────────────────────────────────────────────────
         dbc.Navbar(
             dbc.Container([

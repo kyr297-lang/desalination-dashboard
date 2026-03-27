@@ -386,6 +386,17 @@ def make_chart_section() -> html.Div:
             xs=12,
         )
 
+    # ── First-visit guidance banner ───────────────────────────────────────────
+    banner = dbc.Alert(
+        "Use the sliders below to adjust salinity, depth, and storage mix "
+        "\u2014 charts update on mouse release. Drag any slider to dismiss this tip.",
+        id="banner-guidance",
+        color="info",
+        is_open=True,
+        dismissable=False,
+        className="small no-print",
+    )
+
     # ── Control panel ─────────────────────────────────────────────────────────
     control_panel = dbc.Card(
         dbc.CardBody([
@@ -409,6 +420,7 @@ def make_chart_section() -> html.Div:
                             marks={1: "1yr", 25: "25yr", 50: "50yr"},
                             tooltip={"always_visible": True, "placement": "bottom"},
                             updatemode="mouseup",
+                            allow_direct_input=False,
                         ),
                         html.Span(
                             id="label-years",
@@ -434,9 +446,10 @@ def make_chart_section() -> html.Div:
                             max=1,
                             step=0.001,
                             value=0.5,
-                            marks={},
-                            tooltip={"always_visible": False},
+                            marks={0: "100% Tank", 0.5: "50/50", 1: "100% Battery"},
+                            tooltip={"always_visible": True, "placement": "bottom"},
                             updatemode="mouseup",
+                            allow_direct_input=False,
                         ),
                         html.Span(
                             id="label-battery-ratio",
@@ -471,7 +484,8 @@ def make_chart_section() -> html.Div:
                             value=950,
                             marks={0: "0", 10000: "10k", 20000: "20k", 35000: "35k"},
                             tooltip={"always_visible": True, "placement": "bottom"},
-                            updatemode="drag",
+                            updatemode="mouseup",
+                            allow_direct_input=False,
                         ),
                         html.Span(
                             id="label-tds",
@@ -499,7 +513,8 @@ def make_chart_section() -> html.Div:
                             value=950,
                             marks={0: "0", 950: "950", 1900: "1900"},
                             tooltip={"always_visible": True, "placement": "bottom"},
-                            updatemode="drag",
+                            updatemode="mouseup",
+                            allow_direct_input=False,
                         ),
                         html.Span(
                             id="label-depth",
@@ -598,10 +613,13 @@ def make_chart_section() -> html.Div:
     return html.Div([
         html.H4("System Comparison", className="mt-4 mb-3"),
         legend_store,
+        banner,
         control_panel,
         legend_row,
-        row1,
-        row2,
+        dcc.Loading(
+            children=[row1, row2],
+            type="default",
+        ),
     ])
 
 
@@ -779,3 +797,41 @@ def update_badge_styles(visibility):
         styles.append(style)
 
     return styles[0], styles[1], styles[2]
+
+
+@callback(
+    Output("store-banner-dismissed", "data"),
+    Output("banner-guidance", "is_open"),
+    Input("slider-time-horizon", "value"),
+    Input("slider-battery", "value"),
+    Input("slider-tds", "value"),
+    Input("slider-depth", "value"),
+    State("store-banner-dismissed", "data"),
+    prevent_initial_call=True,
+)
+def dismiss_banner(_th, _bat, _tds, _depth, store):
+    """Dismiss the first-visit guidance banner on any slider interaction.
+
+    Fires when any of the four sliders change value (drag or click). Sets the
+    store flag to dismissed and hides the banner. prevent_initial_call=True
+    ensures the banner is not dismissed on page load when slider defaults fire.
+
+    Parameters
+    ----------
+    _th : float
+        Time horizon slider value (unused; fires callback).
+    _bat : float
+        Battery slider value (unused; fires callback).
+    _tds : float
+        TDS slider value (unused; fires callback).
+    _depth : float
+        Depth slider value (unused; fires callback).
+    store : dict
+        Current banner dismissed-state store.
+
+    Returns
+    -------
+    tuple[dict, bool]
+        Updated store with dismissed=True, and is_open=False to hide banner.
+    """
+    return {"dismissed": True}, False
