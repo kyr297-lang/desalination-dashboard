@@ -403,9 +403,16 @@ def make_equipment_section(
             for idx, row in items_in_stage
         ]
 
+        # System-specific stage heading accent (Phase 13 VISUAL-04)
+        stage_class = "mt-4 mb-2"
+        if system == "mechanical":
+            stage_class += " stage-heading-mechanical"
+        elif system == "electrical":
+            stage_class += " stage-heading-electrical"
+
         sections.append(
             html.Div([
-                html.H5(stage, className="mt-4 mb-2"),
+                html.H5(stage, className=stage_class),
                 dbc.Accordion(
                     accordion_items,
                     always_open=False,
