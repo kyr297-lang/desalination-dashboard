@@ -12,7 +12,7 @@
 ### System Content
 
 - [x] **CONTENT-01**: Landing page intro rewritten — clearly explains what wind-powered desalination is, what the three systems represent, and what students are meant to explore and compare; no references to AI or automated tools
-- [ ] **CONTENT-02**: Mechanical system process stages and equipment descriptions updated — reflect hydraulic drive architecture (HPU → manifold → hydraulic motors driving pumps)
+- [x] **CONTENT-02**: Mechanical system process stages and equipment descriptions updated — reflect hydraulic drive architecture (HPU → manifold → hydraulic motors driving pumps)
 - [x] **CONTENT-03**: Hybrid builder replaced with static preset display — hybrid system shown as a fixed configuration matching the preset BOM; builder dropdowns and slot selection removed entirely
 
 ### Visual Design
@@ -24,11 +24,11 @@
 
 ### UX Quality
 
-- [ ] **UX-01**: All chart outputs wrapped in dcc.Loading — no blank white boxes during callback updates; spinner appears during any chart recalculation
-- [ ] **UX-02**: Battery/tank slider has clear endpoint labels — marks show "100% Tank", "50/50", "100% Battery"; tooltip always visible during drag
-- [ ] **UX-03**: TDS and depth sliders use mouseup updatemode — callbacks fire on release only, preventing per-pixel callback spam
-- [ ] **UX-04**: allow_direct_input=False set on all four sliders — prevents Dash 4.0 text input boxes from appearing on sliders
-- [ ] **UX-05**: First-visit dismissable callout shown — a banner above the control panel guides first-time users on how to use the sliders; dismisses after first interaction and does not reappear
+- [x] **UX-01**: All chart outputs wrapped in dcc.Loading — no blank white boxes during callback updates; spinner appears during any chart recalculation
+- [x] **UX-02**: Battery/tank slider has clear endpoint labels — marks show "100% Tank", "50/50", "100% Battery"; tooltip always visible during drag
+- [x] **UX-03**: TDS and depth sliders use mouseup updatemode — callbacks fire on release only, preventing per-pixel callback spam
+- [x] **UX-04**: allow_direct_input=False set on all four sliders — prevents Dash 4.0 text input boxes from appearing on sliders
+- [x] **UX-05**: First-visit dismissable callout shown — a banner above the control panel guides first-time users on how to use the sliders; dismisses after first interaction and does not reappear
 
 ### Polish
 
@@ -63,17 +63,17 @@
 | DATA-03 | Phase 12 | Complete |
 | DATA-04 | Phase 12 | Complete |
 | CONTENT-01 | Phase 14 | Complete |
-| CONTENT-02 | Phase 14 | Pending |
+| CONTENT-02 | Phase 14 | Complete |
 | CONTENT-03 | Phase 12 | Complete |
 | VISUAL-01 | Phase 13 | Complete |
 | VISUAL-02 | Phase 13 | Complete |
 | VISUAL-03 | Phase 13 | Complete |
 | VISUAL-04 | Phase 13 | Complete |
-| UX-01 | Phase 14 | Pending |
-| UX-02 | Phase 14 | Pending |
-| UX-03 | Phase 14 | Pending |
-| UX-04 | Phase 14 | Pending |
-| UX-05 | Phase 14 | Pending |
+| UX-01 | Phase 14 | Complete |
+| UX-02 | Phase 14 | Complete |
+| UX-03 | Phase 14 | Complete |
+| UX-04 | Phase 14 | Complete |
+| UX-05 | Phase 14 | Complete |
 | POLISH-01 | Phase 15 | Pending |
 | POLISH-02 | Phase 15 | Pending |
 | POLISH-03 | Phase 15 | Pending |

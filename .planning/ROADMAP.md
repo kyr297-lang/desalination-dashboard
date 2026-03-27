@@ -48,7 +48,7 @@
 
 - [x] **Phase 12: Data Layer & Hybrid Builder Removal** - Fix loader crash, update BOMs for hydraulic mechanical and fixed hybrid, parse Energy sheet, remove hybrid builder entirely (completed 2026-03-27)
 - [x] **Phase 13: System Layout Images & Creative Differentiation** - Embed PNG diagrams on all three system pages and create distinct layout identities for mechanical vs electrical (completed 2026-03-27)
-- [ ] **Phase 14: UX Quality & Content Rewrite** - Slider fixes, loading spinners, first-visit guidance, landing page rewrite, and mechanical content update
+- [x] **Phase 14: UX Quality & Content Rewrite** - Slider fixes, loading spinners, first-visit guidance, landing page rewrite, and mechanical content update (completed 2026-03-27)
 - [ ] **Phase 15: Polish & GitHub Push** - Fix broken links, heading hierarchy, error messages, verify print export, push to GitHub
 
 ## Phase Details
@@ -97,13 +97,13 @@ Plans:
   5. First-time visitors see a dismissable guidance banner explaining how to use the sliders; it disappears after interaction and does not reappear
   6. Landing page intro clearly explains wind-powered desalination, the three systems, and what students should explore — with no references to AI or automated tools
   7. Mechanical system descriptions and process stages reflect the hydraulic drive architecture (HPU, manifold, hydraulic motors driving pumps)
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 **UI hint**: yes
 
 Plans:
 - [x] 14-01-PLAN.md — Slider fixes (mouseup, no direct input, battery labels), dcc.Loading spinner, first-visit guidance banner
 - [x] 14-02-PLAN.md — Landing page intro rewrite and system card description updates
-- [ ] 14-03-PLAN.md — Mechanical PROCESS_STAGES and EQUIPMENT_DESCRIPTIONS update, processing.py fallback fix
+- [x] 14-03-PLAN.md — Mechanical PROCESS_STAGES and EQUIPMENT_DESCRIPTIONS update, processing.py fallback fix
 
 ### Phase 15: Polish & GitHub Push
 **Goal**: All rough edges resolved, print export verified after the overhaul, and the updated dashboard is pushed to GitHub
@@ -145,5 +145,5 @@ Phases execute in numeric order: 12 → 13 → 14 → 15
 | 11. Terminology and Display Polish | v1.2 | 1/1 | Complete | 2026-03-01 |
 | 12. Data Layer & Hybrid Builder Removal | v1.3 | 3/3 | Complete    | 2026-03-27 |
 | 13. System Layout Images & Creative Differentiation | v1.3 | 2/2 | Complete    | 2026-03-27 |
-| 14. UX Quality & Content Rewrite | v1.3 | 2/3 | In Progress|  |
+| 14. UX Quality & Content Rewrite | v1.3 | 3/3 | Complete   | 2026-03-27 |
 | 15. Polish & GitHub Push | v1.3 | 0/0 | Not started | - |

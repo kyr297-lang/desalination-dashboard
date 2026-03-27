@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Systems Overhaul & UX Redesign
 status: verifying
-stopped_at: Completed 14-02-PLAN.md
-last_updated: "2026-03-27T06:29:43.138Z"
+stopped_at: Completed 14-03-PLAN.md
+last_updated: "2026-03-27T06:30:02.864Z"
 last_activity: 2026-03-27
 progress:
   total_phases: 4
@@ -53,6 +53,8 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 13-system-layout-images-creative-differentiation P01 | 10 minutes | 2 tasks | 5 files |
 | Phase 13-system-layout-images-creative-differentiation P02 | 5 | 2 tasks | 1 files |
 | Phase 14-ux-quality-content-rewrite P02 | 1 | 1 tasks | 1 files |
+| Phase 14-ux-quality-content-rewrite P03 | 10 | 1 tasks | 2 files |
+| Phase 14-ux-quality-content-rewrite P01 | 5 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -73,6 +75,11 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 14-ux-quality-content-rewrite]: Intro card body expanded to 4 paragraphs per D-14: wind desalination concept, senior design context (10,000-person municipality), three-system technical overview, exploration prompt
 - [Phase 14-ux-quality-content-rewrite]: Mechanical card removes wind-driven pumps, describes HPU-manifold-hydraulic motors architecture per D-16
 - [Phase 14-ux-quality-content-rewrite]: Hybrid card removes builder language, describes fixed preset combining hydraulic and electrical approaches per D-15
+- [Phase 14-ux-quality-content-rewrite]: Plunger Pump PROCESS_STAGES key uses en-dash (U+2013) to match exact data.xlsx byte sequence from row 24
+- [Phase 14-ux-quality-content-rewrite]: High Pressure Pump key has no closing paren -- matches data.xlsx row 25 exactly
+- [Phase 14-ux-quality-content-rewrite]: Gearbox PROCESS_STAGES key has double space 'Winergy  PEAB' differing from hybrid single-space variant
+- [Phase 14-ux-quality-content-rewrite]: Banner store added to shell.py to satisfy suppress_callback_exceptions=True — store must exist in DOM before callback references it
+- [Phase 14-ux-quality-content-rewrite]: prevent_initial_call=True on dismiss_banner mandatory — prevents page-load default slider values from immediately dismissing the first-visit banner
 
 ### Pending Todos
 
@@ -86,6 +93,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-27T06:29:19.106Z
-Stopped at: Completed 14-02-PLAN.md
+Last session: 2026-03-27T06:30:02.861Z
+Stopped at: Completed 14-03-PLAN.md
 Resume file: None
