@@ -25,7 +25,7 @@ from dash import html, dcc, callback, Input, Output, State, ctx
 import dash_bootstrap_components as dbc
 
 from src.config import SYSTEM_COLORS, STAGE_COLORS
-from src.data.processing import compute_chart_data, compute_hybrid_df, interpolate_battery_cost, battery_ratio_label, fmt_cost
+from src.data.processing import compute_chart_data, interpolate_battery_cost, battery_ratio_label, fmt_cost
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -622,15 +622,14 @@ def make_chart_section() -> html.Div:
     Input("slider-time-horizon", "value"),
     Input("slider-battery", "value"),
     Input("store-legend-visibility", "data"),
-    Input("store-hybrid-slots", "data"),
     Input("slider-tds", "value"),
     Input("slider-depth", "value"),
 )
-def update_charts(years, battery_fraction, visibility, slots, tds_ppm, depth_m):
+def update_charts(years, battery_fraction, visibility, tds_ppm, depth_m):
     """Master chart update callback.
 
     Fires whenever the time horizon slider, battery/tank slider, TDS slider,
-    depth slider, legend visibility store, or hybrid slot store changes.
+    depth slider, or legend visibility store changes.
     Computes all chart data in one call and returns four updated figures plus
     five live label strings.
 
@@ -642,10 +641,6 @@ def update_charts(years, battery_fraction, visibility, slots, tds_ppm, depth_m):
         Battery/tank split from the battery slider (0.0-1.0).
     visibility : dict
         Legend visibility store {"mechanical": bool, "electrical": bool, "hybrid": bool}.
-    slots : dict or None
-        Hybrid slot store mapping stage names to selected equipment names.
-        When all 5 slots are filled, hybrid data is computed and passed to
-        compute_chart_data. When any slot is None, hybrid uses placeholder zeros.
     tds_ppm : float
         Source water salinity in PPM from the TDS slider (0-35000, default 950).
     depth_m : float
@@ -662,12 +657,7 @@ def update_charts(years, battery_fraction, visibility, slots, tds_ppm, depth_m):
         empty = go.Figure()
         return empty, empty, empty, empty, "", "", "", "", ""
 
-    # Build hybrid_df if gate is open (all 5 slots filled)
-    hybrid_df = None
-    if slots is not None and all(v is not None for v in slots.values()):
-        hybrid_df = compute_hybrid_df(slots, _data)
-
-    cd = compute_chart_data(_data, battery_fraction, years, hybrid_df=hybrid_df, tds_ppm=tds_ppm, depth_m=depth_m)
+    cd = compute_chart_data(_data, battery_fraction, years, tds_ppm=tds_ppm, depth_m=depth_m)
 
     cost_fig = build_cost_chart(
         years,

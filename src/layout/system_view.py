@@ -7,6 +7,11 @@ Exports
 -------
 create_system_view_layout(active_system, data)
     Returns the full system view component tree for the given active system.
+
+All three systems (mechanical, electrical, hybrid) render identically:
+- Static equipment table grouped by process stage
+- 3-column scorecard from BOM data immediately on page load
+- No gate overlay, slot dropdowns, or slot counter
 """
 
 from dash import html
@@ -16,7 +21,7 @@ from src.config import SYSTEM_COLORS
 from src.layout.scorecard import make_scorecard_table
 from src.layout.equipment_grid import make_equipment_section
 from src.layout.charts import make_chart_section
-from src.layout.hybrid_builder import make_hybrid_builder
+from src.data.processing import compute_scorecard_metrics, generate_comparison_text
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -40,9 +45,9 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
     Assembles:
     1. "Back to Overview" breadcrumb link
     2. Tab bar with Mechanical / Electrical / Hybrid tabs
-    3. Scorecard container (dynamic — updated via callback when hybrid slot store changes)
-    4. Equipment section for the active system
-    5. Chart section (with gate overlay when viewing hybrid tab)
+    3. Scorecard container — always 3-column from BOM data, no gating
+    4. Equipment section for the active system (static, same pattern for all systems)
+    5. Chart section (no gate overlay)
 
     The tab bar is rendered as a static component with active_tab set each time
     the layout is re-rendered — this avoids the circular callback dependency
@@ -52,9 +57,9 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
     Active tab label uses borderBottom highlight instead of backgroundColor
     (avoids a known Bootstrap + Dash tab styling bug).
 
-    For the Hybrid tab: the hybrid builder pipeline is rendered above the chart
-    section. The chart section is wrapped with a gate overlay container that
-    shows a semi-transparent message until all 5 slots are filled.
+    All three systems render equipment identically via make_equipment_section.
+    The hybrid system is a pre-defined configuration loaded from data.xlsx —
+    not user-assembled.
 
     Parameters
     ----------
@@ -103,25 +108,32 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         active_tab=active_system,
     )
 
-    # ── 3. Hybrid builder (hybrid tab only) ───────────────────────────────────
-    hybrid_builder_section = None
-    if active_system == "hybrid":
-        hybrid_builder_section = make_hybrid_builder(data)
-
-    # ── 4. Scorecard container (dynamic via callback) ─────────────────────────
-    # The initial render shows the 2-system scorecard. The scorecard callback
-    # updates scorecard-container when store-hybrid-slots changes.
-    # The export button is a sibling ABOVE scorecard-container inside the
-    # CardBody so it is NOT destroyed when the scorecard callback re-renders
-    # the scorecard-container children.
-    initial_scorecard = make_scorecard_table(data["mechanical"], data["electrical"])
+    # ── 3. Scorecard — always 3-column from BOM data ──────────────────────────
+    # All three DataFrames are available from load_data(); no gating required.
+    initial_scorecard = make_scorecard_table(
+        data["mechanical"], data["electrical"], data.get("hybrid")
+    )
     scorecard_container = html.Div(
         initial_scorecard,
         id="scorecard-container",
     )
 
-    # ── 5. Comparison text (populated by callback when gate is open) ──────────
-    comparison_text_div = html.Div(id="comparison-text")
+    # ── 4. Comparison text — generated from BOM metrics at render time ────────
+    metrics = compute_scorecard_metrics(
+        data["mechanical"], data["electrical"], data.get("hybrid")
+    )
+    if "hybrid" in metrics:
+        comparison_str = generate_comparison_text(
+            metrics["hybrid"], metrics["mechanical"], metrics["electrical"]
+        )
+        comparison_content = html.P(
+            comparison_str,
+            className="text-muted small mt-2",
+            style={"fontStyle": "italic"},
+        )
+    else:
+        comparison_content = None
+    comparison_text_div = html.Div(comparison_content, id="comparison-text")
 
     # ── Export / Print button (hidden in print via no-print class) ────────────
     export_btn = dbc.Button(
@@ -133,62 +145,12 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         className="mb-2 no-print",
     )
 
-    # ── 6. Equipment section ──────────────────────────────────────────────────
-    if active_system == "hybrid":
-        # Hybrid equipment is callback-driven (updates when slots change)
-        equipment = html.Div(id="hybrid-equipment-container")
-    else:
-        system_df = data.get(active_system, data.get("mechanical"))
-        equipment = make_equipment_section(system_df, active_system, data)
+    # ── 5. Equipment section — same pattern for all three systems ─────────────
+    system_df = data.get(active_system, data.get("mechanical"))
+    equipment = make_equipment_section(system_df, active_system, data)
 
-    # ── 7. Chart section (with gate overlay for hybrid tab) ───────────────────
-    chart_section = make_chart_section()
-
-    if active_system == "hybrid":
-        # Gate overlay: shown when slots are incomplete; hidden via callback
-        gate_overlay = html.Div(
-            html.Div(
-                [
-                    html.Span(
-                        "\u26a0",  # warning symbol
-                        style={"fontSize": "2rem", "marginBottom": "0.5rem"},
-                    ),
-                    html.P(
-                        "Fill all 5 slots to see hybrid results",
-                        className="fw-bold mb-1",
-                        style={"fontSize": "1.1rem"},
-                    ),
-                    html.P(
-                        "Use the dropdowns above to select equipment for each stage.",
-                        className="text-muted small",
-                    ),
-                ],
-                style={
-                    "textAlign": "center",
-                    "padding": "2rem",
-                },
-            ),
-            id="hybrid-gate-overlay",
-            style={
-                "display": "flex",
-                "position": "absolute",
-                "top": "0",
-                "left": "0",
-                "right": "0",
-                "bottom": "0",
-                "backgroundColor": "rgba(255,255,255,0.85)",
-                "zIndex": "10",
-                "alignItems": "center",
-                "justifyContent": "center",
-                "borderRadius": "4px",
-            },
-        )
-        chart_wrapper = html.Div(
-            [gate_overlay, chart_section],
-            style={"position": "relative"},
-        )
-    else:
-        chart_wrapper = chart_section
+    # ── 6. Chart section (no gate overlay) ───────────────────────────────────
+    chart_wrapper = make_chart_section()
 
     # ── Assemble layout ───────────────────────────────────────────────────────
     # Scorecard section wrapped in a Card. The export button is inside the
@@ -230,16 +192,8 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         breadcrumb,
         tab_bar,
         system_badge,
+        html.Div(main_content_children, className="mt-3"),
+        chart_wrapper,
     ]
-
-    if hybrid_builder_section is not None:
-        top_level_children.append(
-            html.Div(hybrid_builder_section, className="mt-3")
-        )
-
-    top_level_children.append(
-        html.Div(main_content_children, className="mt-3")
-    )
-    top_level_children.append(chart_wrapper)
 
     return html.Div(top_level_children)
