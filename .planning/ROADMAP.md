@@ -47,7 +47,7 @@
 - Decimal phases (12.1, 12.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 12: Data Layer & Hybrid Builder Removal** - Fix loader crash, update BOMs for hydraulic mechanical and fixed hybrid, parse Energy sheet, remove hybrid builder entirely (completed 2026-03-27)
-- [ ] **Phase 13: System Layout Images & Creative Differentiation** - Embed PNG diagrams on all three system pages and create distinct layout identities for mechanical vs electrical
+- [x] **Phase 13: System Layout Images & Creative Differentiation** - Embed PNG diagrams on all three system pages and create distinct layout identities for mechanical vs electrical (completed 2026-03-27)
 - [ ] **Phase 14: UX Quality & Content Rewrite** - Slider fixes, loading spinners, first-visit guidance, landing page rewrite, and mechanical content update
 - [ ] **Phase 15: Polish & GitHub Push** - Fix broken links, heading hierarchy, error messages, verify print export, push to GitHub
 
@@ -79,11 +79,11 @@ Plans:
   2. Electrical system page displays the electrical layout PNG as a prominent diagram
   3. Hybrid system page displays the hybrid layout PNG as a prominent diagram
   4. Mechanical and electrical pages are visually distinguishable beyond just color — different section emphasis, component presentation, or information hierarchy reflects each system's engineering character
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 13-01-PLAN.md — Copy PNGs to assets, insert diagram cards before scorecard, add differentiation CSS classes
-- [ ] 13-02-PLAN.md — Apply stage heading accents to equipment sections, visual verification checkpoint
+- [x] 13-02-PLAN.md — Apply stage heading accents to equipment sections, visual verification checkpoint
 
 ### Phase 14: UX Quality & Content Rewrite
 **Goal**: Sliders behave correctly without flicker, charts show loading feedback, first-time users get guidance, and all written content reflects the current system designs
@@ -139,6 +139,6 @@ Phases execute in numeric order: 12 → 13 → 14 → 15
 | 10. Landing Page | v1.2 | 1/1 | Complete | 2026-03-01 |
 | 11. Terminology and Display Polish | v1.2 | 1/1 | Complete | 2026-03-01 |
 | 12. Data Layer & Hybrid Builder Removal | v1.3 | 3/3 | Complete    | 2026-03-27 |
-| 13. System Layout Images & Creative Differentiation | v1.3 | 1/2 | In Progress|  |
+| 13. System Layout Images & Creative Differentiation | v1.3 | 2/2 | Complete   | 2026-03-27 |
 | 14. UX Quality & Content Rewrite | v1.3 | 0/0 | Not started | - |
 | 15. Polish & GitHub Push | v1.3 | 0/0 | Not started | - |
