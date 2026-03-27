@@ -17,10 +17,10 @@
 
 ### Visual Design
 
-- [ ] **VISUAL-01**: Mechanical system layout image displayed on mechanical page — PNG served from assets/, shown as a prominent diagram above or alongside the equipment section
-- [ ] **VISUAL-02**: Electrical system layout image displayed on electrical page — PNG served from assets/, shown as a prominent diagram
-- [ ] **VISUAL-03**: Hybrid system layout image displayed on hybrid page — PNG served from assets/
-- [ ] **VISUAL-04**: Mechanical and electrical pages have creatively distinct layouts — not just different colors; different section emphasis, component presentation, or information hierarchy that reflects each system's character
+- [x] **VISUAL-01**: Mechanical system layout image displayed on mechanical page — PNG served from assets/, shown as a prominent diagram above or alongside the equipment section
+- [x] **VISUAL-02**: Electrical system layout image displayed on electrical page — PNG served from assets/, shown as a prominent diagram
+- [x] **VISUAL-03**: Hybrid system layout image displayed on hybrid page — PNG served from assets/
+- [x] **VISUAL-04**: Mechanical and electrical pages have creatively distinct layouts — not just different colors; different section emphasis, component presentation, or information hierarchy that reflects each system's character
 
 ### UX Quality
 
@@ -65,10 +65,10 @@
 | CONTENT-01 | Phase 14 | Pending |
 | CONTENT-02 | Phase 14 | Pending |
 | CONTENT-03 | Phase 12 | Complete |
-| VISUAL-01 | Phase 13 | Pending |
-| VISUAL-02 | Phase 13 | Pending |
-| VISUAL-03 | Phase 13 | Pending |
-| VISUAL-04 | Phase 13 | Pending |
+| VISUAL-01 | Phase 13 | Complete |
+| VISUAL-02 | Phase 13 | Complete |
+| VISUAL-03 | Phase 13 | Complete |
+| VISUAL-04 | Phase 13 | Complete |
 | UX-01 | Phase 14 | Pending |
 | UX-02 | Phase 14 | Pending |
 | UX-03 | Phase 14 | Pending |

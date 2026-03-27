@@ -79,10 +79,10 @@ Plans:
   2. Electrical system page displays the electrical layout PNG as a prominent diagram
   3. Hybrid system page displays the hybrid layout PNG as a prominent diagram
   4. Mechanical and electrical pages are visually distinguishable beyond just color — different section emphasis, component presentation, or information hierarchy reflects each system's engineering character
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 13-01-PLAN.md — Copy PNGs to assets, insert diagram cards before scorecard, add differentiation CSS classes
+- [x] 13-01-PLAN.md — Copy PNGs to assets, insert diagram cards before scorecard, add differentiation CSS classes
 - [ ] 13-02-PLAN.md — Apply stage heading accents to equipment sections, visual verification checkpoint
 
 ### Phase 14: UX Quality & Content Rewrite
@@ -139,6 +139,6 @@ Phases execute in numeric order: 12 → 13 → 14 → 15
 | 10. Landing Page | v1.2 | 1/1 | Complete | 2026-03-01 |
 | 11. Terminology and Display Polish | v1.2 | 1/1 | Complete | 2026-03-01 |
 | 12. Data Layer & Hybrid Builder Removal | v1.3 | 3/3 | Complete    | 2026-03-27 |
-| 13. System Layout Images & Creative Differentiation | v1.3 | 0/2 | Not started | - |
+| 13. System Layout Images & Creative Differentiation | v1.3 | 1/2 | In Progress|  |
 | 14. UX Quality & Content Rewrite | v1.3 | 0/0 | Not started | - |
 | 15. Polish & GitHub Push | v1.3 | 0/0 | Not started | - |
