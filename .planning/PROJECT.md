@@ -50,6 +50,8 @@ Students can visually compare mechanical, electrical, and custom hybrid desalina
 - ✓ Hydraulic mechanical BOM with updated components (HPU, manifold, motors, VTP, plunger pump) — v1.3 (Phase 12)
 - ✓ Fixed hybrid preset display replacing "build your own" builder — v1.3 (Phase 12)
 - ✓ Energy sheet data wired into power breakdown and turbine count charts — v1.3 (Phase 12)
+- ✓ System layout PNG diagrams embedded on each system page (before scorecard) — v1.3 (Phase 13)
+- ✓ Creative CSS differentiation: mechanical left-bar accents, electrical top/bottom-line accents, hybrid neutral — v1.3 (Phase 13)
 - ✓ Power breakdown chart changed from pie to grouped bar chart — v1.2
 - ✓ Consistent 2 significant figures for numeric values throughout — v1.2
 
@@ -109,4 +111,4 @@ Contributors: Amogh Herle, Sofia Ijazi, Kevin Ren, Kyler Sanders — Fall 2025/S
 | Internal data keys unchanged (energy_kw) | Only user-facing labels renamed to Power; minimizes regression risk | ✓ Good — safe refactor boundary |
 
 ---
-*Last updated: 2026-03-27 after Phase 12 (data layer & hybrid builder removal)*
+*Last updated: 2026-03-27 after Phase 13 (system layout images & creative differentiation)*
