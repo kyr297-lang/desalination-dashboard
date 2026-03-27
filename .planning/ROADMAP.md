@@ -46,7 +46,7 @@
 - Integer phases (12, 13, 14, 15): Planned milestone work
 - Decimal phases (12.1, 12.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 12: Data Layer & Hybrid Builder Removal** - Fix loader crash, update BOMs for hydraulic mechanical and fixed hybrid, parse Energy sheet, remove hybrid builder entirely
+- [x] **Phase 12: Data Layer & Hybrid Builder Removal** - Fix loader crash, update BOMs for hydraulic mechanical and fixed hybrid, parse Energy sheet, remove hybrid builder entirely (completed 2026-03-27)
 - [ ] **Phase 13: System Layout Images & Creative Differentiation** - Embed PNG diagrams on all three system pages and create distinct layout identities for mechanical vs electrical
 - [ ] **Phase 14: UX Quality & Content Rewrite** - Slider fixes, loading spinners, first-visit guidance, landing page rewrite, and mechanical content update
 - [ ] **Phase 15: Polish & GitHub Push** - Fix broken links, heading hierarchy, error messages, verify print export, push to GitHub
@@ -63,7 +63,7 @@
   3. Hybrid page displays a fixed preset configuration — no builder dropdowns, no slot selection UI, no "build your own" interaction
   4. Energy/power data from the Energy sheet appears correctly in the dashboard for all three systems
   5. Scorecard renders all three system columns on initial page load without requiring any user interaction
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 12-01-PLAN.md — Fix loader SECTION_HEADERS, rename miscellaneous to hybrid, parse Energy sheet
@@ -135,7 +135,7 @@ Phases execute in numeric order: 12 → 13 → 14 → 15
 | 9. System Page Differentiation | v1.2 | 1/1 | Complete | 2026-03-01 |
 | 10. Landing Page | v1.2 | 1/1 | Complete | 2026-03-01 |
 | 11. Terminology and Display Polish | v1.2 | 1/1 | Complete | 2026-03-01 |
-| 12. Data Layer & Hybrid Builder Removal | v1.3 | 2/3 | In Progress|  |
+| 12. Data Layer & Hybrid Builder Removal | v1.3 | 2/3 | Complete    | 2026-03-27 |
 | 13. System Layout Images & Creative Differentiation | v1.3 | 0/0 | Not started | - |
 | 14. UX Quality & Content Rewrite | v1.3 | 0/0 | Not started | - |
 | 15. Polish & GitHub Push | v1.3 | 0/0 | Not started | - |
