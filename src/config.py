@@ -45,23 +45,29 @@ RAG_COLORS = {
 PROCESS_STAGES = {
     "mechanical": {
         "Water Extraction": [
-            "250kW aeromotor turbine ",
-            "Submersible pump ",
+            "1 MW Aeromotor Turbine",
             "Wind turbine rotor lock",
+            "Gearbox (Winergy  PEAB series)",
+            "Variable-Displacement Hydraulic Power Unit (HPU)",
+            "300 Bar Hydraulic Manifold (Custom Ductile Iron Block)",
+            "Hydraulic Motor (225 kW rating) (Haaglund CA 50)",
+            "Hydraulic Motor (225 kW rating) (Haaglund CA 70)",
+            "Vertical Turbine Pump (PSI Prolew Flowserve VTP)",
         ],
         "Pre-Treatment": [
-            "Pipes",
             "Gate valve",
+            "Pipes (total)",
         ],
         "Desalination": [
-            "2 RO membranes in parallel",
-            "Gear and Booster Pump",
+            "Plunger Pump (Triplex Plunger Pump K 13000 \u2013 3G)",
+            "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)",
+            "Reverse osmosis train",
         ],
         "Post-Treatment": [
             "Calcite bed contactors",
         ],
         "Brine Disposal": [
-            "Extra storage tank",
+            "Extra storage tank (100,000 gallons)",
         ],
     },
     "electrical": {
@@ -125,51 +131,59 @@ PROCESS_STAGES = {
 # Audience: engineering students. Keys match column B strings exactly.
 EQUIPMENT_DESCRIPTIONS = {
     # ── Mechanical system ──────────────────────────────────────────────────────
-    "250kW aeromotor turbine ": (
-        "A large wind-driven turbine rated at 250 kW that provides mechanical "
-        "energy to drive pumps and pressurize water for reverse osmosis. "
-        "It directly couples wind energy to the desalination process without "
-        "converting to electricity."
-    ),
-    "2 RO membranes in parallel": (
-        "Two reverse osmosis membrane modules connected in parallel to increase "
-        "throughput while maintaining operating pressure. Semi-permeable membranes "
-        "reject dissolved salts as pressurized feedwater passes through."
-    ),
-    "Pipes": (
-        "Network of pressurized piping that routes water between process stages "
-        "including from the extraction point through pre-treatment, the RO unit, "
-        "and post-treatment to the product water storage."
-    ),
-    "Submersible pump ": (
-        "An electrically driven pump installed below the water surface in the "
-        "source well or intake structure to lift raw water to the treatment "
-        "system at the required flow rate."
-    ),
     "Wind turbine rotor lock": (
         "A mechanical brake and locking mechanism that immobilizes the wind "
         "turbine rotor for safe maintenance, high-wind shutdown, or emergency "
         "stop conditions."
-    ),
-    "Extra storage tank": (
-        "A buffer tank that stores treated product water or brine concentrate, "
-        "decoupling production rate fluctuations from demand and providing "
-        "capacity for brine disposal scheduling."
     ),
     "Gate valve": (
         "A full-bore isolation valve used to start, stop, or throttle flow "
         "within the piping system. Gate valves provide low pressure drop when "
         "fully open and are standard in water treatment infrastructure."
     ),
-    "Gear and Booster Pump": (
-        "A gear pump or centrifugal booster pump that raises feedwater pressure "
-        "to the level required for effective reverse osmosis membrane operation, "
-        "compensating for system head losses."
-    ),
     "Calcite bed contactors": (
         "A post-treatment vessel packed with calcite (calcium carbonate) media "
         "that remineralizes RO permeate by dissolving into the low-TDS product "
         "water, raising pH and hardness to potable standards."
+    ),
+    "Gearbox (Winergy  PEAB series)": (
+        "A multi-stage planetary gearbox from the Winergy PEAB series that steps "
+        "up turbine shaft speed to the operating speed required by the hydraulic "
+        "power unit, transmitting mechanical power with high efficiency."
+    ),
+    "Variable-Displacement Hydraulic Power Unit (HPU)": (
+        "A variable-displacement hydraulic power unit that converts mechanical "
+        "shaft input into high-pressure hydraulic flow, enabling continuous "
+        "output control regardless of wind speed fluctuations."
+    ),
+    "Hydraulic Motor (225 kW rating) (Haaglund CA 50)": (
+        "A Haaglund CA 50 low-speed high-torque hydraulic motor rated at 225 kW "
+        "that converts hydraulic pressure into mechanical rotation to drive "
+        "high-pressure pumps directly."
+    ),
+    "Hydraulic Motor (225 kW rating) (Haaglund CA 70)": (
+        "A Haaglund CA 70 low-speed high-torque hydraulic motor rated at 225 kW, "
+        "used alongside the CA 50 to distribute hydraulic power across multiple "
+        "pump loads in the mechanical drivetrain."
+    ),
+    "Plunger Pump (Triplex Plunger Pump K 13000 \u2013 3G)": (
+        "A triplex plunger pump that delivers high-pressure feedwater to the "
+        "reverse osmosis membranes through positive-displacement action, "
+        "driven by the hydraulic motor drivetrain."
+    ),
+    "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)": (
+        "A Danfoss APP axial piston pump that pressurizes feedwater to the "
+        "operating point required for reverse osmosis membrane separation."
+    ),
+    "Reverse osmosis train": (
+        "A reverse osmosis membrane train that rejects dissolved salts from "
+        "pressurized feedwater, producing low-TDS permeate for post-treatment "
+        "and distribution."
+    ),
+    "Extra storage tank (100,000 gallons)": (
+        "A 100,000-gallon buffer tank that stores product water or brine "
+        "concentrate, providing operational flexibility during variable "
+        "wind conditions."
     ),
     # ── Electrical system ─────────────────────────────────────────────────────
     "Turbine": (

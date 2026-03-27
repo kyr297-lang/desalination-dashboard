@@ -659,7 +659,7 @@ def compute_chart_data(
         print("[WARN] Energy sheet data not available, using BOM-based energy estimates")
 
         # Turbine count from BOM row names
-        mech_turbine_rows = mechanical_df[mechanical_df["name"] == "250kW aeromotor turbine "]["quantity"]
+        mech_turbine_rows = mechanical_df[mechanical_df["name"] == "1 MW Aeromotor Turbine"]["quantity"]
         mech_turbines = int(pd.to_numeric(mech_turbine_rows, errors="coerce").sum()) if len(mech_turbine_rows) > 0 else 0
 
         elec_turbine_rows = electrical_df[electrical_df["name"] == "Turbine"]["quantity"]
