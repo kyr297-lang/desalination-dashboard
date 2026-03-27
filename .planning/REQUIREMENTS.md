@@ -11,7 +11,7 @@
 
 ### System Content
 
-- [ ] **CONTENT-01**: Landing page intro rewritten — clearly explains what wind-powered desalination is, what the three systems represent, and what students are meant to explore and compare; no references to AI or automated tools
+- [x] **CONTENT-01**: Landing page intro rewritten — clearly explains what wind-powered desalination is, what the three systems represent, and what students are meant to explore and compare; no references to AI or automated tools
 - [ ] **CONTENT-02**: Mechanical system process stages and equipment descriptions updated — reflect hydraulic drive architecture (HPU → manifold → hydraulic motors driving pumps)
 - [x] **CONTENT-03**: Hybrid builder replaced with static preset display — hybrid system shown as a fixed configuration matching the preset BOM; builder dropdowns and slot selection removed entirely
 
@@ -62,7 +62,7 @@
 | DATA-02 | Phase 12 | Complete |
 | DATA-03 | Phase 12 | Complete |
 | DATA-04 | Phase 12 | Complete |
-| CONTENT-01 | Phase 14 | Pending |
+| CONTENT-01 | Phase 14 | Complete |
 | CONTENT-02 | Phase 14 | Pending |
 | CONTENT-03 | Phase 12 | Complete |
 | VISUAL-01 | Phase 13 | Complete |

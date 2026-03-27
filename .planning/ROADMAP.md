@@ -97,8 +97,13 @@ Plans:
   5. First-time visitors see a dismissable guidance banner explaining how to use the sliders; it disappears after interaction and does not reappear
   6. Landing page intro clearly explains wind-powered desalination, the three systems, and what students should explore — with no references to AI or automated tools
   7. Mechanical system descriptions and process stages reflect the hydraulic drive architecture (HPU, manifold, hydraulic motors driving pumps)
-**Plans**: TBD
+**Plans:** 2/3 plans executed
 **UI hint**: yes
+
+Plans:
+- [x] 14-01-PLAN.md — Slider fixes (mouseup, no direct input, battery labels), dcc.Loading spinner, first-visit guidance banner
+- [x] 14-02-PLAN.md — Landing page intro rewrite and system card description updates
+- [ ] 14-03-PLAN.md — Mechanical PROCESS_STAGES and EQUIPMENT_DESCRIPTIONS update, processing.py fallback fix
 
 ### Phase 15: Polish & GitHub Push
 **Goal**: All rough edges resolved, print export verified after the overhaul, and the updated dashboard is pushed to GitHub
@@ -140,5 +145,5 @@ Phases execute in numeric order: 12 → 13 → 14 → 15
 | 11. Terminology and Display Polish | v1.2 | 1/1 | Complete | 2026-03-01 |
 | 12. Data Layer & Hybrid Builder Removal | v1.3 | 3/3 | Complete    | 2026-03-27 |
 | 13. System Layout Images & Creative Differentiation | v1.3 | 2/2 | Complete    | 2026-03-27 |
-| 14. UX Quality & Content Rewrite | v1.3 | 0/0 | Not started | - |
+| 14. UX Quality & Content Rewrite | v1.3 | 2/3 | In Progress|  |
 | 15. Polish & GitHub Push | v1.3 | 0/0 | Not started | - |
