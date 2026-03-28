@@ -4,18 +4,17 @@ src/layout/charts.py
 Plotly figure builders, chart section layout, and callbacks for the System
 Comparison panel.
 
-Provides four pure figure-building functions, one layout factory, and three
+Provides two pure figure-building functions, one layout factory, and three
 Dash callbacks that wire sliders and legend toggles to the chart figures.
 
 Exports
 -------
 set_data(data) -> None
 build_cost_chart(years, mech_cumulative, elec_cumulative, hybrid_cumulative, visibility) -> go.Figure
-build_land_chart(mech_land, elec_land, hybrid_land, visibility) -> go.Figure
-build_turbine_chart(mech_count, elec_count, hybrid_count, visibility) -> go.Figure
 build_energy_bar_chart(mech_energy, elec_energy, hybrid_energy, visibility) -> go.Figure
 make_chart_section() -> html.Div
 update_charts(years, battery_fraction, visibility, tds_ppm, depth_m) -> tuple
+    Returns (cost_fig, power_fig, label_years, label_ratio, label_cost, label_tds, label_depth)
 toggle_legend(n_mech, n_elec, n_hybrid, visibility) -> dict
 update_badge_styles(visibility) -> tuple
 """
@@ -137,119 +136,6 @@ def build_cost_chart(
     return fig
 
 
-def build_land_chart(
-    mech_land: float,
-    elec_land: float,
-    hybrid_land: float,
-    visibility: dict,
-) -> go.Figure:
-    """Build the land area grouped bar chart.
-
-    Compares total physical footprint (m²) across all three systems.
-    Values shown on hover only — no bar labels. Hybrid shows 0 in Phase 3.
-
-    Parameters
-    ----------
-    mech_land : float
-        Mechanical system land area in m².
-    elec_land : float
-        Electrical system land area in m².
-    hybrid_land : float
-        Hybrid system land area in m² (0 placeholder in Phase 3).
-    visibility : dict
-        Store dict {"mechanical": bool, "electrical": bool, "hybrid": bool}.
-
-    Returns
-    -------
-    go.Figure
-    """
-    systems = [
-        ("Mechanical", mech_land,  SYSTEM_COLORS["Mechanical"]),
-        ("Electrical", elec_land,  SYSTEM_COLORS["Electrical"]),
-        ("Hybrid",     hybrid_land, SYSTEM_COLORS["Hybrid"]),
-    ]
-
-    fig = go.Figure()
-    for name, value, color in systems:
-        key = name.lower()
-        fig.add_trace(go.Bar(
-            x=["Land Area"],
-            y=[value],
-            name=name,
-            marker_color=color,
-            visible=_visibility(visibility, key),
-            hovertemplate=f"{name}: %{{y:,.0f}} m<sup>2</sup><extra></extra>",
-            text=None,
-        ))
-
-    fig.update_layout(
-        barmode="group",
-        yaxis_title="Area (m\u00b2)",
-        showlegend=False,
-        uirevision="static",
-        transition=_TRANSITION,
-        margin=_MARGIN,
-    )
-    return fig
-
-
-def build_turbine_chart(
-    mech_count: int,
-    elec_count: int,
-    hybrid_count: int,
-    visibility: dict,
-) -> go.Figure:
-    """Build the wind turbine count grouped bar chart.
-
-    Compares the number of wind turbines per system. Integer y-axis.
-    Hybrid shows 0 in Phase 3.
-
-    Parameters
-    ----------
-    mech_count : int
-        Number of wind turbines in the mechanical system.
-    elec_count : int
-        Number of wind turbines in the electrical system.
-    hybrid_count : int
-        Number of wind turbines in the hybrid system (0 in Phase 3).
-    visibility : dict
-        Store dict {"mechanical": bool, "electrical": bool, "hybrid": bool}.
-
-    Returns
-    -------
-    go.Figure
-    """
-    systems = [
-        ("Mechanical", mech_count,  SYSTEM_COLORS["Mechanical"]),
-        ("Electrical", elec_count,  SYSTEM_COLORS["Electrical"]),
-        ("Hybrid",     hybrid_count, SYSTEM_COLORS["Hybrid"]),
-    ]
-
-    fig = go.Figure()
-    for name, count, color in systems:
-        key = name.lower()
-        fig.add_trace(go.Bar(
-            x=["Wind Turbines"],
-            y=[count],
-            name=name,
-            marker_color=color,
-            visible=_visibility(visibility, key),
-            hovertemplate=f"{name}: %{{y}} turbines<extra></extra>",
-            text=None,
-        ))
-
-    fig.update_layout(
-        barmode="group",
-        yaxis_title="Wind Turbines",
-        yaxis=dict(dtick=1),
-        showlegend=False,
-        uirevision="static",
-        transition=_TRANSITION,
-        margin=_MARGIN,
-    )
-    return fig
-
-
 def build_energy_bar_chart(
     mech_energy: dict,
     elec_energy: dict,
@@ -279,13 +165,9 @@ def build_energy_bar_chart(
     go.Figure
     """
     ALL_STAGES = [
-        "Water Extraction",
-        "Pre-Treatment",
-        "Desalination",
-        "Post-Treatment",
-        "Brine Disposal",
-        "Control",
-        "Other",
+        "Groundwater Extraction",
+        "RO Desalination",
+        "Brine Reinjection",
     ]
 
     all_systems = [
@@ -327,7 +209,7 @@ def build_energy_bar_chart(
         ))
 
     fig.update_layout(
-        barmode="group",
+        barmode="stack",
         yaxis_title="Power (kW)",
         uirevision="static",
         transition=_TRANSITION,
@@ -577,8 +459,8 @@ def make_chart_section() -> html.Div:
         data={"mechanical": True, "electrical": True, "hybrid": True},
     )
 
-    # ── 2x2 chart grid ────────────────────────────────────────────────────────
-    row1 = dbc.Row(
+    # ── 2-chart row ───────────────────────────────────────────────────────────
+    chart_row = dbc.Row(
         [
             _chart_card(
                 "Cost Over Time",
@@ -586,25 +468,9 @@ def make_chart_section() -> html.Div:
                 "chart-cost",
             ),
             _chart_card(
-                "Land Area",
-                "Total footprint per system (m\u00b2)",
-                "chart-land",
-            ),
-        ],
-        className="mb-3",
-    )
-
-    row2 = dbc.Row(
-        [
-            _chart_card(
-                "Wind Turbine Count",
-                "Number of turbines per system",
-                "chart-turbine",
-            ),
-            _chart_card(
                 "Power Breakdown",
-                "Power use by process stage (kW)",
-                "chart-pie",
+                "Shaft power demand by subsystem (kW)",
+                "chart-power",
             ),
         ],
         className="mb-3",
@@ -617,7 +483,7 @@ def make_chart_section() -> html.Div:
         control_panel,
         legend_row,
         dcc.Loading(
-            children=[row1, row2],
+            children=[chart_row],
             type="default",
         ),
     ])
@@ -629,9 +495,7 @@ def make_chart_section() -> html.Div:
 
 @callback(
     Output("chart-cost", "figure"),
-    Output("chart-land", "figure"),
-    Output("chart-turbine", "figure"),
-    Output("chart-pie", "figure"),
+    Output("chart-power", "figure"),
     Output("label-years", "children"),
     Output("label-battery-ratio", "children"),
     Output("label-elec-cost", "children"),
@@ -648,7 +512,7 @@ def update_charts(years, battery_fraction, visibility, tds_ppm, depth_m):
 
     Fires whenever the time horizon slider, battery/tank slider, TDS slider,
     depth slider, or legend visibility store changes. Computes all chart data
-    in one call and returns four updated figures plus five live label strings.
+    in one call and returns two updated figures plus five live label strings.
 
     Parameters
     ----------
@@ -666,13 +530,12 @@ def update_charts(years, battery_fraction, visibility, tds_ppm, depth_m):
     Returns
     -------
     tuple
-        (cost_fig, land_fig, turbine_fig, pie_fig, label_years, label_ratio,
-         label_cost, label_tds, label_depth)
+        (cost_fig, power_fig, label_years, label_ratio, label_cost, label_tds, label_depth)
     """
     # Guard: if data not yet loaded, return empty figures and blank labels
     if _data is None:
         empty = go.Figure()
-        return empty, empty, empty, empty, "", "", "", "", ""
+        return empty, empty, "", "", "", "", ""
 
     cd = compute_chart_data(_data, battery_fraction, years, tds_ppm=tds_ppm, depth_m=depth_m)
 
@@ -683,19 +546,7 @@ def update_charts(years, battery_fraction, visibility, tds_ppm, depth_m):
         cd["cost_over_time"]["hybrid"],
         visibility,
     )
-    land_fig = build_land_chart(
-        cd["land_area"]["mechanical"],
-        cd["land_area"]["electrical"],
-        cd["land_area"]["hybrid"],
-        visibility,
-    )
-    turbine_fig = build_turbine_chart(
-        cd["turbine_count"]["mechanical"],
-        cd["turbine_count"]["electrical"],
-        cd["turbine_count"]["hybrid"],
-        visibility,
-    )
-    pie_fig = build_energy_bar_chart(
+    power_fig = build_energy_bar_chart(
         cd["energy_breakdown"]["mechanical"],
         cd["energy_breakdown"]["electrical"],
         cd["energy_breakdown"]["hybrid"],
@@ -708,7 +559,7 @@ def update_charts(years, battery_fraction, visibility, tds_ppm, depth_m):
     label_tds = f"{int(round(tds_ppm))} PPM"
     label_depth = f"{int(round(depth_m))} m"
 
-    return cost_fig, land_fig, turbine_fig, pie_fig, label_years, label_ratio, label_cost, label_tds, label_depth
+    return cost_fig, power_fig, label_years, label_ratio, label_cost, label_tds, label_depth
 
 
 @callback(
