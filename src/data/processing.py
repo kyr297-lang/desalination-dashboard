@@ -19,11 +19,10 @@ or UI module. All formatting uses pandas for safe numeric coercion.
 
 from __future__ import annotations
 
-import math
 import numpy as np
 import pandas as pd
 
-from src.config import PROCESS_STAGES, RAG_COLORS
+from src.config import PROCESS_STAGES, RAG_COLORS, SUBSYSTEM_POWER, LIFESPAN_DEFAULTS
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Formatting helpers
@@ -157,8 +156,7 @@ def fmt(value) -> str:
 # ──────────────────────────────────────────────────────────────────────────────
 
 # Metrics where a lower value is considered better (green = lowest).
-# "efficiency" holds total energy consumption; lower energy = more efficient.
-RAG_BETTER_IS_LOWER: set[str] = {"cost", "land_area", "efficiency"}
+RAG_BETTER_IS_LOWER: set[str] = {"cost"}
 
 
 def rag_color(values: dict[str, float], metric: str) -> dict[str, str]:
@@ -245,19 +243,13 @@ def compute_scorecard_metrics(
     dict with keys "mechanical" and "electrical" (and optionally "hybrid"),
     each mapping to:
         {
-            "cost":       float  (sum of cost_usd column, USD),
-            "land_area":  float  (sum of land_area_m2 column, m²),
-            "efficiency": float  (sum of energy_kw column, kW — lower is better),
+            "cost": float  (sum of cost_usd column, USD),
         }
     """
     def _aggregate(df: pd.DataFrame) -> dict[str, float]:
         cost = pd.to_numeric(df["cost_usd"], errors="coerce").sum()
-        land = pd.to_numeric(df["land_area_m2"], errors="coerce").sum()
-        energy = pd.to_numeric(df["energy_kw"], errors="coerce").sum()
         return {
-            "cost":       float(cost),
-            "land_area":  float(land),
-            "efficiency": float(energy),
+            "cost": float(cost),
         }
 
     result = {
@@ -299,8 +291,6 @@ def generate_comparison_text(
     """
     metric_labels = {
         "cost": "cost",
-        "land_area": "land area",
-        "efficiency": "energy use",
     }
 
     def _pct_diff(hybrid_val, other_val, metric_key: str) -> str | None:
@@ -320,7 +310,7 @@ def generate_comparison_text(
 
     lines: list[str] = []
 
-    for metric_key in ["cost", "land_area", "efficiency"]:
+    for metric_key in ["cost"]:
         h_val = hybrid_metrics.get(metric_key)
 
         for other_name, other_metrics in [("Mechanical", mech_metrics), ("Electrical", elec_metrics)]:
@@ -483,6 +473,10 @@ def compute_cost_over_time(
 
         lifespan = row["lifespan_years"]
 
+        # Fallback: if xlsx has no lifespan data, use config defaults
+        if lifespan is None:
+            lifespan = LIFESPAN_DEFAULTS.get(row["name"], "indefinite")
+
         # "indefinite" items are bought once at year 0 — no replacements
         if isinstance(lifespan, str) and lifespan.strip().lower() == "indefinite":
             annual[0] += cost
@@ -540,16 +534,10 @@ def compute_chart_data(
         cost_over_time : dict[str, np.ndarray]
             {"mechanical": array, "electrical": array, "hybrid": array}
             Each array has length years+1 (cumulative cost per year).
-        land_area : dict[str, float]
-            {"mechanical": float, "electrical": float, "hybrid": float}
-            Total land area in m² per system.
-        turbine_count : dict[str, int]
-            {"mechanical": int, "electrical": int, "hybrid": int}
-            Number of wind turbines per system.
         energy_breakdown : dict[str, dict[str, float]]
-            {"mechanical": {stage: kw, ...}, "electrical": {stage: kw, ...},
-             "hybrid": {stage: kw, ...}}
-            Energy use per process stage for each system.
+            {"mechanical": {subsystem: kw, ...}, "electrical": {...}, "hybrid": {...}}
+            Shaft power demand per subsystem (Groundwater Extraction, RO Desalination,
+            Brine Reinjection) with TDS/depth slider offsets applied.
         electrical_total_cost : float
             Live electrical total cost at current battery_fraction (USD).
     """
@@ -565,134 +553,37 @@ def compute_chart_data(
     # Mechanical: straightforward cumulative replacement model
     mech_cumulative = compute_cost_over_time(mechanical_df, years)
 
-    # Electrical: exclude the spreadsheet "Battery (1 day of power)" row and
-    # replace with the slider-interpolated cost so all replacement cycles use
-    # the current slider value (year 0, 12, 24, 36, 48).
+    # Electrical: exclude the spreadsheet battery row and replace with the
+    # slider-interpolated cost so all replacement cycles use the current slider
+    # value (year 0, 12, 24, 36, 48).
     # Research Pitfall 1: the $1.8M battery row != lookup table values — don't add both.
     elec_cumulative = compute_cost_over_time(
         electrical_df,
         years,
-        override_costs={"Battery (1 day of power)": interpolated_cost},
+        override_costs={"Battery (Tesla Megapack 3.9MWh unit)": interpolated_cost},
     )
 
     # Hybrid: read directly from data["hybrid"] BOM
     hybrid_cumulative = compute_cost_over_time(hybrid_df, years)
 
-    # ── Land area ─────────────────────────────────────────────────────────────
-    mech_land = float(pd.to_numeric(mechanical_df["land_area_m2"], errors="coerce").sum())
-    elec_land = float(pd.to_numeric(electrical_df["land_area_m2"], errors="coerce").sum())
-    hybrid_land = float(pd.to_numeric(hybrid_df["land_area_m2"], errors="coerce").sum())
-
-    # ── Energy sheet data ──────────────────────────────────────────────────────
-    energy_data = data.get("energy")
-
-    # Subsystem name → STAGE_COLORS key mapping.
-    # Energy sheet names are descriptive; map to canonical stage keys by keyword.
-    def _subsystem_name_to_stage(name: str) -> str:
-        """Map an Energy sheet subsystem name to a STAGE_COLORS key."""
-        name_lower = name.lower()
-        if "gw extraction" in name_lower or "groundwater" in name_lower:
-            return "Water Extraction"
-        if "ro feed" in name_lower or "high pressure pump" in name_lower or "booster pump" in name_lower:
-            return "Desalination"
-        if "brine" in name_lower:
-            return "Brine Disposal"
-        if "pre-treatment" in name_lower or "pre treatment" in name_lower or "filtration" in name_lower:
-            return "Pre-Treatment"
-        if "post-treatment" in name_lower or "post treatment" in name_lower:
-            return "Post-Treatment"
-        if "control" in name_lower or "plc" in name_lower or "scada" in name_lower:
-            return "Control"
-        return "Other"
-
-    def _energy_from_energy_sheet(energy_sys: dict) -> dict[str, float]:
-        """Build stage->kW dict from Energy sheet subsystem rows."""
-        result: dict[str, float] = {}
-        for sub in energy_sys.get("subsystems", []):
-            name = sub.get("name", "Other")
-            kw = sub.get("shaft_power_kw")
-            if kw is None or kw <= 0:
-                continue
-            stage = _subsystem_name_to_stage(name)
-            result[stage] = result.get(stage, 0.0) + float(kw)
-        return result
-
-    def _energy_by_stage(df: pd.DataFrame, system: str) -> dict[str, float]:
-        """Fallback: build stage->kW dict from BOM energy_kw columns."""
-        stage_energy: dict[str, float] = {}
-        for _, row in df.iterrows():
-            kw = pd.to_numeric(row["energy_kw"], errors="coerce")
-            if pd.isna(kw) or kw == 0:
-                continue
-            stage = get_equipment_stage(str(row["name"]), system)
-            stage_energy[stage] = stage_energy.get(stage, 0.0) + float(kw)
-        return stage_energy
-
-    if energy_data is not None:
-        # ── Turbine count from Energy sheet ───────────────────────────────────
-        # total_turbine_input / selected_turbine_kw, rounded up.
-        # If total_turbine_input is 0 (e.g. electrical system uses "Total Electrical Demand"
-        # label that the loader may not capture), fall back to sum of subsystem turbine_input_kw.
-        turbine_counts: dict[str, int] = {}
-        for sys_key in ["mechanical", "electrical", "hybrid"]:
-            sys_energy = energy_data.get(sys_key, {})
-            total_input = sys_energy.get("total_turbine_input") or 0
-            if total_input == 0:
-                # Fallback: sum subsystem turbine_input_kw values
-                total_input = sum(
-                    float(sub.get("turbine_input_kw") or 0)
-                    for sub in sys_energy.get("subsystems", [])
-                    if sub.get("turbine_input_kw") is not None
-                )
-            turbine_size = sys_energy.get("selected_turbine_kw") or 1
-            turbine_counts[sys_key] = math.ceil(total_input / turbine_size) if turbine_size > 0 and total_input > 0 else 0
-        mech_turbines = turbine_counts["mechanical"]
-        elec_turbines = turbine_counts["electrical"]
-        hybrid_turbines = turbine_counts["hybrid"]
-
-        # ── Energy breakdown from Energy sheet ────────────────────────────────
-        mech_energy = _energy_from_energy_sheet(energy_data.get("mechanical", {}))
-        elec_energy = _energy_from_energy_sheet(energy_data.get("electrical", {}))
-        hybrid_energy = _energy_from_energy_sheet(energy_data.get("hybrid", {}))
-    else:
-        # ── Fallback: BOM-based calculation ───────────────────────────────────
-        print("[WARN] Energy sheet data not available, using BOM-based energy estimates")
-
-        # Turbine count from BOM row names
-        mech_turbine_rows = mechanical_df[mechanical_df["name"] == "1 MW Aeromotor Turbine"]["quantity"]
-        mech_turbines = int(pd.to_numeric(mech_turbine_rows, errors="coerce").sum()) if len(mech_turbine_rows) > 0 else 0
-
-        elec_turbine_rows = electrical_df[electrical_df["name"] == "Turbine"]["quantity"]
-        elec_turbines = int(pd.to_numeric(elec_turbine_rows, errors="coerce").sum()) if len(elec_turbine_rows) > 0 else 0
-
-        hybrid_turbines = 0
-
-        # Energy breakdown from BOM energy_kw columns
-        mech_energy = _energy_by_stage(mechanical_df, "mechanical")
-        elec_energy = _energy_by_stage(electrical_df, "electrical")
-        hybrid_energy = {} if hybrid_df is None else _energy_by_stage(hybrid_df, "miscellaneous")
-
-    # ── TDS and depth energy offsets ──────────────────────────────────────────
-    # Interpolate RO desalination energy from Part 2 TDS lookup table
+    # ── Energy breakdown: 3-subsystem model from config constants ────────────
+    # All three systems share the same shaft power demands. Slider offsets
+    # modify "RO Desalination" (TDS) and "Groundwater Extraction" (depth).
     ro_kw = interpolate_energy(tds_ppm, data["tds_lookup"], "tds_ppm", "ro_energy_kw")
-    # Interpolate pump energy from Part 2 depth lookup table
     pump_kw = interpolate_energy(depth_m, data["depth_lookup"], "depth_m", "pump_energy_kw")
 
-    # Apply offsets to all three systems.
-    # TDS affects desalination energy demand (RO membranes) regardless of drive type.
-    # Depth affects water extraction energy demand (pump lift) regardless of drive type.
-    mech_energy["Desalination"] = mech_energy.get("Desalination", 0.0) + ro_kw
-    elec_energy["Desalination"] = elec_energy.get("Desalination", 0.0) + ro_kw
-    hybrid_energy["Desalination"] = hybrid_energy.get("Desalination", 0.0) + ro_kw
-    mech_energy["Water Extraction"] = mech_energy.get("Water Extraction", 0.0) + pump_kw
-    elec_energy["Water Extraction"] = elec_energy.get("Water Extraction", 0.0) + pump_kw
-    hybrid_energy["Water Extraction"] = hybrid_energy.get("Water Extraction", 0.0) + pump_kw
+    energy_breakdown = {}
+    for sys_key in ["mechanical", "electrical", "hybrid"]:
+        energy = dict(SUBSYSTEM_POWER)  # shallow copy of base values
+        energy["RO Desalination"] += ro_kw
+        energy["Groundwater Extraction"] += pump_kw
+        energy_breakdown[sys_key] = energy
 
     # ── Electrical total cost (live readout for slider label) ─────────────────
     # Sum all electrical costs EXCLUDING the battery row, then add interpolated cost.
     elec_base_cost = float(
         pd.to_numeric(
-            electrical_df[electrical_df["name"] != "Battery (1 day of power)"]["cost_usd"],
+            electrical_df[electrical_df["name"] != "Battery (Tesla Megapack 3.9MWh unit)"]["cost_usd"],
             errors="coerce",
         ).sum()
     )
@@ -704,20 +595,6 @@ def compute_chart_data(
             "electrical": elec_cumulative,
             "hybrid": hybrid_cumulative,
         },
-        "land_area": {
-            "mechanical": mech_land,
-            "electrical": elec_land,
-            "hybrid": hybrid_land,
-        },
-        "turbine_count": {
-            "mechanical": mech_turbines,
-            "electrical": elec_turbines,
-            "hybrid": hybrid_turbines,
-        },
-        "energy_breakdown": {
-            "mechanical": mech_energy,
-            "electrical": elec_energy,
-            "hybrid": hybrid_energy,
-        },
+        "energy_breakdown": energy_breakdown,
         "electrical_total_cost": electrical_total_cost,
     }
