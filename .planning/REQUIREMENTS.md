@@ -1,0 +1,36 @@
+# Requirements — v1.4 Data & Display Overhaul
+
+## Phase 15 — Data Layer & Charts
+
+- [x] **DATA-01**: App loads without crash on new data.xlsx (no Energy sheet, new column layout)
+- [x] **DATA-02**: Electrical BOM uses total_cost column (col E); mechanical/hybrid use cost column (col D)
+- [x] **DATA-03**: Lifespan column parsed correctly per section; cost-over-time graph is non-flat
+- [x] **DATA-04**: Three subsystem energy values parsed from Part 1 (172.9 / 311.5 / 81.9 kW)
+- [x] **CHART-01**: Land Area chart removed entirely
+- [x] **CHART-02**: Wind Turbine Count chart removed entirely
+- [x] **CHART-03**: Power breakdown chart shows 3 subsystems (Groundwater Extraction, RO Desalination, Brine Reinjection) as stacked bars
+- [x] **CHART-04**: TDS slider offsets RO Desalination bar; Depth slider offsets Groundwater Extraction bar
+- [x] **CHART-05**: Battery/tank slider correctly updates electrical cost-over-time (new battery name)
+- [ ] **CHART-06**: All slider labels update on interaction (years, TDS, depth, battery ratio)
+- [x] **CHART-07**: chart-pie ID renamed to chart-power throughout
+
+## Phase 16 — Display Polish & Content
+
+- [ ] **DISP-01**: All 3 system layout photos updated to new PNGs
+- [ ] **DISP-02**: Equipment names displayed with proper title case and unicode cleanup (DISPLAY_NAMES mapping)
+- [ ] **DISP-03**: Equipment accordion regrouped into: Power & Drive / Water Extraction / Desalination / Brine & Storage / Support
+- [ ] **DISP-04**: Hybrid stage headings have accent class (stage-heading-hybrid, CSS added)
+- [ ] **DISP-05**: Scorecard shows only Total Capital Cost (land area and power rows removed)
+- [ ] **DISP-06**: Scorecard legend text updated ("Lower total cost is better")
+- [ ] **DISP-07**: Comparison text compares cost only (land area and energy sentences removed)
+- [ ] **DISP-08**: Overview card descriptions remove "land area" references
+- [ ] **DISP-09**: Equipment detail table shows Name, Quantity, Cost, Lifespan (no power/land area)
+- [ ] **DISP-10**: Cross-system comparison table shows Cost and Lifespan (no power/land area)
+- [ ] **DISP-11**: Equipment descriptions updated for new electrical and hybrid component names
+
+## Traceability
+
+| Phase | Requirements |
+|-------|-------------|
+| 15    | DATA-01–04, CHART-01–07 |
+| 16    | DISP-01–11 |

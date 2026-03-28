@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Data & Display Overhaul
 status: executing
-stopped_at: Completed 15-01-PLAN.md
-last_updated: "2026-03-28T21:52:40.808Z"
+stopped_at: Completed 15-02-PLAN.md
+last_updated: "2026-03-28T21:58:59.540Z"
 last_activity: 2026-03-28
 progress:
   total_phases: 2
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-26)
 ## Current Position
 
 Phase: 15 (data-layer-chart-overhaul) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-03-28
 
@@ -56,6 +56,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 14-ux-quality-content-rewrite P03 | 10 | 1 tasks | 2 files |
 | Phase 14-ux-quality-content-rewrite P01 | 5 | 1 tasks | 2 files |
 | Phase 15 P01 | 3 | 2 tasks | 2 files |
+| Phase 15 P02 | 4 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,9 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 15]: loader.py cost_col parameter on _parse_section: electrical=5 (col E total cost), mech/hybrid=4 (col D); lifespan reads from cost_col+1
 - [Phase 15]: _parse_energy_sheet returns None instead of raising ValueError when Energy sheet absent; processing.py (Plan 15-03) will add SUBSYSTEM_POWER fallback
 - [Phase 15]: STAGE_COLORS reduced from 7 to 4 keys (3 subsystems + Other fallback) to align with new 3-subsystem power breakdown chart model
+- [Phase 15]: Energy breakdown uses SUBSYSTEM_POWER constants (not Energy sheet) — avoids optional sheet dependency; identical power demands across all 3 systems
+- [Phase 15]: barmode changed from group to stack for power breakdown chart — stacked bars better convey total load composition
+- [Phase 15]: compute_scorecard_metrics returns only cost — BOM DataFrames no longer have energy_kw or land_area_m2 columns after Plan 01
 
 ### Pending Todos
 
@@ -98,6 +102,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-28T21:52:40.804Z
-Stopped at: Completed 15-01-PLAN.md
+Last session: 2026-03-28T21:58:59.537Z
+Stopped at: Completed 15-02-PLAN.md
 Resume file: None
