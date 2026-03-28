@@ -40,13 +40,11 @@ SECTION_HEADERS: dict[str, str] = {
     "Hybrid Components": "hybrid",
 }
 
-# Ordered column names for the equipment rows (columns B-G, positions 2-7).
+# Ordered column names for the equipment rows (columns B-E, positions 2-5).
 EQUIPMENT_COLUMNS = [
     "name",
     "quantity",
     "cost_usd",
-    "energy_kw",
-    "land_area_m2",
     "lifespan_years",
 ]
 
@@ -70,7 +68,7 @@ DEPTH_LOOKUP_COLUMNS = ["depth_m", "pump_energy_kw"]
 # Private helpers
 # ──────────────────────────────────────────────────────────────────────────────
 
-def _parse_section(ws, header_row: int, stop_rows: set) -> list[dict]:
+def _parse_section(ws, header_row: int, stop_rows: set, cost_col: int = 4) -> list[dict]:
     """
     Parse equipment rows starting immediately after *header_row*.
 
@@ -88,6 +86,11 @@ def _parse_section(ws, header_row: int, stop_rows: set) -> list[dict]:
         1-based row number of the section header ("Electrical Components", etc.)
     stop_rows : set[int]
         Row numbers that mark the start of the *next* section (or end boundary).
+    cost_col : int
+        1-based column index for the cost_usd value.
+        Electrical section uses col 5 (E = total cost).
+        Mechanical and hybrid sections use col 4 (D = cost).
+        Lifespan is always the column immediately after cost_col.
 
     Returns
     -------
@@ -106,12 +109,10 @@ def _parse_section(ws, header_row: int, stop_rows: set) -> list[dict]:
         if name == "Total":
             continue
         rows.append({
-            "name":          name,
-            "quantity":      ws.cell(r, 3).value,   # may be None or string
-            "cost_usd":      ws.cell(r, 4).value,   # may be string e.g. "$ 2500 per ton"
-            "energy_kw":     ws.cell(r, 5).value,
-            "land_area_m2":  ws.cell(r, 6).value,
-            "lifespan_years": ws.cell(r, 7).value,  # may be "indefinite"
+            "name":           name,
+            "quantity":       ws.cell(r, 3).value,
+            "cost_usd":       ws.cell(r, cost_col).value,
+            "lifespan_years": ws.cell(r, cost_col + 1).value,
         })
     return rows
 
@@ -184,7 +185,7 @@ def _parse_part2_lookups(wb) -> tuple[pd.DataFrame, pd.DataFrame]:
     return tds_df, depth_df
 
 
-def _parse_energy_sheet(wb) -> dict:
+def _parse_energy_sheet(wb) -> dict | None:
     """
     Parse the Energy sheet into a structured dict grouped by system.
 
@@ -209,17 +210,12 @@ def _parse_energy_sheet(wb) -> dict:
         "total_shaft_power"   – float
         "total_turbine_input" – float  (total at turbine shaft before margin)
         "selected_turbine_kw" – float
-
-    Raises
-    ------
-    ValueError
-        If "Energy" sheet not found in data.xlsx.
+    Returns None if the Energy sheet is absent (power data falls back to
+    SUBSYSTEM_POWER constants in config.py).
     """
     if "Energy" not in wb.sheetnames:
-        raise ValueError(
-            "Energy sheet not found in data.xlsx. "
-            "Power breakdown and turbine charts require this sheet."
-        )
+        print("  [loader] Energy sheet not found — using config constants for power data")
+        return None
 
     ws = wb["Energy"]
 
@@ -337,7 +333,9 @@ def load_data() -> dict:
         "depth_lookup"   – pd.DataFrame with columns ["depth_m", "pump_energy_kw"], 20 rows
         "energy"         – dict grouped by system ("mechanical", "electrical", "hybrid"),
                            each containing subsystems list, total_shaft_power,
-                           total_turbine_input, and selected_turbine_kw
+                           total_turbine_input, and selected_turbine_kw.
+                           May be None if the Energy sheet is absent from data.xlsx;
+                           callers should fall back to SUBSYSTEM_POWER from config.py.
 
     Raises
     ------
@@ -345,7 +343,7 @@ def load_data() -> dict:
         If data.xlsx does not exist at the configured path.
     ValueError
         If one or more expected section headers are missing from 'Part 1',
-        or if the Energy sheet is absent, or if parsing otherwise fails.
+        or if parsing otherwise fails.
     """
     # ── 1. File existence check ──────────────────────────────────────────────
     if not DATA_FILE.exists():
@@ -391,9 +389,9 @@ def load_data() -> dict:
     mech_start   = section_row_map["mechanical"]
     hybrid_start = section_row_map["hybrid"]
 
-    electrical_rows = _parse_section(ws, elec_start,   stop_rows={mech_start})
-    mechanical_rows = _parse_section(ws, mech_start,   stop_rows={hybrid_start})
-    hybrid_rows     = _parse_section(ws, hybrid_start, stop_rows=set())
+    electrical_rows = _parse_section(ws, elec_start,   stop_rows={mech_start},   cost_col=5)
+    mechanical_rows = _parse_section(ws, mech_start,   stop_rows={hybrid_start}, cost_col=4)
+    hybrid_rows     = _parse_section(ws, hybrid_start, stop_rows=set(),           cost_col=4)
 
     print(f"  [loader] Electrical: {len(electrical_rows)} equipment rows parsed")
     print(f"  [loader] Mechanical: {len(mechanical_rows)} equipment rows parsed")
