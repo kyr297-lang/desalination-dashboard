@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.3
-milestone_name: Systems Overhaul & UX Redesign
-status: verifying
-stopped_at: Completed 14-03-PLAN.md
-last_updated: "2026-03-27T06:30:02.864Z"
-last_activity: 2026-03-27
+milestone: v1.4
+milestone_name: Data & Display Overhaul
+status: executing
+stopped_at: Completed 15-01-PLAN.md
+last_updated: "2026-03-28T21:52:40.808Z"
+last_activity: 2026-03-28
 progress:
-  total_phases: 4
-  completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  total_phases: 2
+  completed_phases: 0
+  total_plans: 3
+  completed_plans: 1
   percent: 0
 ---
 
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-26)
 
 **Core value:** Students can visually compare mechanical, electrical, and hybrid desalination systems side-by-side to understand cost, land, and efficiency tradeoffs
-**Current focus:** Phase 14 — ux-quality-content-rewrite
+**Current focus:** Phase 15 — data-layer-chart-overhaul
 
 ## Current Position
 
-Phase: Not started (defining phases)
-Plan: —
-Status: v1.4 milestone initialized — ready to plan Phase 15
+Phase: 15 (data-layer-chart-overhaul) — EXECUTING
+Plan: 2 of 3
+Status: Ready to execute
 Last activity: 2026-03-28
 
 Progress: [░░░░░░░░░░] 0%
@@ -55,6 +55,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 14-ux-quality-content-rewrite P02 | 1 | 1 tasks | 1 files |
 | Phase 14-ux-quality-content-rewrite P03 | 10 | 1 tasks | 2 files |
 | Phase 14-ux-quality-content-rewrite P01 | 5 | 1 tasks | 2 files |
+| Phase 15 P01 | 3 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,10 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 14-ux-quality-content-rewrite]: Gearbox PROCESS_STAGES key has double space 'Winergy  PEAB' differing from hybrid single-space variant
 - [Phase 14-ux-quality-content-rewrite]: Banner store added to shell.py to satisfy suppress_callback_exceptions=True — store must exist in DOM before callback references it
 - [Phase 14-ux-quality-content-rewrite]: prevent_initial_call=True on dismiss_banner mandatory — prevents page-load default slider values from immediately dismissing the first-visit banner
+- [Phase 15]: SUBSYSTEM_POWER hardcoded in config.py as engineering constants (172.9/311.49/81.865 kW) — identical across all 3 systems; simpler than parsing Energy sheet
+- [Phase 15]: loader.py cost_col parameter on _parse_section: electrical=5 (col E total cost), mech/hybrid=4 (col D); lifespan reads from cost_col+1
+- [Phase 15]: _parse_energy_sheet returns None instead of raising ValueError when Energy sheet absent; processing.py (Plan 15-03) will add SUBSYSTEM_POWER fallback
+- [Phase 15]: STAGE_COLORS reduced from 7 to 4 keys (3 subsystems + Other fallback) to align with new 3-subsystem power breakdown chart model
 
 ### Pending Todos
 
@@ -93,6 +98,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-27T06:30:02.861Z
-Stopped at: Completed 14-03-PLAN.md
+Last session: 2026-03-28T21:52:40.804Z
+Stopped at: Completed 15-01-PLAN.md
 Resume file: None
