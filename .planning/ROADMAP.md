@@ -65,3 +65,17 @@
 | 12. Data Layer & Hybrid Builder Removal | v1.3 | 3/3 | Complete | 2026-03-27 |
 | 13. System Layout Images & Creative Differentiation | v1.3 | 2/2 | Complete | 2026-03-27 |
 | 14. UX Quality & Content Rewrite | v1.3 | 3/3 | Complete | 2026-03-27 |
+
+---
+
+## v1.4 Data & Display Overhaul
+
+### Phase 15: data-layer-chart-overhaul
+**Goal:** Fix loader for new xlsx; remove land/turbine charts; power breakdown uses 3 subsystems; all sliders work.
+**Requirements:** DATA-01–04, CHART-01–07
+**Files:** loader.py, processing.py, charts.py, config.py
+
+### Phase 16: display-polish-content
+**Goal:** Photos, equipment names/grouping, scorecard, descriptions, hybrid accent.
+**Requirements:** DISP-01–11
+**Files:** assets/*.png, config.py, equipment_grid.py, scorecard.py, overview.py, custom.css

@@ -1,5 +1,22 @@
 # Wind-Powered Desalination Dashboard
 
+## Current Milestone: v1.4 Data & Display Overhaul
+
+**Goal:** Align dashboard with updated data.xlsx, remove obsolete charts, fix broken sliders, and polish all content.
+
+**Target features:**
+- Fix data loader for new xlsx structure (no Energy sheet, new column layout, lifespan restored)
+- Replace per-component power chart with 3 subsystems (Groundwater Extraction, RO Desalination, Brine Reinjection)
+- Remove Land Area and Wind Turbine Count charts; fix chart-pie→chart-power rename
+- Fix battery/tank slider (name changed in xlsx); fix all slider labels
+- Regroup equipment accordion into logical stages aligned with 3 subsystems
+- Format all equipment names (title case, unicode cleanup, grammar)
+- Update scorecard (remove broken land/power rows)
+- Update all 3 system layout photos
+- Fix hybrid stage heading accent (audit bug)
+
+---
+
 ## Current State: v1.3 Shipped (2026-03-27)
 
 **Shipped:** Hydraulic mechanical system reflected end-to-end, hybrid builder removed, system diagrams embedded, UX polished with slider fixes, guidance banner, and full content rewrite.
