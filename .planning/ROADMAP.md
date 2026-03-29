@@ -73,7 +73,7 @@
 ### Phase 15: data-layer-chart-overhaul
 **Goal:** Fix loader for new xlsx; remove land/turbine charts; power breakdown uses 3 subsystems; all sliders work.
 **Requirements:** DATA-01–04, CHART-01–07
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 15-01-PLAN.md — Data foundation: config constants + loader column fixes
