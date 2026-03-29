@@ -119,11 +119,6 @@ def create_layout(data: dict) -> html.Div:
                     dbc.Nav(
                         [
                             dbc.NavLink("Overview", href="/", active="exact"),
-                            dbc.NavLink(
-                                "System Explorer",
-                                href="#",
-                                id="nav-system-explorer",
-                            ),
                         ],
                         vertical=True,
                         pills=True,
