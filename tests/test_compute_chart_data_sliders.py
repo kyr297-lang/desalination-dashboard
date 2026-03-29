@@ -4,9 +4,9 @@ tests/test_compute_chart_data_sliders.py
 Tests for the TDS and depth slider integration in compute_chart_data().
 
 Verifies that:
-  - Test A: tds_ppm=0, depth_m=0 produces baseline energy values (no offset at zero)
-  - Test B: tds_ppm=950, depth_m=950 adds interpolated ro_kw to "Desalination" and
-            pump_kw to "Water Extraction" for both mechanical and electrical systems
+  - Test A: tds_ppm=0, depth_m=0 produces baseline energy values (SUBSYSTEM_POWER constants, no offset)
+  - Test B: tds_ppm=950, depth_m=950 adds interpolated ro_kw to "RO Desalination" and
+            pump_kw to "Groundwater Extraction" for both mechanical and electrical systems
   - Test C: tds_ppm and depth_m default to 950 when omitted
   - Test D: backward-compatible — existing callers without tds_ppm/depth_m still work
 
@@ -26,7 +26,7 @@ from src.data.processing import compute_chart_data
 
 def _make_equipment_df(rows: list[dict]) -> pd.DataFrame:
     """Build an equipment DataFrame from a list of dicts."""
-    columns = ["name", "quantity", "cost_usd", "energy_kw", "land_area_m2", "lifespan_years"]
+    columns = ["name", "quantity", "cost_usd", "lifespan_years"]
     return pd.DataFrame(rows, columns=columns)
 
 
@@ -64,83 +64,77 @@ def _make_battery_lookup() -> pd.DataFrame:
 def synthetic_data() -> dict:
     """Minimal data dict for testing compute_chart_data().
 
-    - Mechanical: one "250kW aeromotor turbine " row with energy 500 kW
-      (maps to "Water Extraction" stage in PROCESS_STAGES["mechanical"])
-    - Electrical: one "Turbine" row with energy 600 kW
-      (maps to "Water Extraction" stage in PROCESS_STAGES["electrical"])
-    - Both have indefinite lifespan and minimal cost/land values
+    - Mechanical: one "1 MW Aeromotor Turbine" row (4-column schema)
+    - Electrical: one "1.5 MW Turbine (GE Vernova 1.5sle)" row (4-column schema)
+    - Hybrid: empty DataFrame (4-column schema)
     - Battery lookup: 11 rows, linear cost
     - TDS lookup:   linear scale 0-190 kW over 0-1900 ppm
     - Depth lookup: linear scale 0-190 kW over 0-1900 m
+
+    Energy values come from SUBSYSTEM_POWER constants in src/config.py,
+    not from equipment rows — the 4-column schema has no energy_kw column.
     """
     mech = _make_equipment_df([
         {
-            "name": "250kW aeromotor turbine ",
+            "name": "1 MW Aeromotor Turbine",
             "quantity": 1,
             "cost_usd": 100_000,
-            "energy_kw": 500,
-            "land_area_m2": 1000,
             "lifespan_years": "indefinite",
         }
     ])
     elec = _make_equipment_df([
         {
-            "name": "Turbine",
+            "name": "1.5\u202fMW Turbine (GE Vernova 1.5sle)",
             "quantity": 1,
-            "cost_usd": 200_000,
-            "energy_kw": 600,
-            "land_area_m2": 2000,
+            "cost_usd": 1_000_000,
             "lifespan_years": "indefinite",
         }
     ])
-    misc = _make_equipment_df([])
+    hybrid = _make_equipment_df([])
 
     return {
-        "mechanical":    mech,
-        "electrical":    elec,
-        "miscellaneous": misc,
+        "mechanical":     mech,
+        "electrical":     elec,
+        "hybrid":         hybrid,
         "battery_lookup": _make_battery_lookup(),
-        "tds_lookup":    _make_tds_lookup(),
-        "depth_lookup":  _make_depth_lookup(),
+        "tds_lookup":     _make_tds_lookup(),
+        "depth_lookup":   _make_depth_lookup(),
     }
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Test A: zero TDS and depth produce no offset (baseline)
+# Test A: zero TDS and depth produce base SUBSYSTEM_POWER values (no offset)
 # ──────────────────────────────────────────────────────────────────────────────
 
 class TestZeroOffset:
-    """At tds_ppm=0 and depth_m=0, interpolated kW values are 0.0."""
+    """At tds_ppm=0 and depth_m=0, interpolated kW values are 0.0, so energy
+    equals the SUBSYSTEM_POWER base constants exactly."""
 
-    def test_mechanical_desalination_zero_tds(self, synthetic_data):
-        """At TDS=0, no offset is added to Desalination stage."""
+    def test_mechanical_ro_desalination_zero_tds(self, synthetic_data):
+        """At TDS=0, no offset added; RO Desalination equals SUBSYSTEM_POWER base 311.49."""
         cd = compute_chart_data(synthetic_data, tds_ppm=0, depth_m=0)
         mech_energy = cd["energy_breakdown"]["mechanical"]
-        # "Desalination" key does not exist in the mechanical equipment rows
-        # so it should only exist if ro_kw > 0. At tds=0, ro_kw=0, so
-        # if the key exists it must be 0 (or it may be missing entirely).
-        desalination_kw = mech_energy.get("Desalination", 0.0)
-        assert desalination_kw == pytest.approx(0.0)
+        # Base RO Desalination from SUBSYSTEM_POWER: 311.49, no TDS offset at 0
+        assert mech_energy["RO Desalination"] == pytest.approx(311.49)
 
-    def test_mechanical_water_extraction_zero_depth(self, synthetic_data):
-        """At depth=0, pump_kw=0 so Water Extraction stage equals the base 500 kW."""
+    def test_mechanical_groundwater_zero_depth(self, synthetic_data):
+        """At depth=0, no offset added; Groundwater Extraction equals SUBSYSTEM_POWER base 172.9."""
         cd = compute_chart_data(synthetic_data, tds_ppm=0, depth_m=0)
         mech_energy = cd["energy_breakdown"]["mechanical"]
-        # "Water Extraction" stage has the turbine row (500 kW) plus pump_kw=0
-        assert mech_energy.get("Water Extraction", 0.0) == pytest.approx(500.0)
+        # Base Groundwater Extraction from SUBSYSTEM_POWER: 172.9, no depth offset at 0
+        assert mech_energy["Groundwater Extraction"] == pytest.approx(172.9)
 
-    def test_electrical_desalination_zero_tds(self, synthetic_data):
-        """At TDS=0, Desalination stage offset is 0 for electrical too."""
+    def test_electrical_ro_desalination_zero_tds(self, synthetic_data):
+        """At TDS=0, RO Desalination offset is 0 for electrical too."""
         cd = compute_chart_data(synthetic_data, tds_ppm=0, depth_m=0)
         elec_energy = cd["energy_breakdown"]["electrical"]
-        desalination_kw = elec_energy.get("Desalination", 0.0)
-        assert desalination_kw == pytest.approx(0.0)
+        assert elec_energy["RO Desalination"] == pytest.approx(311.49)
 
-    def test_electrical_water_extraction_zero_depth(self, synthetic_data):
-        """At depth=0, pump_kw=0 so Water Extraction stage equals base 600 kW."""
+    def test_electrical_groundwater_zero_depth(self, synthetic_data):
+        """At depth=0, Groundwater Extraction offset is 0 for electrical too."""
         cd = compute_chart_data(synthetic_data, tds_ppm=0, depth_m=0)
         elec_energy = cd["energy_breakdown"]["electrical"]
-        assert elec_energy.get("Water Extraction", 0.0) == pytest.approx(600.0)
+        assert elec_energy["Groundwater Extraction"] == pytest.approx(172.9)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -150,33 +144,31 @@ class TestZeroOffset:
 class TestMidpointOffset:
     """At tds_ppm=950 and depth_m=950, interpolated offsets are 95.0 kW each."""
 
-    def test_mechanical_desalination_midpoint(self, synthetic_data):
-        """At TDS=950, ro_kw=95.0 is added to mechanical Desalination stage."""
+    def test_mechanical_ro_desalination_midpoint(self, synthetic_data):
+        """At TDS=950, ro_kw=95.0 is added to mechanical RO Desalination stage."""
         cd = compute_chart_data(synthetic_data, tds_ppm=950, depth_m=950)
         mech_energy = cd["energy_breakdown"]["mechanical"]
-        # Desalination: 0 (base) + 95 (ro offset) = 95.0
-        assert mech_energy.get("Desalination", 0.0) == pytest.approx(95.0)
+        # RO Desalination: 311.49 (base) + 95.0 (TDS offset) = 406.49
+        assert mech_energy["RO Desalination"] == pytest.approx(406.49)
 
-    def test_mechanical_water_extraction_midpoint(self, synthetic_data):
-        """At depth=950, pump_kw=95.0 is added to mechanical Water Extraction."""
+    def test_mechanical_groundwater_midpoint(self, synthetic_data):
+        """At depth=950, pump_kw=95.0 is added to mechanical Groundwater Extraction."""
         cd = compute_chart_data(synthetic_data, tds_ppm=950, depth_m=950)
         mech_energy = cd["energy_breakdown"]["mechanical"]
-        # Water Extraction: 500 (turbine) + 95 (pump offset) = 595.0
-        assert mech_energy.get("Water Extraction", 0.0) == pytest.approx(595.0)
+        # Groundwater Extraction: 172.9 (base) + 95.0 (depth offset) = 267.9
+        assert mech_energy["Groundwater Extraction"] == pytest.approx(267.9)
 
-    def test_electrical_desalination_midpoint(self, synthetic_data):
-        """At TDS=950, ro_kw=95.0 is added to electrical Desalination stage."""
+    def test_electrical_ro_desalination_midpoint(self, synthetic_data):
+        """At TDS=950, ro_kw=95.0 is added to electrical RO Desalination stage."""
         cd = compute_chart_data(synthetic_data, tds_ppm=950, depth_m=950)
         elec_energy = cd["energy_breakdown"]["electrical"]
-        # Desalination: 0 (base, no electrical Desalination equipment in fixture) + 95 = 95.0
-        assert elec_energy.get("Desalination", 0.0) == pytest.approx(95.0)
+        assert elec_energy["RO Desalination"] == pytest.approx(406.49)
 
-    def test_electrical_water_extraction_midpoint(self, synthetic_data):
-        """At depth=950, pump_kw=95.0 is added to electrical Water Extraction."""
+    def test_electrical_groundwater_midpoint(self, synthetic_data):
+        """At depth=950, pump_kw=95.0 is added to electrical Groundwater Extraction."""
         cd = compute_chart_data(synthetic_data, tds_ppm=950, depth_m=950)
         elec_energy = cd["energy_breakdown"]["electrical"]
-        # Water Extraction: 600 (turbine) + 95 (pump offset) = 695.0
-        assert elec_energy.get("Water Extraction", 0.0) == pytest.approx(695.0)
+        assert elec_energy["Groundwater Extraction"] == pytest.approx(267.9)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -190,22 +182,22 @@ class TestDefaults:
         """Calling with no tds_ppm/depth_m gives same result as tds_ppm=950, depth_m=950."""
         cd_default = compute_chart_data(synthetic_data)
         cd_explicit = compute_chart_data(synthetic_data, tds_ppm=950, depth_m=950)
-        # Compare Desalination in mechanical (most sensitive to TDS)
+        # Compare RO Desalination in mechanical (most sensitive to TDS)
         assert (
-            cd_default["energy_breakdown"]["mechanical"].get("Desalination", 0.0)
+            cd_default["energy_breakdown"]["mechanical"]["RO Desalination"]
             == pytest.approx(
-                cd_explicit["energy_breakdown"]["mechanical"].get("Desalination", 0.0)
+                cd_explicit["energy_breakdown"]["mechanical"]["RO Desalination"]
             )
         )
 
     def test_default_depth_equals_950(self, synthetic_data):
-        """Water Extraction stage with defaults matches explicit depth_m=950."""
+        """Groundwater Extraction stage with defaults matches explicit depth_m=950."""
         cd_default = compute_chart_data(synthetic_data)
         cd_explicit = compute_chart_data(synthetic_data, tds_ppm=950, depth_m=950)
         assert (
-            cd_default["energy_breakdown"]["mechanical"].get("Water Extraction", 0.0)
+            cd_default["energy_breakdown"]["mechanical"]["Groundwater Extraction"]
             == pytest.approx(
-                cd_explicit["energy_breakdown"]["mechanical"].get("Water Extraction", 0.0)
+                cd_explicit["energy_breakdown"]["mechanical"]["Groundwater Extraction"]
             )
         )
 
@@ -225,8 +217,7 @@ class TestBackwardCompat:
         assert "electrical" in cd["energy_breakdown"]
 
     def test_return_keys_unchanged(self, synthetic_data):
-        """Return dict still has all five expected top-level keys."""
+        """Return dict has exactly three expected top-level keys."""
         cd = compute_chart_data(synthetic_data)
-        expected_keys = {"cost_over_time", "land_area", "turbine_count",
-                         "energy_breakdown", "electrical_total_cost"}
+        expected_keys = {"cost_over_time", "energy_breakdown", "electrical_total_cost"}
         assert set(cd.keys()) == expected_keys
