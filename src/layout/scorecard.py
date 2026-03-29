@@ -149,20 +149,14 @@ def make_scorecard_table(
     # ── 2. Assign RAG colors per metric ──────────────────────────────────────
     if has_hybrid:
         cost_values = {"mechanical": mech["cost"], "electrical": elec["cost"], "hybrid": hyb["cost"]}
-        land_values = {"mechanical": mech["land_area"], "electrical": elec["land_area"], "hybrid": hyb["land_area"]}
-        energy_values = {"mechanical": mech["efficiency"], "electrical": elec["efficiency"], "hybrid": hyb["efficiency"]}
     else:
         cost_values = {"mechanical": mech["cost"], "electrical": elec["cost"]}
-        land_values = {"mechanical": mech["land_area"], "electrical": elec["land_area"]}
-        energy_values = {"mechanical": mech["efficiency"], "electrical": elec["efficiency"]}
 
     cost_colors = rag_color(cost_values, metric="cost")
-    land_colors = rag_color(land_values, metric="land_area")
-    energy_colors = rag_color(energy_values, metric="efficiency")
 
     # ── 3. Count green dots per system ───────────────────────────────────────
     green_hex = RAG_COLORS["green"]
-    all_color_maps = [cost_colors, land_colors, energy_colors]
+    all_color_maps = [cost_colors]
 
     mech_greens = sum(1 for colors in all_color_maps if colors.get("mechanical") == green_hex)
     elec_greens = sum(1 for colors in all_color_maps if colors.get("electrical") == green_hex)
@@ -194,36 +188,6 @@ def make_scorecard_table(
                 _value_cell(fmt_cost(elec["cost"]), cost_colors.get("electrical", "")),
                 _value_cell(fmt_cost(hyb["cost"]), cost_colors.get("hybrid", "")),
             ]),
-            html.Tr([
-                html.Th("Total Land Area"),
-                _value_cell(
-                    f"{fmt_sig2(mech['land_area'])} m\u00b2",
-                    land_colors.get("mechanical", ""),
-                ),
-                _value_cell(
-                    f"{fmt_sig2(elec['land_area'])} m\u00b2",
-                    land_colors.get("electrical", ""),
-                ),
-                _value_cell(
-                    f"{fmt_sig2(hyb['land_area'])} m\u00b2",
-                    land_colors.get("hybrid", ""),
-                ),
-            ]),
-            html.Tr([
-                html.Th("Total Power (kW)"),
-                _value_cell(
-                    f"{fmt_sig2(mech['efficiency'])} kW",
-                    energy_colors.get("mechanical", ""),
-                ),
-                _value_cell(
-                    f"{fmt_sig2(elec['efficiency'])} kW",
-                    energy_colors.get("electrical", ""),
-                ),
-                _value_cell(
-                    f"{fmt_sig2(hyb['efficiency'])} kW",
-                    energy_colors.get("hybrid", ""),
-                ),
-            ]),
         ]
         col_span = 4
         header_row = html.Tr([
@@ -238,28 +202,6 @@ def make_scorecard_table(
                 html.Th("Total Cost"),
                 _value_cell(fmt_cost(mech["cost"]), cost_colors.get("mechanical", "")),
                 _value_cell(fmt_cost(elec["cost"]), cost_colors.get("electrical", "")),
-            ]),
-            html.Tr([
-                html.Th("Total Land Area"),
-                _value_cell(
-                    f"{fmt_sig2(mech['land_area'])} m\u00b2",
-                    land_colors.get("mechanical", ""),
-                ),
-                _value_cell(
-                    f"{fmt_sig2(elec['land_area'])} m\u00b2",
-                    land_colors.get("electrical", ""),
-                ),
-            ]),
-            html.Tr([
-                html.Th("Total Power (kW)"),
-                _value_cell(
-                    f"{fmt_sig2(mech['efficiency'])} kW",
-                    energy_colors.get("mechanical", ""),
-                ),
-                _value_cell(
-                    f"{fmt_sig2(elec['efficiency'])} kW",
-                    energy_colors.get("electrical", ""),
-                ),
             ]),
         ]
         col_span = 3
@@ -297,8 +239,7 @@ def make_scorecard_table(
     return html.Div([
         html.H5("System Scorecard", className="mt-3"),
         html.P(
-            "Green = best of the compared systems, Red = worst. "
-            "Lower cost, less land, and less energy are better.",
+            "Green = lowest cost, Red = highest cost.",
             className="text-muted small",
         ),
         table,
