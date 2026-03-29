@@ -16,7 +16,7 @@ import pandas as pd
 from dash import html
 import dash_bootstrap_components as dbc
 
-from src.config import EQUIPMENT_DESCRIPTIONS, PROCESS_STAGES, DISPLAY_NAMES
+from src.config import EQUIPMENT_DESCRIPTIONS, PROCESS_STAGES, DISPLAY_NAMES, LIFESPAN_DEFAULTS
 from src.data.processing import fmt_cost, fmt_num, fmt, fmt_sig2, get_equipment_stage
 
 
@@ -39,10 +39,12 @@ _STAGE_ORDER = [
 # Private helpers
 # ──────────────────────────────────────────────────────────────────────────────
 
-def _fmt_lifespan(value) -> str:
-    """Format lifespan value, handling non-numeric strings like 'indefinite'."""
+def _fmt_lifespan(value, name: str = "") -> str:
+    """Format lifespan value, applying LIFESPAN_DEFAULTS when xlsx has no data."""
     if value is None:
-        return "N/A"
+        value = LIFESPAN_DEFAULTS.get(name, "indefinite")
+    if isinstance(value, str) and value.strip().lower() == "indefinite":
+        return "Indefinite"
     n = pd.to_numeric(value, errors="coerce")
     if pd.isna(n):
         return str(value)
@@ -65,7 +67,7 @@ def _make_summary_badges(row: pd.Series) -> dbc.Row:
     badges = [
         ("Qty", fmt_sig2(row.get("quantity"))),
         ("Cost", fmt_cost(row.get("cost_usd"))),
-        ("Lifespan", _fmt_lifespan(row.get("lifespan_years"))),
+        ("Lifespan", _fmt_lifespan(row.get("lifespan_years"), row.get("name", ""))),
     ]
     cols = []
     for label, value in badges:
@@ -103,7 +105,7 @@ def _make_detail_table(row: pd.Series) -> dbc.Table:
         ("Name", fmt(display_name)),
         ("Quantity", fmt_sig2(row.get("quantity"))),
         ("Cost", fmt_cost(row.get("cost_usd"))),
-        ("Lifespan", _fmt_lifespan(row.get("lifespan_years"))),
+        ("Lifespan", _fmt_lifespan(row.get("lifespan_years"), name)),
     ]
     table_rows = [
         html.Tr([html.Th(label, style={"width": "35%"}), html.Td(value)])
@@ -154,11 +156,13 @@ def _make_cross_system_comparison(
     this_row_df = this_df[this_df["name"] == equipment_name]
     if not this_row_df.empty:
         r = this_row_df.iloc[0]
+        raw_name = str(r.get("name", "N/A"))
+        raw_ls = r.get("lifespan_years")
         comparison_rows.append({
             "System": system.capitalize(),
-            "Name": DISPLAY_NAMES.get(str(r.get("name", "N/A")), str(r.get("name", "N/A"))),
+            "Name": DISPLAY_NAMES.get(raw_name, raw_name),
             "Cost": r.get("cost_usd"),
-            "Lifespan": r.get("lifespan_years"),
+            "Lifespan": raw_ls if raw_ls is not None else LIFESPAN_DEFAULTS.get(raw_name, "indefinite"),
         })
 
     for other_sys in other_systems:
@@ -170,11 +174,12 @@ def _make_cross_system_comparison(
             other_stage = get_equipment_stage(str(other_row.get("name", "")), other_sys)
             if other_stage == this_stage:
                 other_name = str(other_row.get("name", "N/A"))
+                raw_ls = other_row.get("lifespan_years")
                 comparison_rows.append({
                     "System": other_sys.capitalize(),
                     "Name": DISPLAY_NAMES.get(other_name, other_name),
                     "Cost": other_row.get("cost_usd"),
-                    "Lifespan": other_row.get("lifespan_years"),
+                    "Lifespan": raw_ls if raw_ls is not None else LIFESPAN_DEFAULTS.get(other_name, "indefinite"),
                 })
 
     if len(comparison_rows) <= 1:

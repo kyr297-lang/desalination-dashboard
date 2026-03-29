@@ -128,7 +128,7 @@ def build_cost_chart(
             tickformat="~s",
         ),
         showlegend=False,
-        uirevision="static",
+        uirevision=f"cost-{years}",
         transition=_TRANSITION,
         margin=_MARGIN,
         hovermode="x unified",
@@ -187,7 +187,6 @@ def build_energy_bar_chart(
 
     if not visible_systems:
         fig.update_layout(
-            uirevision="static",
             transition=_TRANSITION,
             margin=dict(l=40, r=10, t=10, b=10),
         )
@@ -211,7 +210,6 @@ def build_energy_bar_chart(
     fig.update_layout(
         barmode="stack",
         yaxis_title="Power (kW)",
-        uirevision="static",
         transition=_TRANSITION,
         margin=dict(l=40, r=10, t=10, b=10),
         legend=dict(
