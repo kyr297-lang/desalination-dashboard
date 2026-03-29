@@ -68,6 +68,13 @@ Students can visually compare mechanical, electrical, and custom hybrid desalina
 - ✓ Creative CSS differentiation: mechanical left-bar accents, electrical top/bottom-line accents, hybrid neutral — v1.3 (Phase 13)
 - ✓ Power breakdown chart changed from pie to grouped bar chart — v1.2
 - ✓ Consistent 2 significant figures for numeric values throughout — v1.2
+- ✓ Data loader fixed for new xlsx (section-aware cost column, Energy sheet graceful fallback) — v1.4 (Phase 15)
+- ✓ 3-subsystem power breakdown (Groundwater Extraction / RO Desalination / Brine Reinjection) with TDS/depth slider offsets — v1.4 (Phase 15)
+- ✓ Land Area and Wind Turbine Count charts removed; chart-pie renamed chart-power — v1.4 (Phase 15)
+- ✓ All 3 system layout photos updated to new PNGs — v1.4 (Phase 16)
+- ✓ Equipment names with unicode cleanup via DISPLAY_NAMES mapping — v1.4 (Phase 16)
+- ✓ Equipment accordion regrouped into 5 process stages (Power & Drive / Water Extraction / Desalination / Brine & Storage / Support) — v1.4 (Phase 16)
+- ✓ Scorecard and comparison text reduced to cost-only (land area and energy rows/sentences removed) — v1.4 (Phase 16)
 
 ### Active
 
@@ -84,9 +91,9 @@ Students can visually compare mechanical, electrical, and custom hybrid desalina
 
 ## Context
 
-Shipped v1.2 — dashboard with interactive parameter exploration and polished presentation.
+Shipped v1.4 — dashboard fully aligned with updated data.xlsx, all charts working, 3-subsystem energy model, 5-stage equipment grouping, and all display content polished.
 Tech stack: Python 3.11, Dash 4.0, Plotly, dash-bootstrap-components (FLATLY theme), pandas 2.2.3, openpyxl 3.1.5, gunicorn 23.0.0.
-Codebase: 8,218 LOC Python across 11 modules.
+Codebase: ~8,300 LOC Python across 11 modules.
 Data source: `data.xlsx` with two sheets — "Part 1" (Electrical, Mechanical, Miscellaneous equipment + battery lookup) and "Part 2" (TDS vs kW for RO desalination; Depth vs kW for pump energy). Committed to git.
 Architecture: Module-level `set_data()` pattern avoids circular imports; `dcc.Store` for client-side state; `server = app.server` for WSGI; `suppress_callback_exceptions=True` for multi-tab DOM. `interpolate_energy()` uses np.interp for slider-driven lookups.
 Deployment: Render free tier with auto-deploy from GitHub main branch at https://github.com/kyr297-lang/desalination-dashboard.
@@ -123,6 +130,12 @@ Contributors: Amogh Herle, Sofia Ijazi, Kevin Ren, Kyler Sanders — Fall 2025/S
 | Grouped bar over stacked bar for power breakdown | Side-by-side bars more readable than stacked for engineering comparison | ✓ Good — clearer stage comparison |
 | fmt_sig2 using Python .2g format | Consistent 2-sig-fig display; large integers comma-formatted | ✓ Good — clean numeric presentation |
 | Internal data keys unchanged (energy_kw) | Only user-facing labels renamed to Power; minimizes regression risk | ✓ Good — safe refactor boundary |
+| SUBSYSTEM_POWER hardcoded as engineering constants | 172.9/311.49/81.865 kW identical across all 3 systems; avoids optional Energy sheet dependency | ✓ Good — simpler and more reliable than xlsx parsing |
+| cost_col parameter on _parse_section | Electrical reads col E (total cost), mech/hybrid col D; lifespan always cost_col+1 | ✓ Good — no separate lifespan_col needed |
+| Land/turbine charts removed permanently | Data no longer available in xlsx; 2-chart layout (cost + power) is cleaner | ✓ Good — reduces cognitive load |
+| Stacked bar (not grouped) for power breakdown | Stacked bars better convey total load composition for 3 subsystems | ✓ Good — pivot from v1.2 grouped bar |
+| DISPLAY_NAMES with .get(name, name) fallback | Config-driven unicode cleanup without fragile string replacement in render code | ✓ Good — forward-compatible with future name changes |
+| PROCESS_STAGES regrouped from 7 to 5 stages | Aligns equipment grouping with 3-subsystem engineering model; removes artificial pre/post-treatment split | ✓ Good — matches domain structure |
 
 ---
-*Last updated: 2026-03-29 — Phase 16 complete: display polish + content cleanup (5-stage equipment grouping, DISPLAY_NAMES unicode cleanup, scorecard legend, overview text, layout photos)*
+*Last updated: 2026-03-29 after v1.4 milestone — data loader fixed, 3-subsystem power model, land/turbine charts removed, 5-stage equipment grouping, DISPLAY_NAMES unicode cleanup, cost-only scorecard and comparison text*

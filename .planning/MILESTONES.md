@@ -1,5 +1,24 @@
 # Milestones
 
+## v1.4 Data & Display Overhaul (Shipped: 2026-03-29)
+
+**Delivered:** Fixed data loader for new xlsx structure, replaced per-component energy model with 3-subsystem constants, removed obsolete charts, updated all system layout photos, regrouped equipment accordion into 5 process stages, and cleaned all display content to cost-only.
+
+**Stats:** 2 phases, 6 plans, 10 tasks | 9 files changed (+709/-633) | 2 days (2026-03-28 → 2026-03-29)
+
+**Key accomplishments:**
+
+1. Data loader fixed for new xlsx — section-aware cost column (electrical col E, mech/hybrid col D), Energy sheet graceful fallback, SUBSYSTEM_POWER constants replacing optional sheet dependency
+2. 3-subsystem power model wired end-to-end — SUBSYSTEM_POWER constants with TDS/depth slider offsets, 7-output callback, chart-power replacing chart-pie
+3. Land Area and Wind Turbine Count charts removed; 13/13 Playwright verification checks passed
+4. All 3 system layout PNGs replaced with new versions; DISPLAY_NAMES dict added for unicode cleanup (5 entries covering U+202F, U+00A0, en-dash, double-space, missing paren)
+5. Equipment accordion regrouped from 7 legacy stages to 5 process stages (Power & Drive / Water Extraction / Desalination / Brine & Storage / Support)
+6. Scorecard, comparison text, and overview descriptions stripped to cost-only — aligns with Phase 15 data model removing energy_kw/land_area_m2 from BOM schema
+
+**Requirements:** 22/22 v1.4 requirements satisfied (DATA-01–04, CHART-01–07, DISP-01–11)
+
+---
+
 ## v1.3 Systems Overhaul & UX Redesign (Shipped: 2026-03-27)
 
 **Delivered:** Rewrote the data layer for the hydraulic mechanical system and fixed hybrid preset, embedded system architecture diagrams, removed the hybrid builder, and overhauled UX — slider fixes, guidance banner, landing page rewrite, and mechanical content update.
@@ -8,6 +27,7 @@
 **Git range:** 2db69b0 → 94ed1fa
 
 **Key accomplishments:**
+
 1. Data layer overhaul — loader updated for renamed sections, hydraulic mechanical BOM, fixed hybrid preset, Energy sheet parsed for all three systems
 2. Hybrid builder removed — fully replaced with static preset display; all slot-based callbacks and UI deleted
 3. System layout PNG diagrams embedded on all three system pages with creative CSS differentiation (mechanical: left-bar accents; electrical: top/bottom-line accents)
@@ -27,6 +47,7 @@
 **Git range:** feat(07-01) → feat(11-01)
 
 **Key accomplishments:**
+
 1. Part 2 data layer — TDS and depth lookup tables parsed from data.xlsx "Part 2" sheet
 2. Interactive TDS (0–35,000 PPM) and depth (0–1,900 m) sliders with live power breakdown chart updates via np.interp interpolation
 3. System page visual differentiation — 4px colored top border + pill badge for Mechanical vs Electrical identity
@@ -46,6 +67,7 @@
 **Git range:** 19d6a75 → 710fb62
 
 **Key accomplishments:**
+
 1. Data layer parses 3-sheet data.xlsx into validated DataFrames with consistent system colors
 2. System selection UI with landing overview, tab navigation, RAG scorecard, and accordion equipment grid (24 items)
 3. Four comparison charts (cost-over-time, land area, turbine count, energy pie) with battery slider and real-time updates
@@ -57,7 +79,6 @@
 
 ---
 
-
 ## v1.1 Sharing & Analysis (Shipped: 2026-02-24)
 
 **Delivered:** Deployed the dashboard to Render free tier with auto-deploy from GitHub, making it accessible to classmates via public URL.
@@ -65,6 +86,7 @@
 **Stats:** 1 phase, 2 plans | 6 commits | 1 day (2026-02-23 → 2026-02-24)
 
 **Key accomplishments:**
+
 1. WSGI entry point (`server = app.server`) and Procfile with gunicorn for Render deployment
 2. Public GitHub repo at https://github.com/kyr297-lang/desalination-dashboard
 3. Auto-deploy pipeline: push to main → Render rebuilds automatically
@@ -74,4 +96,3 @@
 **Known gaps:** NPV analysis (Phase 7), Equipment comparison table (Phase 8), Chart PNG export (Phase 9) — deferred to future milestone
 
 ---
-

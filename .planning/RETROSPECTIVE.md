@@ -43,6 +43,46 @@
 
 ---
 
+## Milestone: v1.4 — Data & Display Overhaul
+
+**Shipped:** 2026-03-29
+**Phases:** 2 | **Plans:** 6 | **Commits:** 21
+
+### What Was Built
+- Data loader overhauled for new xlsx structure — section-aware cost columns, Energy sheet graceful fallback
+- 3-subsystem power model (Groundwater Extraction / RO Desalination / Brine Reinjection) replacing 7-stage Energy sheet dependency
+- Land Area and Wind Turbine Count charts removed; 2-chart layout (cost + power breakdown)
+- All 3 system layout PNGs replaced; DISPLAY_NAMES mapping for unicode cleanup
+- Equipment accordion regrouped from 7 legacy stages to 5 process stages
+- Scorecard, comparison text, and overview descriptions stripped to cost-only
+
+### What Worked
+- Hardcoding SUBSYSTEM_POWER as engineering constants was the right call — avoids optional sheet dependency entirely and made processing.py much simpler
+- Worktree isolation per plan caught a baseline mismatch (initial release vs main head) early — executor flagged and fixed correctly
+- Playwright verification (13/13 checks) gave high confidence before audit — found zero surprises at audit time
+- `DISPLAY_NAMES.get(name, name)` pattern is elegantly forward-compatible — no fragile string replace needed in render code
+
+### What Was Inefficient
+- Phase 15-03 ROADMAP.md checkbox `[ ]` was never updated to `[x]` — minor doc gap, caught at audit
+- MILESTONES.md one-liner extraction failed for phases with YAML frontmatter `---` — gsd-tools summary-extract hitting delimiter instead of content
+
+### Patterns Established
+- `cost_col` parameter on `_parse_section()` for section-aware parsing without branching — reusable if xlsx schema changes again
+- `DISPLAY_NAMES` config dict with `.get()` fallback — clean separation of raw data keys from display strings
+- 5-stage process grouping (Power & Drive / Water Extraction / Desalination / Brine & Storage / Support) — established as the canonical equipment taxonomy for this project
+
+### Key Lessons
+1. When xlsx schema changes, fix the loader constants first (Plan 01) before touching processing/charts (Plan 02) — dependency order matters and was correctly honored
+2. Worktrees starting from initial release (not current main) need all intermediate changes reapplied — this caused 3 auto-fixes in Phase 16; consider worktree baseline when planning multi-wave execution
+3. Audit-first milestone completion confirmed zero surprises — the 22/22 PASS reflects real execution quality, not optimistic checking
+
+### Cost Observations
+- Model mix: Sonnet for execution, Opus for planning
+- Sessions: ~4 across 2 days
+- Notable: 6 plans in 2 days with very high execution accuracy (0 rework cycles)
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -52,6 +92,8 @@
 | v1.0 | 50 | 5 | Foundation — established all patterns |
 | v1.1 | 6 | 1 | Deployment — single-phase milestone |
 | v1.2 | 37 | 5 | Parallel phases, audit-first completion |
+| v1.3 | ~30 | 3 | Major overhaul — worktree isolation, content rewrite |
+| v1.4 | 21 | 2 | Data realignment — constants over xlsx, chart cleanup |
 
 ### Top Lessons (Verified Across Milestones)
 
