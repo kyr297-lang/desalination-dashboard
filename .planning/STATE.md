@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Data & Display Overhaul
 status: executing
-stopped_at: Completed 15-02-PLAN.md
-last_updated: "2026-03-29T01:22:40.701Z"
+stopped_at: Completed 16-01-PLAN.md
+last_updated: "2026-03-29T05:33:34.592Z"
 last_activity: 2026-03-29
 progress:
   total_phases: 2
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 6
+  completed_plans: 5
   percent: 0
 ---
 
@@ -21,12 +21,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-26)
 
 **Core value:** Students can visually compare mechanical, electrical, and hybrid desalination systems side-by-side to understand cost, land, and efficiency tradeoffs
-**Current focus:** Phase 15 — data-layer-chart-overhaul
+**Current focus:** Phase 16 — display-polish-content
 
 ## Current Position
 
-Phase: 16
-Plan: Not started
+Phase: 16 (display-polish-content) — EXECUTING
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-03-29
 
@@ -57,6 +57,8 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 14-ux-quality-content-rewrite P01 | 5 | 1 tasks | 2 files |
 | Phase 15 P01 | 3 | 2 tasks | 2 files |
 | Phase 15 P02 | 4 | 2 tasks | 2 files |
+| Phase 16-display-polish-content P03 | 5 | 2 tasks | 3 files |
+| Phase 16 P01 | 8 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -89,6 +91,10 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 15]: Energy breakdown uses SUBSYSTEM_POWER constants (not Energy sheet) — avoids optional sheet dependency; identical power demands across all 3 systems
 - [Phase 15]: barmode changed from group to stack for power breakdown chart — stacked bars better convey total load composition
 - [Phase 15]: compute_scorecard_metrics returns only cost — BOM DataFrames no longer have energy_kw or land_area_m2 columns after Plan 01
+- [Phase 16-display-polish-content]: Scorecard renders only Total Cost row — land area and power rows removed to align with Phase 15 cost-only data model
+- [Phase 16-display-polish-content]: generate_comparison_text metric_labels reduced to cost only — land_area and efficiency comparisons removed
+- [Phase 16-01]: DISPLAY_NAMES uses .get(raw_name, raw_name) pattern — forward-compatible with Phase 14 unicode names not yet in PROCESS_STAGES
+- [Phase 16-01]: Stage heading CSS added for all three systems (mechanical+electrical+hybrid) in worktree since worktree starts at initial release
 
 ### Pending Todos
 
@@ -102,6 +108,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-28T21:58:59.537Z
-Stopped at: Completed 15-02-PLAN.md
+Last session: 2026-03-29T05:33:34.589Z
+Stopped at: Completed 16-01-PLAN.md
 Resume file: None

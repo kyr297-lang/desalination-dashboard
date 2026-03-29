@@ -83,4 +83,9 @@ Plans:
 ### Phase 16: display-polish-content
 **Goal:** Photos, equipment names/grouping, scorecard, descriptions, hybrid accent.
 **Requirements:** DISP-01–11
-**Files:** assets/*.png, config.py, equipment_grid.py, scorecard.py, overview.py, custom.css
+**Plans:** 2/3 plans executed
+
+Plans:
+- [x] 16-01-PLAN.md — Assets + CSS accent + DISPLAY_NAMES config
+- [ ] 16-02-PLAN.md — Equipment grid regrouping + detail table simplification
+- [x] 16-03-PLAN.md — Scorecard legend + overview content cleanup
