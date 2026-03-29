@@ -44,72 +44,99 @@ RAG_COLORS = {
 # strings returned by loader.py (from column B of data.xlsx).
 PROCESS_STAGES = {
     "mechanical": {
-        "Water Extraction": [
-            "250kW aeromotor turbine ",
-            "Submersible pump ",
+        "Power & Drive": [
+            "1 MW Aeromotor Turbine",
             "Wind turbine rotor lock",
+            "Gearbox (Winergy  PEAB series)",
+            "Variable-Displacement Hydraulic Power Unit (HPU)",
+            "300 Bar Hydraulic Manifold (Custom Ductile Iron Block)",
+            "Hydraulic Motor (225 kW rating) (Haaglund CA 50)",
+            "Hydraulic Motor (225 kW rating) (Haaglund CA 70)",
         ],
-        "Pre-Treatment": [
-            "Pipes",
-            "Gate valve",
+        "Water Extraction": [
+            "Vertical Turbine Pump (PSI Prolew Flowserve VTP)",
         ],
         "Desalination": [
-            "2 RO membranes in parallel",
-            "Gear and Booster Pump",
+            "Plunger Pump (Triplex Plunger Pump K 13000 \u2013 3G)",
+            "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)",
+            "Reverse osmosis train",
         ],
-        "Post-Treatment": [
+        "Brine & Storage": [
+            "Extra storage tank (100,000 gallons)",
+        ],
+        "Support": [
+            "Gate valve",
+            "Pipes (total)",
             "Calcite bed contactors",
-        ],
-        "Brine Disposal": [
-            "Extra storage tank",
         ],
     },
     "electrical": {
-        "Water Extraction": [
-            "Turbine",
-            "Submersible pump",
-            "Battery (1 day of power)",
+        "Power & Drive": [
+            "1.5\u202fMW Turbine (GE Vernova 1.5sle)",
+            "Battery (Tesla Megapack 3.9MWh unit)",
         ],
-        "Pre-Treatment": [
-            "Multi-Media Filtration",
-            "Pipes (total)",
+        "Water Extraction": [
+            "Submersible Pumps (WDM (Nidec) NHE Series high-head submersible)",
         ],
         "Desalination": [
-            "RO membranes in parallel",
-            "Booster Pump",
+            "Multi-Media Filtration System (Pure Aqua MF-500 Series FRP Filter Skid)",
+            "RO Membrane Trains",
+            "Booster Pumps (Grundfos CR 10-10 K)",
         ],
-        "Post-Treatment": [
-            "Calcite bed contactors",
+        "Brine & Storage": [
+            "Brine Disposal Well",
         ],
-        "Brine Disposal": [
-            "Brine Well",
-        ],
-        "Control": [
-            "PLC",
+        "Support": [
+            "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)",
+            "Piping (total)",
+            "Calcite Bed Contactor (DrinTec FRP Calcite Contactor)",
         ],
     },
-    "miscellaneous": {
-        "Water Extraction": [
-            "Piston pump",
+    "hybrid": {
+        "Power & Drive": [
+            "1 MW Aeromotor Turbine",
+            "Gearbox (Winergy PEAB series)",
+            "Variable-Displacement HPU",
+            "300 Bar Hydraulic Manifold (Custom Ductile Iron Block)",
+            "Hydraulic Motor (225 kW, Haaglund CA 50)",
+            "Battery (Tesla Megapack 3.9 MWh)",
         ],
-        "Pre-Treatment": [
-            "Antiscalant (assuming 3g/L of antiscalant)",
+        "Water Extraction": [
+            "Vertical Turbine Pump (PSI Prolew Flowserve VTP)",
         ],
         "Desalination": [
-            "2 RO membranes in parallel",
-            "RO membranes in parallel",
-            "Gear and Booster Pump",
-            "Booster Pump",
+            "Multi-Media Filtration System (Pure Aqua MF-500 Series)",
+            "Reverse Osmosis Trains",
+            "High Pressure Pump (Danfoss APP 78/1500 180B7808)",
+            "Booster Pump (Grundfos CR 10-10 K)",
         ],
-        "Post-Treatment": [
-            "Green blend addition",
-            "Activated carbon (annual)",
-            "55 gallon container is 2500 USD, for 1 million gal/day lasts about 20 days",
+        "Brine & Storage": [
+            "Brine Disposal Well",
+            "Extra Storage Tank (100,000 gallons)",
         ],
-        "Brine Disposal": [
-            "Evaporation Pond",
+        "Support": [
+            "PLC (Siemens SIMATIC S7-1200 CPU1215C-1)",
+            "Piping (total)",
+            "Calcite Bed Contactor (DrinTec FRP Calcite Contactor)",
         ],
     },
+}
+
+# Clean display names for equipment items shown in the UI.
+# Keys are exact data.xlsx column B strings (with unicode); values are
+# the human-readable versions.  Items not in this dict display as-is.
+# Usage: DISPLAY_NAMES.get(raw_name, raw_name)
+DISPLAY_NAMES: dict[str, str] = {
+    # Electrical — narrow no-break space U+202F before "MW"
+    "1.5\u202fMW Turbine (GE Vernova 1.5sle)": "1.5 MW Turbine (GE Vernova 1.5sle)",
+    # Electrical — non-breaking space U+00A0 before "CPU"
+    "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)": "PLC (Siemens SIMATIC S7-1200 CPU1215C-1)",
+    # Mechanical — double space in Winergy name
+    "Gearbox (Winergy  PEAB series)": "Gearbox (Winergy PEAB series)",
+    # Mechanical — en-dash U+2013
+    "Plunger Pump (Triplex Plunger Pump K 13000 \u2013 3G)": "Plunger Pump (Triplex Plunger Pump K 13000 - 3G)",
+    # Mechanical — missing closing paren
+    "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)": "High Pressure Pump (Danfoss APP 78/1500 180B7808, 1300 L/min)",
 }
 
 # EQUIPMENT_DESCRIPTIONS provides a 1-2 sentence technical description for
@@ -246,21 +273,4 @@ EQUIPMENT_DESCRIPTIONS = {
         "consumption rate supporting 1 million gallons per day, each drum "
         "lasts roughly 20 days."
     ),
-}
-
-# Clean display names for equipment items shown in the UI.
-# Keys are exact data.xlsx column B strings (with unicode); values are
-# the human-readable versions.  Items not in this dict display as-is.
-# Usage: DISPLAY_NAMES.get(raw_name, raw_name)
-DISPLAY_NAMES: dict[str, str] = {
-    # Electrical — narrow no-break space U+202F before "MW"
-    "1.5\u202fMW Turbine (GE Vernova 1.5sle)": "1.5 MW Turbine (GE Vernova 1.5sle)",
-    # Electrical — non-breaking space U+00A0 before "CPU"
-    "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)": "PLC (Siemens SIMATIC S7-1200 CPU1215C-1)",
-    # Mechanical — double space in Winergy name
-    "Gearbox (Winergy  PEAB series)": "Gearbox (Winergy PEAB series)",
-    # Mechanical — en-dash U+2013
-    "Plunger Pump (Triplex Plunger Pump K 13000 \u2013 3G)": "Plunger Pump (Triplex Plunger Pump K 13000 - 3G)",
-    # Mechanical — missing closing paren
-    "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)": "High Pressure Pump (Danfoss APP 78/1500 180B7808, 1300 L/min)",
 }

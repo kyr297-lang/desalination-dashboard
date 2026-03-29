@@ -16,7 +16,7 @@ import pandas as pd
 from dash import html
 import dash_bootstrap_components as dbc
 
-from src.config import EQUIPMENT_DESCRIPTIONS, PROCESS_STAGES
+from src.config import EQUIPMENT_DESCRIPTIONS, PROCESS_STAGES, DISPLAY_NAMES
 from src.data.processing import fmt_cost, fmt_num, fmt, fmt_sig2, get_equipment_stage
 
 
@@ -27,35 +27,17 @@ from src.data.processing import fmt_cost, fmt_num, fmt, fmt_sig2, get_equipment_
 # Canonical stage order for display.  Equipment that does not match any stage
 # is placed under "Other".
 _STAGE_ORDER = [
+    "Power & Drive",
     "Water Extraction",
-    "Pre-Treatment",
     "Desalination",
-    "Post-Treatment",
-    "Brine Disposal",
-    "Control",
-    "Other",
+    "Brine & Storage",
+    "Support",
 ]
 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Private helpers
 # ──────────────────────────────────────────────────────────────────────────────
-
-def _fmt_power(value) -> str:
-    """Format power value with kW unit, or 'N/A'."""
-    n = pd.to_numeric(value, errors="coerce")
-    if pd.isna(n):
-        return "N/A"
-    return f"{fmt_sig2(float(n))} kW"
-
-
-def _fmt_land(value) -> str:
-    """Format land area value with m2 unit, or 'N/A'."""
-    n = pd.to_numeric(value, errors="coerce")
-    if pd.isna(n):
-        return "N/A"
-    return f"{fmt_sig2(float(n))} m\u00b2"
-
 
 def _fmt_lifespan(value) -> str:
     """Format lifespan value, handling non-numeric strings like 'indefinite'."""
@@ -68,7 +50,7 @@ def _fmt_lifespan(value) -> str:
 
 
 def _make_summary_badges(row: pd.Series) -> dbc.Row:
-    """Build a row of five metric badges for the collapsed accordion header summary.
+    """Build a row of metric badges for the collapsed accordion header summary.
 
     Parameters
     ----------
@@ -78,13 +60,11 @@ def _make_summary_badges(row: pd.Series) -> dbc.Row:
     Returns
     -------
     dbc.Row
-        Five small badge columns: Qty, Cost, Energy, Land, Lifespan.
+        Three small badge columns: Qty, Cost, Lifespan.
     """
     badges = [
         ("Qty", fmt_sig2(row.get("quantity"))),
         ("Cost", fmt_cost(row.get("cost_usd"))),
-        ("Power", _fmt_power(row.get("energy_kw"))),
-        ("Land", _fmt_land(row.get("land_area_m2"))),
         ("Lifespan", _fmt_lifespan(row.get("lifespan_years"))),
     ]
     cols = []
@@ -115,14 +95,14 @@ def _make_detail_table(row: pd.Series) -> dbc.Table:
     Returns
     -------
     dbc.Table
-        Two-column table with label (Th) and value (Td) for every field.
+        Two-column table with label (Th) and value (Td) for Name, Qty, Cost, Lifespan.
     """
+    name = row.get("name", "")
+    display_name = DISPLAY_NAMES.get(name, name)
     fields = [
-        ("Name", fmt(row.get("name"))),
+        ("Name", fmt(display_name)),
         ("Quantity", fmt_sig2(row.get("quantity"))),
         ("Cost", fmt_cost(row.get("cost_usd"))),
-        ("Power", _fmt_power(row.get("energy_kw"))),
-        ("Land Area", _fmt_land(row.get("land_area_m2"))),
         ("Lifespan", _fmt_lifespan(row.get("lifespan_years"))),
     ]
     table_rows = [
@@ -176,10 +156,9 @@ def _make_cross_system_comparison(
         r = this_row_df.iloc[0]
         comparison_rows.append({
             "System": system.capitalize(),
-            "Name": str(r.get("name", "N/A")),
+            "Name": DISPLAY_NAMES.get(str(r.get("name", "N/A")), str(r.get("name", "N/A"))),
             "Cost": r.get("cost_usd"),
-            "Power": r.get("energy_kw"),
-            "Land Area": r.get("land_area_m2"),
+            "Lifespan": r.get("lifespan_years"),
         })
 
     for other_sys in other_systems:
@@ -190,12 +169,12 @@ def _make_cross_system_comparison(
         for _, other_row in other_df.iterrows():
             other_stage = get_equipment_stage(str(other_row.get("name", "")), other_sys)
             if other_stage == this_stage:
+                other_name = str(other_row.get("name", "N/A"))
                 comparison_rows.append({
                     "System": other_sys.capitalize(),
-                    "Name": str(other_row.get("name", "N/A")),
+                    "Name": DISPLAY_NAMES.get(other_name, other_name),
                     "Cost": other_row.get("cost_usd"),
-                    "Power": other_row.get("energy_kw"),
-                    "Land Area": other_row.get("land_area_m2"),
+                    "Lifespan": other_row.get("lifespan_years"),
                 })
 
     if len(comparison_rows) <= 1:
@@ -207,17 +186,16 @@ def _make_cross_system_comparison(
             className="mt-2",
         )
 
-    # Determine best (lowest) numeric value per metric column
-    metric_cols = ["Cost", "Power", "Land Area"]
-    best_vals: dict[str, float] = {}
-    for col in metric_cols:
-        numeric_vals = [
-            pd.to_numeric(r[col], errors="coerce")
-            for r in comparison_rows
-        ]
-        valid = [v for v in numeric_vals if not pd.isna(v)]
-        if valid:
-            best_vals[col] = min(valid)
+    # Best values: lowest cost, highest lifespan
+    best_cost = None
+    best_lifespan = None
+    for r in comparison_rows:
+        c = pd.to_numeric(r["Cost"], errors="coerce")
+        if not pd.isna(c):
+            best_cost = min(best_cost, c) if best_cost is not None else c
+        ls = pd.to_numeric(r["Lifespan"], errors="coerce")
+        if not pd.isna(ls):
+            best_lifespan = max(best_lifespan, ls) if best_lifespan is not None else ls
 
     # Build table rows
     header = html.Thead(
@@ -225,35 +203,34 @@ def _make_cross_system_comparison(
             html.Th("System"),
             html.Th("Name"),
             html.Th("Cost"),
-            html.Th("Power"),
-            html.Th("Land Area"),
+            html.Th("Lifespan"),
         ])
     )
     body_rows = []
     for comp_row in comparison_rows:
+        cost_raw = comp_row["Cost"]
+        cost_numeric = pd.to_numeric(cost_raw, errors="coerce")
+        cost_is_best = (
+            best_cost is not None
+            and not pd.isna(cost_numeric)
+            and float(cost_numeric) == best_cost
+        )
+
+        ls_raw = comp_row["Lifespan"]
+        ls_numeric = pd.to_numeric(ls_raw, errors="coerce")
+        ls_is_best = (
+            best_lifespan is not None
+            and not pd.isna(ls_numeric)
+            and float(ls_numeric) == best_lifespan
+        )
+
+        best_style = {"color": "#28A745", "fontWeight": "bold"}
         cells = [
             html.Td(comp_row["System"], style={"fontWeight": "600"}),
             html.Td(comp_row["Name"], style={"fontSize": "0.85rem"}),
+            html.Td(fmt_cost(cost_raw), style=best_style if cost_is_best else {}),
+            html.Td(_fmt_lifespan(ls_raw), style=best_style if ls_is_best else {}),
         ]
-        for col, fmt_fn, unit in [
-            ("Cost", fmt_cost, ""),
-            ("Power", _fmt_power, ""),
-            ("Land Area", _fmt_land, ""),
-        ]:
-            raw = comp_row[col]
-            numeric = pd.to_numeric(raw, errors="coerce")
-            display = fmt_fn(raw) if col != "Land Area" else _fmt_land(raw)
-            is_best = (
-                col in best_vals
-                and not pd.isna(numeric)
-                and float(numeric) == best_vals[col]
-            )
-            cells.append(
-                html.Td(
-                    display,
-                    style={"color": "#28A745", "fontWeight": "bold"} if is_best else {},
-                )
-            )
         body_rows.append(html.Tr(cells))
 
     table = dbc.Table(
@@ -268,7 +245,7 @@ def _make_cross_system_comparison(
             html.H6("Cross-System Comparison", className="mt-3 text-muted"),
             html.P(
                 f"Equipment in the same process stage ({this_stage}) across systems. "
-                "Green = best value.",
+                "Green = best value (lowest cost, longest lifespan).",
                 className="small text-muted",
             ),
             table,
@@ -300,11 +277,12 @@ def _make_accordion_item(
     dbc.AccordionItem
     """
     name = str(row.get("name", "Unknown"))
+    display_name = DISPLAY_NAMES.get(name, name)
     cost_display = fmt_cost(row.get("cost_usd"))
 
-    # Collapsed header: name + cost
+    # Collapsed header: display name + cost
     title = html.Span([
-        html.Strong(name),
+        html.Strong(display_name),
         html.Span(
             f" — {cost_display}",
             className="text-muted ms-1",
@@ -312,7 +290,7 @@ def _make_accordion_item(
         ),
     ])
 
-    # Description
+    # Description uses original name since EQUIPMENT_DESCRIPTIONS keys match raw xlsx strings
     description_text = EQUIPMENT_DESCRIPTIONS.get(name, "No description available.")
     description = html.P(
         description_text,
