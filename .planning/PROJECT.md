@@ -17,7 +17,7 @@
 
 ---
 
-## Current State: v1.4 In Progress — Phase 15 Complete (2026-03-28)
+## Current State: v1.4 Complete — Phase 16 Complete (2026-03-29)
 
 **Shipped:** Hydraulic mechanical system reflected end-to-end, hybrid builder removed, system diagrams embedded, UX polished with slider fixes, guidance banner, and full content rewrite.
 
@@ -125,4 +125,4 @@ Contributors: Amogh Herle, Sofia Ijazi, Kevin Ren, Kyler Sanders — Fall 2025/S
 | Internal data keys unchanged (energy_kw) | Only user-facing labels renamed to Power; minimizes regression risk | ✓ Good — safe refactor boundary |
 
 ---
-*Last updated: 2026-03-28 — Phase 15 complete: data layer + chart overhaul (4-col BOM, 3-subsystem energy model, 2-chart layout)*
+*Last updated: 2026-03-29 — Phase 16 complete: display polish + content cleanup (5-stage equipment grouping, DISPLAY_NAMES unicode cleanup, scorecard legend, overview text, layout photos)*
