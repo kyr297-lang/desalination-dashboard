@@ -53,6 +53,32 @@
     size: auto;
 }
 
+/* Equipment stage heading accents
+   ──────────────────────────────────────────────────────────────────
+   These classes are applied by equipment_grid.py to H5 stage heading
+   elements. Each system gets a distinct left-border accent matching its
+   SYSTEM_COLORS entry. */
+.stage-heading-mechanical {
+    border-left: 3px solid #5B8DB8;
+    padding-left: 0.5rem;
+    border-bottom: 1px solid #5B8DB8;
+    padding-bottom: 0.25rem;
+}
+
+.stage-heading-electrical {
+    border-left: 3px solid #D4854A;
+    padding-left: 0.5rem;
+    border-bottom: 1px solid #D4854A;
+    padding-bottom: 0.25rem;
+}
+
+.stage-heading-hybrid {
+    border-left: 3px solid #6BAA75;
+    padding-left: 0.5rem;
+    border-bottom: 1px solid #6BAA75;
+    padding-bottom: 0.25rem;
+}
+
 /* Print media rules
    ──────────────────
    Hide all non-report UI elements in print/PDF export view.
@@ -94,42 +120,11 @@
     .scorecard-print-section {
         page-break-inside: avoid;
     }
-}
 
-/* ── System layout diagram differentiation (Phase 13) ─────────── */
-
-/* Mechanical: blueprint-style left accent bar + very subtle tinted background */
-.system-card-mechanical {
-    border-left: 4px solid #5B8DB8;
-}
-.system-card-mechanical .card-body {
-    background-color: rgba(91, 141, 184, 0.03);
-}
-
-/* Electrical: clean top-line accent */
-.system-card-electrical {
-    border-top: 2px solid #D4854A;
-}
-
-/* Equipment stage heading accents */
-.stage-heading-mechanical {
-    border-left: 3px solid #5B8DB8;
-    padding-left: 0.5rem;
-}
-
-.stage-heading-electrical {
-    border-bottom: 2px solid #D4854A;
-    padding-bottom: 0.25rem;
-}
-
-/* Ensure diagram card accent borders print faithfully */
-@media print {
-    .system-card-mechanical,
-    .system-card-electrical {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-    .system-card-mechanical .card-body {
+    /* Stage heading accent borders — print preservation */
+    .stage-heading-mechanical,
+    .stage-heading-electrical,
+    .stage-heading-hybrid {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }

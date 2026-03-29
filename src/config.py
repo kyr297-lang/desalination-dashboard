@@ -21,35 +21,13 @@ SYSTEM_COLORS = {
 # Muted academic palette — distinct from SYSTEM_COLORS and from each other.
 # Fixed assignment prevents color shifting when stage values drop to 0.
 STAGE_COLORS = {
-    "Groundwater Extraction": "#4AACB0",   # muted teal
-    "RO Desalination":        "#D4A739",   # muted amber
-    "Brine Reinjection":      "#C46E5A",   # muted brick red
-    "Other":                  "#999999",   # medium grey (fallback)
-}
-
-# Engineering constants: subsystem shaft power demands (kW).
-# These are identical across all three systems (mechanical, electrical, hybrid)
-# because the desalination process loads are the same regardless of drive type.
-# Source: Energy sheet analysis (172.9 + 311.49 + 81.865 = 566.255 kW total).
-SUBSYSTEM_POWER = {
-    "Groundwater Extraction": 172.9,
-    "RO Desalination": 311.49,
-    "Brine Reinjection": 81.865,
-}
-
-# Default equipment lifespans (years) used when xlsx has no lifespan column.
-# "indefinite" means the item is purchased once and never replaced.
-# Keys must match exact equipment name strings from data.xlsx column B.
-LIFESPAN_DEFAULTS = {
-    # Electrical system
-    "Battery (Tesla Megapack 3.9MWh unit)": 12,
-    "RO Membrane Trains": 7,
-    # Mechanical system
-    "Reverse osmosis train": 7,
-    # Hybrid system
-    "Battery (Tesla Megapack 3.9 MWh)": 12,
-    "Reverse Osmosis Trains": 7,
-    # Default: everything else is indefinite (no replacement)
+    "Water Extraction": "#4AACB0",   # muted teal
+    "Pre-Treatment":    "#9975B5",   # muted purple
+    "Desalination":     "#D4A739",   # muted amber
+    "Post-Treatment":   "#7DAA5A",   # muted olive green
+    "Brine Disposal":   "#C46E5A",   # muted brick red
+    "Control":          "#7A9FBF",   # muted slate blue
+    "Other":            "#999999",   # medium grey
 }
 
 # RAG (Red / Amber / Green) traffic-light colors for the scorecard.
@@ -67,145 +45,123 @@ RAG_COLORS = {
 PROCESS_STAGES = {
     "mechanical": {
         "Water Extraction": [
-            "1 MW Aeromotor Turbine",
+            "250kW aeromotor turbine ",
+            "Submersible pump ",
             "Wind turbine rotor lock",
-            "Gearbox (Winergy  PEAB series)",
-            "Variable-Displacement Hydraulic Power Unit (HPU)",
-            "300 Bar Hydraulic Manifold (Custom Ductile Iron Block)",
-            "Hydraulic Motor (225 kW rating) (Haaglund CA 50)",
-            "Hydraulic Motor (225 kW rating) (Haaglund CA 70)",
-            "Vertical Turbine Pump (PSI Prolew Flowserve VTP)",
         ],
         "Pre-Treatment": [
+            "Pipes",
             "Gate valve",
-            "Pipes (total)",
         ],
         "Desalination": [
-            "Plunger Pump (Triplex Plunger Pump K 13000 \u2013 3G)",
-            "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)",
-            "Reverse osmosis train",
+            "2 RO membranes in parallel",
+            "Gear and Booster Pump",
         ],
         "Post-Treatment": [
             "Calcite bed contactors",
         ],
         "Brine Disposal": [
-            "Extra storage tank (100,000 gallons)",
+            "Extra storage tank",
         ],
     },
     "electrical": {
         "Water Extraction": [
-            "1.5\u202fMW Turbine (GE Vernova 1.5sle)",
-            "Submersible Pumps (WDM (Nidec) NHE Series high-head submersible)",
-            "Battery (Tesla Megapack 3.9MWh unit)",
+            "Turbine",
+            "Submersible pump",
+            "Battery (1 day of power)",
         ],
         "Pre-Treatment": [
-            "Multi-Media Filtration System (Pure Aqua MF-500 Series FRP Filter Skid)",
-            "Piping (total)",
+            "Multi-Media Filtration",
+            "Pipes (total)",
         ],
         "Desalination": [
-            "RO Membrane Trains",
-            "Booster Pumps (Grundfos CR 10-10 K)",
+            "RO membranes in parallel",
+            "Booster Pump",
         ],
         "Post-Treatment": [
-            "Calcite Bed Contactor (DrinTec FRP Calcite Contactor)",
+            "Calcite bed contactors",
         ],
         "Brine Disposal": [
-            "Brine Disposal Well",
+            "Brine Well",
         ],
         "Control": [
-            "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)",
+            "PLC",
         ],
     },
-    "hybrid": {
+    "miscellaneous": {
         "Water Extraction": [
-            "1 MW Aeromotor Turbine",
-            "Vertical Turbine Pump (PSI Prolew Flowserve VTP)",
-            "Variable-Displacement HPU",
-            "Gearbox (Winergy PEAB series)",
-            "300 Bar Hydraulic Manifold (Custom Ductile Iron Block)",
-            "Hydraulic Motor (225 kW, Haaglund CA 50)",
-            "Battery (Tesla Megapack 3.9 MWh)",
+            "Piston pump",
         ],
         "Pre-Treatment": [
-            "Multi-Media Filtration System (Pure Aqua MF-500 Series)",
-            "Piping (total)",
+            "Antiscalant (assuming 3g/L of antiscalant)",
         ],
         "Desalination": [
-            "Reverse Osmosis Trains",
-            "High Pressure Pump (Danfoss APP 78/1500 180B7808)",
-            "Booster Pump (Grundfos CR 10-10 K)",
+            "2 RO membranes in parallel",
+            "RO membranes in parallel",
+            "Gear and Booster Pump",
+            "Booster Pump",
         ],
         "Post-Treatment": [
-            "Calcite Bed Contactor (DrinTec FRP Calcite Contactor)",
+            "Green blend addition",
+            "Activated carbon (annual)",
+            "55 gallon container is 2500 USD, for 1 million gal/day lasts about 20 days",
         ],
         "Brine Disposal": [
-            "Brine Disposal Well",
-            "Extra Storage Tank (100,000 gallons)",
-        ],
-        "Control": [
-            "PLC (Siemens SIMATIC S7-1200 CPU1215C-1)",
+            "Evaporation Pond",
         ],
     },
 }
 
 # EQUIPMENT_DESCRIPTIONS provides a 1-2 sentence technical description for
-# each equipment item in the mechanical, electrical, and hybrid systems.
+# each equipment item in the mechanical, electrical, and miscellaneous systems.
 # Audience: engineering students. Keys match column B strings exactly.
 EQUIPMENT_DESCRIPTIONS = {
     # ── Mechanical system ──────────────────────────────────────────────────────
+    "250kW aeromotor turbine ": (
+        "A large wind-driven turbine rated at 250 kW that provides mechanical "
+        "energy to drive pumps and pressurize water for reverse osmosis. "
+        "It directly couples wind energy to the desalination process without "
+        "converting to electricity."
+    ),
+    "2 RO membranes in parallel": (
+        "Two reverse osmosis membrane modules connected in parallel to increase "
+        "throughput while maintaining operating pressure. Semi-permeable membranes "
+        "reject dissolved salts as pressurized feedwater passes through."
+    ),
+    "Pipes": (
+        "Network of pressurized piping that routes water between process stages "
+        "including from the extraction point through pre-treatment, the RO unit, "
+        "and post-treatment to the product water storage."
+    ),
+    "Submersible pump ": (
+        "An electrically driven pump installed below the water surface in the "
+        "source well or intake structure to lift raw water to the treatment "
+        "system at the required flow rate."
+    ),
     "Wind turbine rotor lock": (
         "A mechanical brake and locking mechanism that immobilizes the wind "
         "turbine rotor for safe maintenance, high-wind shutdown, or emergency "
         "stop conditions."
+    ),
+    "Extra storage tank": (
+        "A buffer tank that stores treated product water or brine concentrate, "
+        "decoupling production rate fluctuations from demand and providing "
+        "capacity for brine disposal scheduling."
     ),
     "Gate valve": (
         "A full-bore isolation valve used to start, stop, or throttle flow "
         "within the piping system. Gate valves provide low pressure drop when "
         "fully open and are standard in water treatment infrastructure."
     ),
+    "Gear and Booster Pump": (
+        "A gear pump or centrifugal booster pump that raises feedwater pressure "
+        "to the level required for effective reverse osmosis membrane operation, "
+        "compensating for system head losses."
+    ),
     "Calcite bed contactors": (
         "A post-treatment vessel packed with calcite (calcium carbonate) media "
         "that remineralizes RO permeate by dissolving into the low-TDS product "
         "water, raising pH and hardness to potable standards."
-    ),
-    "Gearbox (Winergy  PEAB series)": (
-        "A multi-stage planetary gearbox from the Winergy PEAB series that steps "
-        "up turbine shaft speed to the operating speed required by the hydraulic "
-        "power unit, transmitting mechanical power with high efficiency."
-    ),
-    "Variable-Displacement Hydraulic Power Unit (HPU)": (
-        "A variable-displacement hydraulic power unit that converts mechanical "
-        "shaft input into high-pressure hydraulic flow, enabling continuous "
-        "output control regardless of wind speed fluctuations."
-    ),
-    "Hydraulic Motor (225 kW rating) (Haaglund CA 50)": (
-        "A Haaglund CA 50 low-speed high-torque hydraulic motor rated at 225 kW "
-        "that converts hydraulic pressure into mechanical rotation to drive "
-        "high-pressure pumps directly."
-    ),
-    "Hydraulic Motor (225 kW rating) (Haaglund CA 70)": (
-        "A Haaglund CA 70 low-speed high-torque hydraulic motor rated at 225 kW, "
-        "used alongside the CA 50 to distribute hydraulic power across multiple "
-        "pump loads in the mechanical drivetrain."
-    ),
-    "Plunger Pump (Triplex Plunger Pump K 13000 \u2013 3G)": (
-        "A triplex plunger pump that delivers high-pressure feedwater to the "
-        "reverse osmosis membranes through positive-displacement action, "
-        "driven by the hydraulic motor drivetrain."
-    ),
-    "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)": (
-        "A Danfoss APP axial piston pump that pressurizes feedwater to the "
-        "operating point required for reverse osmosis membrane separation."
-    ),
-    "Reverse osmosis train": (
-        "A reverse osmosis membrane train that rejects dissolved salts from "
-        "pressurized feedwater, producing low-TDS permeate for post-treatment "
-        "and distribution."
-    ),
-    "Extra storage tank (100,000 gallons)": (
-        "A 100,000-gallon buffer tank that stores product water or brine "
-        "concentrate, providing operational flexibility during variable "
-        "wind conditions."
     ),
     # ── Electrical system ─────────────────────────────────────────────────────
     "Turbine": (
@@ -258,129 +214,7 @@ EQUIPMENT_DESCRIPTIONS = {
         "permeate, and brine lines, that interconnects all process equipment "
         "throughout the electrical desalination system."
     ),
-    # ── New electrical names (Phase 15 xlsx update) ───────────────────────────
-    "1.5\u202fMW Turbine (GE Vernova 1.5sle)": (
-        "A GE Vernova 1.5sle wind turbine rated at 1.5 MW that converts wind "
-        "energy into electricity to power the desalination system's pumps, "
-        "controls, and ancillary loads."
-    ),
-    "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)": (
-        "A Siemens SIMATIC S7-1200 programmable logic controller that automates "
-        "sequencing, monitoring, and control of the desalination system, including "
-        "pump scheduling, pressure regulation, and alarm management."
-    ),
-    "Submersible Pumps (WDM (Nidec) NHE Series high-head submersible)": (
-        "Nidec NHE Series high-head submersible pumps installed below the water "
-        "surface to extract raw groundwater and deliver it to the pre-treatment "
-        "stage at the required flow and pressure."
-    ),
-    "Battery (Tesla Megapack 3.9MWh unit)": (
-        "A Tesla Megapack utility-scale battery module with 3.9 MWh capacity "
-        "that stores electrical energy generated by the wind turbine, ensuring "
-        "continuous 24/7 desalination output during low-wind periods."
-    ),
-    "Booster Pumps (Grundfos CR 10-10 K)": (
-        "Grundfos CR 10-10 K multi-stage centrifugal booster pumps that elevate "
-        "feedwater pressure to the operating point of the RO membranes."
-    ),
-    "RO Membrane Trains": (
-        "Multiple reverse osmosis membrane trains arranged in parallel to increase "
-        "system capacity while sharing the high-pressure feed, each rejecting "
-        "dissolved salts to produce low-TDS permeate."
-    ),
-    "Multi-Media Filtration System (Pure Aqua MF-500 Series FRP Filter Skid)": (
-        "A Pure Aqua MF-500 series multi-media filtration skid that removes "
-        "suspended solids and turbidity from feedwater using layered sand, "
-        "anthracite, and garnet media prior to the RO membranes."
-    ),
-    "Piping (total)": (
-        "The complete piping network, including suction, feed, high-pressure, "
-        "permeate, and brine lines, that interconnects all process equipment "
-        "throughout the desalination system."
-    ),
-    # ── Hybrid system ─────────────────────────────────────────────────────────
-    "1 MW Aeromotor Turbine": (
-        "A large-format wind turbine rated at 1 MW that provides primary mechanical "
-        "energy to the hydraulic drivetrain; the same turbine platform as the "
-        "mechanical system, enabling shared component sourcing."
-    ),
-    "Gearbox (Winergy PEAB series)": (
-        "A multi-stage planetary gearbox from the Winergy PEAB series that steps "
-        "up turbine shaft speed to the operating speed required by the hydraulic "
-        "power unit, transmitting mechanical power with high efficiency."
-    ),
-    "Variable-Displacement HPU": (
-        "A variable-displacement hydraulic power unit that converts mechanical "
-        "shaft input from the gearbox into high-pressure hydraulic flow, allowing "
-        "continuous output control regardless of wind speed fluctuations."
-    ),
-    "300 Bar Hydraulic Manifold (Custom Ductile Iron Block)": (
-        "A custom-machined ductile iron hydraulic manifold rated to 300 bar that "
-        "distributes high-pressure hydraulic fluid to multiple actuators, "
-        "minimizing piping connections and pressure losses in the drivetrain."
-    ),
-    "Hydraulic Motor (225 kW, Haaglund CA 50)": (
-        "A Haaglund CA 50 low-speed high-torque hydraulic motor rated at 225 kW "
-        "that converts hydraulic pressure into mechanical rotation to drive the "
-        "high-pressure RO feed pump directly."
-    ),
-    "High Pressure Pump (Danfoss APP 78/1500 180B7808)": (
-        "A Danfoss APP axial piston pump rated for high-pressure RO feed "
-        "pressurization, delivering up to 1500 L/min at the pressure required "
-        "for membrane separation in the reverse osmosis train."
-    ),
-    "Battery (Tesla Megapack 3.9 MWh)": (
-        "A Tesla Megapack utility-scale battery module with 3.9 MWh capacity "
-        "that stores electrical energy generated by the turbine generator, "
-        "supplying the electrical subsystem loads (VTP, brine pump, PLC) "
-        "for continuous 24/7 operation."
-    ),
-    "Vertical Turbine Pump (PSI Prolew Flowserve VTP)": (
-        "A Flowserve vertical turbine pump used for groundwater extraction, "
-        "electrically driven from the battery bank in the hybrid system to "
-        "decouple extraction from the hydraulic drivetrain."
-    ),
-    "Booster Pump (Grundfos CR 10-10 K)": (
-        "A Grundfos CR series multi-stage centrifugal booster pump that raises "
-        "feedwater pressure ahead of the RO membranes, electrically driven "
-        "from the battery supply in the hybrid configuration."
-    ),
-    "PLC (Siemens SIMATIC S7-1200 CPU1215C-1)": (
-        "A Siemens SIMATIC S7-1200 programmable logic controller that provides "
-        "automated sequencing, pressure monitoring, and fault management for "
-        "the hybrid system's mixed hydraulic and electrical subsystems."
-    ),
-    "Multi-Media Filtration System (Pure Aqua MF-500 Series)": (
-        "A Pure Aqua MF-500 series multi-media filtration skid that removes "
-        "suspended solids and turbidity from feedwater using layered sand, "
-        "anthracite, and garnet media prior to the RO membranes."
-    ),
-    "Reverse Osmosis Trains": (
-        "Parallel reverse osmosis membrane trains that reject dissolved salts "
-        "from pressurized feedwater, producing low-TDS permeate for post-treatment "
-        "and distribution."
-    ),
-    "Calcite Bed Contactor (DrinTec FRP Calcite Contactor)": (
-        "A DrinTec fiberglass-reinforced calcite contactor that remineralizes "
-        "RO permeate by dissolving calcium carbonate media, restoring pH, "
-        "hardness, and alkalinity to potable water standards."
-    ),
-    "Brine Disposal Well": (
-        "A dedicated injection well for safe subsurface disposal of RO brine "
-        "concentrate, preventing surface contamination and meeting regulatory "
-        "discharge requirements."
-    ),
-    "Extra Storage Tank (100,000 gallons)": (
-        "A 100,000-gallon product water or brine buffer tank that decouples "
-        "the production rate from demand, providing operational flexibility "
-        "during variable wind conditions."
-    ),
-    "Piping (total)": (
-        "The complete piping network for the hybrid system, encompassing "
-        "hydraulic lines, process water feed, RO permeate, brine reject, "
-        "and chemical dosing connections between all process stages."
-    ),
-    # ── Shared chemical treatment ──────────────────────────────────────────────
+    # ── Miscellaneous / shared ────────────────────────────────────────────────
     "Green blend addition": (
         "Addition of a blend of minerals or pH-adjusting chemicals to the "
         "product water to meet regulatory requirements for taste, hardness, "
@@ -412,4 +246,21 @@ EQUIPMENT_DESCRIPTIONS = {
         "consumption rate supporting 1 million gallons per day, each drum "
         "lasts roughly 20 days."
     ),
+}
+
+# Clean display names for equipment items shown in the UI.
+# Keys are exact data.xlsx column B strings (with unicode); values are
+# the human-readable versions.  Items not in this dict display as-is.
+# Usage: DISPLAY_NAMES.get(raw_name, raw_name)
+DISPLAY_NAMES: dict[str, str] = {
+    # Electrical — narrow no-break space U+202F before "MW"
+    "1.5\u202fMW Turbine (GE Vernova 1.5sle)": "1.5 MW Turbine (GE Vernova 1.5sle)",
+    # Electrical — non-breaking space U+00A0 before "CPU"
+    "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)": "PLC (Siemens SIMATIC S7-1200 CPU1215C-1)",
+    # Mechanical — double space in Winergy name
+    "Gearbox (Winergy  PEAB series)": "Gearbox (Winergy PEAB series)",
+    # Mechanical — en-dash U+2013
+    "Plunger Pump (Triplex Plunger Pump K 13000 \u2013 3G)": "Plunger Pump (Triplex Plunger Pump K 13000 - 3G)",
+    # Mechanical — missing closing paren
+    "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)": "High Pressure Pump (Danfoss APP 78/1500 180B7808, 1300 L/min)",
 }
