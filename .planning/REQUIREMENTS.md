@@ -18,14 +18,14 @@
 
 - [x] **DISP-01**: All 3 system layout photos updated to new PNGs
 - [x] **DISP-02**: Equipment names displayed with proper title case and unicode cleanup (DISPLAY_NAMES mapping)
-- [ ] **DISP-03**: Equipment accordion regrouped into: Power & Drive / Water Extraction / Desalination / Brine & Storage / Support
+- [x] **DISP-03**: Equipment accordion regrouped into: Power & Drive / Water Extraction / Desalination / Brine & Storage / Support
 - [x] **DISP-04**: Hybrid stage headings have accent class (stage-heading-hybrid, CSS added)
 - [x] **DISP-05**: Scorecard shows only Total Capital Cost (land area and power rows removed)
 - [x] **DISP-06**: Scorecard legend text updated ("Lower total cost is better")
 - [x] **DISP-07**: Comparison text compares cost only (land area and energy sentences removed)
 - [x] **DISP-08**: Overview card descriptions remove "land area" references
-- [ ] **DISP-09**: Equipment detail table shows Name, Quantity, Cost, Lifespan (no power/land area)
-- [ ] **DISP-10**: Cross-system comparison table shows Cost and Lifespan (no power/land area)
+- [x] **DISP-09**: Equipment detail table shows Name, Quantity, Cost, Lifespan (no power/land area)
+- [x] **DISP-10**: Cross-system comparison table shows Cost and Lifespan (no power/land area)
 - [x] **DISP-11**: Equipment descriptions updated for new electrical and hybrid component names
 
 ## Traceability

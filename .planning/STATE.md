@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Data & Display Overhaul
-status: executing
-stopped_at: Completed 16-01-PLAN.md
-last_updated: "2026-03-29T05:33:34.592Z"
+status: verifying
+stopped_at: Completed 16-02-PLAN.md
+last_updated: "2026-03-29T05:40:06.937Z"
 last_activity: 2026-03-29
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
   percent: 0
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-26)
 
 Phase: 16 (display-polish-content) — EXECUTING
 Plan: 3 of 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-03-29
 
 Progress: [░░░░░░░░░░] 0%
@@ -59,6 +59,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 15 P02 | 4 | 2 tasks | 2 files |
 | Phase 16-display-polish-content P03 | 5 | 2 tasks | 3 files |
 | Phase 16 P01 | 8 | 2 tasks | 6 files |
+| Phase 16-display-polish-content P02 | 12 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,8 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 16-display-polish-content]: generate_comparison_text metric_labels reduced to cost only — land_area and efficiency comparisons removed
 - [Phase 16-01]: DISPLAY_NAMES uses .get(raw_name, raw_name) pattern — forward-compatible with Phase 14 unicode names not yet in PROCESS_STAGES
 - [Phase 16-01]: Stage heading CSS added for all three systems (mechanical+electrical+hybrid) in worktree since worktree starts at initial release
+- [Phase 16-display-polish-content]: PROCESS_STAGES regrouped from 7 stages to 5: Power & Drive, Water Extraction, Desalination, Brine & Storage, Support — matches Phase 15 equipment names
+- [Phase 16-display-polish-content]: Cross-system comparison now shows Lifespan instead of Power/Land Area (those columns removed in Phase 15)
 
 ### Pending Todos
 
@@ -108,6 +111,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-29T05:33:34.589Z
-Stopped at: Completed 16-01-PLAN.md
+Last session: 2026-03-29T05:40:06.934Z
+Stopped at: Completed 16-02-PLAN.md
 Resume file: None
