@@ -81,7 +81,7 @@ PROCESS_STAGES = {
         "Desalination": [
             "Plunger Pump (Triplex Plunger Pump K 13000 \u2013 3G)",
             "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)",
-            "Reverse osmosis train",
+            "Pure Aqua Large Reverse Osmosis System RO-600 (Includes Pre and Post treatment)",
         ],
         "Brine & Storage": [
             "Extra storage tank (100,000 gallons)",
@@ -89,7 +89,6 @@ PROCESS_STAGES = {
         "Support": [
             "Gate valve",
             "Pipes (total)",
-            "Calcite bed contactors",
         ],
     },
     "electrical": {
@@ -101,8 +100,7 @@ PROCESS_STAGES = {
             "Submersible Pumps (WDM (Nidec) NHE Series high-head submersible)",
         ],
         "Desalination": [
-            "Multi-Media Filtration System (Pure Aqua MF-500 Series FRP Filter Skid)",
-            "RO Membrane Trains",
+            "Pure Aqua Large Reverse Osmosis System RO-600 (Includes Pre and Post treatment)",
             "Booster Pumps (Grundfos CR 10-10 K)",
         ],
         "Brine & Storage": [
@@ -111,35 +109,32 @@ PROCESS_STAGES = {
         "Support": [
             "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)",
             "Piping (total)",
-            "Calcite Bed Contactor (DrinTec FRP Calcite Contactor)",
         ],
     },
     "hybrid": {
         "Power & Drive": [
             "1 MW Aeromotor Turbine",
-            "Gearbox (Winergy PEAB series)",
-            "Variable-Displacement HPU",
-            "300 Bar Hydraulic Manifold (Custom Ductile Iron Block)",
-            "Hydraulic Motor (225 kW, Haaglund CA 50)",
-            "Battery (Tesla Megapack 3.9 MWh)",
+            "Wind turbine rotor lock",
+            "Gearbox (Winergy  PEAB series) - Must be ordered with second output shaft",
+            "Variable-Displacement Hydraulic Power Unit (HPU)",
+            "Hydraulic Motor (225 kW rating) (Haaglund CA 70)",
+            "Battery (Tesla Megapack 3.9MWh unit)",
+            "HCI544E 3-Phase - Stamford | 600 kW ",
+            "Rectifier/Inverter Package",
         ],
         "Water Extraction": [
             "Vertical Turbine Pump (PSI Prolew Flowserve VTP)",
         ],
         "Desalination": [
-            "Multi-Media Filtration System (Pure Aqua MF-500 Series)",
-            "Reverse Osmosis Trains",
-            "High Pressure Pump (Danfoss APP 78/1500 180B7808)",
-            "Booster Pump (Grundfos CR 10-10 K)",
+            "Pure Aqua Large Reverse Osmosis System RO-600 (Includes Pre and Post treatment)",
+            "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)",
         ],
         "Brine & Storage": [
-            "Brine Disposal Well",
-            "Extra Storage Tank (100,000 gallons)",
+            "Extra storage tank (100,000 gallons)",
         ],
         "Support": [
-            "PLC (Siemens SIMATIC S7-1200 CPU1215C-1)",
-            "Piping (total)",
-            "Calcite Bed Contactor (DrinTec FRP Calcite Contactor)",
+            "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)",
+            "Pipes (total)",
         ],
     },
 }
@@ -375,6 +370,27 @@ EQUIPMENT_DESCRIPTIONS = {
         "The complete piping network for the hybrid system, encompassing "
         "hydraulic lines, process water feed, RO permeate, brine reject, "
         "and chemical dosing connections between all process stages."
+    ),
+    # ── Shared across systems ─────────────────────────────────────────────────
+    "Pure Aqua Large Reverse Osmosis System RO-600 (Includes Pre and Post treatment)": (
+        "An integrated skid combining multi-media pre-treatment filtration, reverse "
+        "osmosis membrane trains, and post-treatment remineralization into a single "
+        "packaged system, rejecting dissolved salts and producing potable-quality permeate."
+    ),
+    "Gearbox (Winergy  PEAB series) - Must be ordered with second output shaft": (
+        "A Winergy PEAB series planetary gearbox configured with a second output shaft "
+        "to simultaneously drive both the hydraulic power unit and an AC alternator, "
+        "splitting mechanical power between the hydraulic and electrical subsystems."
+    ),
+    "HCI544E 3-Phase - Stamford | 600 kW ": (
+        "A Stamford HCI544E synchronous AC alternator rated at 600 kW that converts "
+        "mechanical drivetrain power from the gearbox second shaft into three-phase AC "
+        "electricity for battery charging and electrical pump loads."
+    ),
+    "Rectifier/Inverter Package": (
+        "A power electronics package that rectifies three-phase AC output from the "
+        "alternator into DC for battery charging, and inverts stored DC back to AC "
+        "to supply variable-frequency motor drives and system loads."
     ),
     # ── Shared chemical treatment ──────────────────────────────────────────────
     "Green blend addition": (

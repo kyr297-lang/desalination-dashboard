@@ -4,6 +4,11 @@
   "commit_docs": true,
   "model_profile": "quality",
   "model_overrides": {
+    "gsd-planner": "claude-opus-4-6",
+    "gsd-phase-researcher": "claude-opus-4-6",
+    "gsd-project-researcher": "claude-opus-4-6",
+    "gsd-debugger": "claude-opus-4-6",
+    "gsd-roadmapper": "claude-opus-4-6",
     "gsd-executor": "sonnet"
   },
   "workflow": {
