@@ -442,3 +442,21 @@ DISPLAY_NAMES: dict[str, str] = {
     # Mechanical — missing closing paren
     "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)": "High Pressure Pump (Danfoss APP 78/1500 180B7808, 1300 L/min)",
 }
+
+# Drivetrain efficiency constants (turbine shaft output → RO pump shaft input).
+# Mechanical:  gearbox 97% × HPU 88% × hyd motor 90% × pump 90% = 69.3%
+# Electrical:  VFD 97% × electric motor 94% × pump 90%           = 82.1%
+# Hybrid:      RO load (55%) through hydraulic path (69.3%),
+#              GW+brine load (45%) through alternator→rectifier/inverter→VFD→motor→pump (71.8%)
+#              Weighted: 0.55×0.693 + 0.45×0.718 ≈ 70.4%
+DRIVETRAIN_EFFICIENCY = {
+    "mechanical": 0.693,
+    "electrical": 0.821,
+    "hybrid":     0.704,
+}
+
+# LCOW denominator: cumulative potable water production over 20-year project life.
+# Q_potable = 157.7 m³/hr × 0.30 capacity factor × 8760 hr/yr × 20 yr = 8,288,712 m³
+# Converted: 8,288,712 m³ × 264.172 gal/m³ / 1000 = 2,189,595 thousand US gallons
+# Usage: LCOW ($/kgal) = total_capex_usd / LCOW_DENOMINATOR_KGAL
+LCOW_DENOMINATOR_KGAL = 2_189_595.0

@@ -145,15 +145,21 @@ def make_scorecard_table(
 
     # ── 2. Assign RAG colors per metric ──────────────────────────────────────
     if has_hybrid:
-        cost_values = {"mechanical": mech["cost"], "electrical": elec["cost"], "hybrid": hyb["cost"]}
+        cost_values   = {"mechanical": mech["cost"],                 "electrical": elec["cost"],                 "hybrid": hyb["cost"]}
+        dt_eff_values = {"mechanical": mech["drivetrain_efficiency"], "electrical": elec["drivetrain_efficiency"], "hybrid": hyb["drivetrain_efficiency"]}
+        lcow_values   = {"mechanical": mech["lcow"],                 "electrical": elec["lcow"],                 "hybrid": hyb["lcow"]}
     else:
-        cost_values = {"mechanical": mech["cost"], "electrical": elec["cost"]}
+        cost_values   = {"mechanical": mech["cost"],                 "electrical": elec["cost"]}
+        dt_eff_values = {"mechanical": mech["drivetrain_efficiency"], "electrical": elec["drivetrain_efficiency"]}
+        lcow_values   = {"mechanical": mech["lcow"],                 "electrical": elec["lcow"]}
 
-    cost_colors = rag_color(cost_values, metric="cost")
+    cost_colors   = rag_color(cost_values,   metric="cost")
+    dt_eff_colors = rag_color(dt_eff_values, metric="drivetrain_efficiency")
+    lcow_colors   = rag_color(lcow_values,   metric="lcow")
 
     # ── 3. Count green dots per system ───────────────────────────────────────
     green_hex = RAG_COLORS["green"]
-    all_color_maps = [cost_colors]
+    all_color_maps = [cost_colors, dt_eff_colors, lcow_colors]
 
     mech_greens = sum(1 for colors in all_color_maps if colors.get("mechanical") == green_hex)
     elec_greens = sum(1 for colors in all_color_maps if colors.get("electrical") == green_hex)
@@ -185,6 +191,18 @@ def make_scorecard_table(
                 _value_cell(fmt_cost(elec["cost"]), cost_colors.get("electrical", "")),
                 _value_cell(fmt_cost(hyb["cost"]), cost_colors.get("hybrid", "")),
             ]),
+            html.Tr([
+                html.Th("Drivetrain Efficiency"),
+                _value_cell(f"{mech['drivetrain_efficiency']*100:.1f}%", dt_eff_colors.get("mechanical", "")),
+                _value_cell(f"{elec['drivetrain_efficiency']*100:.1f}%", dt_eff_colors.get("electrical", "")),
+                _value_cell(f"{hyb['drivetrain_efficiency']*100:.1f}%",  dt_eff_colors.get("hybrid", "")),
+            ]),
+            html.Tr([
+                html.Th("LCOW (CapEx only)"),
+                _value_cell(f"${mech['lcow']:.2f}/kgal", lcow_colors.get("mechanical", "")),
+                _value_cell(f"${elec['lcow']:.2f}/kgal", lcow_colors.get("electrical", "")),
+                _value_cell(f"${hyb['lcow']:.2f}/kgal",  lcow_colors.get("hybrid", "")),
+            ]),
         ]
         col_span = 4
         header_row = html.Tr([
@@ -199,6 +217,16 @@ def make_scorecard_table(
                 html.Th("Total Cost"),
                 _value_cell(fmt_cost(mech["cost"]), cost_colors.get("mechanical", "")),
                 _value_cell(fmt_cost(elec["cost"]), cost_colors.get("electrical", "")),
+            ]),
+            html.Tr([
+                html.Th("Drivetrain Efficiency"),
+                _value_cell(f"{mech['drivetrain_efficiency']*100:.1f}%", dt_eff_colors.get("mechanical", "")),
+                _value_cell(f"{elec['drivetrain_efficiency']*100:.1f}%", dt_eff_colors.get("electrical", "")),
+            ]),
+            html.Tr([
+                html.Th("LCOW (CapEx only)"),
+                _value_cell(f"${mech['lcow']:.2f}/kgal", lcow_colors.get("mechanical", "")),
+                _value_cell(f"${elec['lcow']:.2f}/kgal", lcow_colors.get("electrical", "")),
             ]),
         ]
         col_span = 3
@@ -236,7 +264,8 @@ def make_scorecard_table(
     return html.Div([
         html.H5("System Scorecard", className="mt-3"),
         html.P(
-            "Lower total cost is better.",
+            "Green = best of the compared systems, Red = worst. "
+            "Lower cost and LCOW are better. Higher drivetrain efficiency is better.",
             className="text-muted small",
         ),
         table,

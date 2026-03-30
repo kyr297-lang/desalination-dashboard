@@ -22,7 +22,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from src.config import PROCESS_STAGES, RAG_COLORS, SUBSYSTEM_POWER, LIFESPAN_DEFAULTS
+from src.config import PROCESS_STAGES, RAG_COLORS, SUBSYSTEM_POWER, LIFESPAN_DEFAULTS, DRIVETRAIN_EFFICIENCY, LCOW_DENOMINATOR_KGAL
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Formatting helpers
@@ -156,7 +156,7 @@ def fmt(value) -> str:
 # ──────────────────────────────────────────────────────────────────────────────
 
 # Metrics where a lower value is considered better (green = lowest).
-RAG_BETTER_IS_LOWER: set[str] = {"cost"}
+RAG_BETTER_IS_LOWER: set[str] = {"cost", "lcow"}
 
 
 def rag_color(values: dict[str, float], metric: str) -> dict[str, str]:
@@ -246,19 +246,21 @@ def compute_scorecard_metrics(
             "cost": float  (sum of cost_usd column, USD),
         }
     """
-    def _aggregate(df: pd.DataFrame) -> dict[str, float]:
-        cost = pd.to_numeric(df["cost_usd"], errors="coerce").sum()
+    def _aggregate(df: pd.DataFrame, system_key: str) -> dict[str, float]:
+        cost = float(pd.to_numeric(df["cost_usd"], errors="coerce").sum())
         return {
-            "cost": float(cost),
+            "cost":                  cost,
+            "drivetrain_efficiency": DRIVETRAIN_EFFICIENCY.get(system_key, float("nan")),
+            "lcow":                  cost / LCOW_DENOMINATOR_KGAL,
         }
 
     result = {
-        "mechanical": _aggregate(mechanical_df),
-        "electrical": _aggregate(electrical_df),
+        "mechanical": _aggregate(mechanical_df, "mechanical"),
+        "electrical": _aggregate(electrical_df, "electrical"),
     }
 
     if hybrid_df is not None:
-        result["hybrid"] = _aggregate(hybrid_df)
+        result["hybrid"] = _aggregate(hybrid_df, "hybrid")
 
     return result
 
