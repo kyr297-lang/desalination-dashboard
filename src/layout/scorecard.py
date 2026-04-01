@@ -269,5 +269,17 @@ def make_scorecard_table(
             className="text-muted small",
         ),
         table,
+        html.P(
+            [
+                html.Strong("Drivetrain Efficiency: "),
+                "fraction of turbine shaft power that reaches the RO pump shaft after all "
+                "mechanical and electrical conversion losses (gearbox, hydraulic, motor, VFD). ",
+                html.Strong("LCOW (CapEx only): "),
+                "Levelized Cost of Water \u2014 total capital expenditure divided by cumulative "
+                "20-year potable water production ($/thousand US gallons). OpEx not included.",
+            ],
+            className="text-muted small mt-2",
+            style={"fontStyle": "italic"},
+        ),
     ])
 

@@ -187,6 +187,15 @@ def build_energy_bar_chart(
 
     if not visible_systems:
         fig.update_layout(
+            annotations=[dict(
+                text="All systems hidden — click a badge above to show data",
+                xref="paper", yref="paper",
+                x=0.5, y=0.5,
+                showarrow=False,
+                font=dict(size=13, color="#999999"),
+            )],
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
             transition=_TRANSITION,
             margin=dict(l=40, r=10, t=10, b=10),
         )
@@ -301,6 +310,8 @@ def make_chart_section() -> html.Div:
                             tooltip={"always_visible": True, "placement": "bottom"},
                             updatemode="mouseup",
                             allow_direct_input=False,
+                            persistence=True,
+                            persistence_type="session",
                         ),
                         html.Span(
                             id="label-years",
@@ -330,6 +341,8 @@ def make_chart_section() -> html.Div:
                             tooltip={"always_visible": True, "placement": "bottom"},
                             updatemode="mouseup",
                             allow_direct_input=False,
+                            persistence=True,
+                            persistence_type="session",
                         ),
                         html.Span(
                             id="label-battery-ratio",
@@ -359,13 +372,15 @@ def make_chart_section() -> html.Div:
                         dcc.Slider(
                             id="slider-tds",
                             min=0,
-                            max=35000,
+                            max=10000,
                             step=100,
                             value=950,
-                            marks={0: "0", 10000: "10k", 20000: "20k", 35000: "35k"},
+                            marks={0: "0 PPM", 5000: "5k", 10000: "10k PPM"},
                             tooltip={"always_visible": True, "placement": "bottom"},
                             updatemode="mouseup",
                             allow_direct_input=False,
+                            persistence=True,
+                            persistence_type="session",
                         ),
                         html.Span(
                             id="label-tds",
@@ -379,7 +394,7 @@ def make_chart_section() -> html.Div:
                 dbc.Col(
                     [
                         html.Div([
-                            html.Strong("Water Source Depth"),
+                            html.Strong("Groundwater Well Depth"),
                             html.Small(
                                 " \u2014 Adjust to model pump energy demand",
                                 className="text-muted ms-1",
@@ -395,6 +410,8 @@ def make_chart_section() -> html.Div:
                             tooltip={"always_visible": True, "placement": "bottom"},
                             updatemode="mouseup",
                             allow_direct_input=False,
+                            persistence=True,
+                            persistence_type="session",
                         ),
                         html.Span(
                             id="label-depth",

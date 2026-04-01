@@ -118,7 +118,7 @@ def create_layout(data: dict) -> html.Div:
                 children=[
                     dbc.Nav(
                         [
-                            dbc.NavLink("Overview", href="/", active="exact"),
+                            dbc.NavLink("Overview", id="nav-overview", href="", active=True),
                         ],
                         vertical=True,
                         pills=True,
@@ -209,6 +209,28 @@ def select_system_from_tab(active_tab):
 def back_to_overview(n_clicks):
     """Reset to landing page when back link is clicked."""
     return None
+
+
+@callback(
+    Output("active-system", "data", allow_duplicate=True),
+    Input("nav-overview", "n_clicks"),
+    prevent_initial_call=True,
+)
+def nav_overview_click(n_clicks):
+    """Reset to landing page when the sidebar Overview link is clicked (BUG-1)."""
+    return None
+
+
+@callback(
+    Output("nav-overview", "active"),
+    Input("active-system", "data"),
+)
+def update_nav_overview_active(active_system):
+    """Reflect current view in sidebar active state (BUG-2).
+
+    Overview link is active only when no system is selected (landing page).
+    """
+    return active_system is None
 
 
 @callback(

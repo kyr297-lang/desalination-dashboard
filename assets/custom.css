@@ -53,6 +53,49 @@
     size: auto;
 }
 
+/* Mobile responsive layout (≤575px)
+   ──────────────────────────────────────────────────────────────────
+   Fix sidebar crowding, tab clipping, scorecard overflow, and chart
+   label truncation on narrow viewports. */
+@media (max-width: 575px) {
+    /* Auto-collapse sidebar on mobile — hamburger still opens it */
+    #sidebar {
+        width: 0px !important;
+    }
+
+    /* Prevent system tab labels from clipping off-screen */
+    #system-tabs .nav-link {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.8rem;
+    }
+
+    /* Shrink scorecard table text so it fits without horizontal scroll */
+    #scorecard-container .table {
+        font-size: 0.75rem;
+    }
+
+    #scorecard-container .table th,
+    #scorecard-container .table td {
+        padding: 0.25rem 0.3rem;
+    }
+
+    /* Stack the two-column slider rows vertically */
+    .chart-controls .col-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* Prevent chart x-axis labels from truncating */
+    .js-plotly-plot .plotly .xtick text {
+        font-size: 10px !important;
+    }
+
+    /* Ensure cards don't overflow viewport */
+    .card {
+        overflow-x: hidden;
+    }
+}
+
 /* Equipment stage heading accents
    ──────────────────────────────────────────────────────────────────
    These classes are applied by equipment_grid.py to H5 stage heading

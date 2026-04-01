@@ -456,7 +456,8 @@ DRIVETRAIN_EFFICIENCY = {
 }
 
 # LCOW denominator: cumulative potable water production over 20-year project life.
-# Q_potable = 157.7 m³/hr × 0.30 capacity factor × 8760 hr/yr × 20 yr = 8,288,712 m³
-# Converted: 8,288,712 m³ × 264.172 gal/m³ / 1000 = 2,189,595 thousand US gallons
+# Q_potable = 157.7 m³/hr × 0.30 wind capacity factor × 0.95 plant availability × 8760 hr/yr × 20 yr
+#           = 7,874,276 m³
+# Converted: 7,874,276 m³ × 264.172 gal/m³ / 1000 = 2,080,163 thousand US gallons
 # Usage: LCOW ($/kgal) = total_capex_usd / LCOW_DENOMINATOR_KGAL
-LCOW_DENOMINATOR_KGAL = 2_189_595.0
+LCOW_DENOMINATOR_KGAL = 2_080_163.0

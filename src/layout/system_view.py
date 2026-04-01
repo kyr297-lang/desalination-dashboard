@@ -86,12 +86,11 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         Full system view component tree.
     """
     # ── 1. Breadcrumb ─────────────────────────────────────────────────────────
-    breadcrumb = html.A(
+    breadcrumb = html.Button(
         "\u2190 Overview",
         id="back-to-overview",
-        href="#",
-        className="text-muted small mb-2 d-inline-block no-print",
-        style={"cursor": "pointer", "textDecoration": "none"},
+        className="btn btn-link text-muted small mb-2 p-0 no-print",
+        style={"textDecoration": "none", "verticalAlign": "baseline"},
     )
 
     # ── 2. Tab bar ────────────────────────────────────────────────────────────
