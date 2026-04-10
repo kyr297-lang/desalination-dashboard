@@ -291,17 +291,6 @@ def make_chart_section() -> html.Div:
             xs=12,
         )
 
-    # ── First-visit guidance banner ───────────────────────────────────────────
-    banner = dbc.Alert(
-        "Use the sliders below to adjust salinity, depth, and storage mix "
-        "\u2014 charts update on mouse release. Drag any slider to dismiss this tip.",
-        id="banner-guidance",
-        color="info",
-        is_open=True,
-        dismissable=False,
-        className="small no-print",
-    )
-
     # ── Slider explanation (SLDR-01) ─────────────────────────────────────────
     slider_explanation = html.P(
         "The sliders below let you explore how site-specific water conditions "
@@ -498,13 +487,6 @@ def make_chart_section() -> html.Div:
         data={"mechanical": True, "electrical": True, "hybrid": True},
     )
 
-    # ── Banner dismissed store ────────────────────────────────────────────────
-    banner_store = dcc.Store(
-        id="store-banner-dismissed",
-        data={"dismissed": False},
-        storage_type="session",   # persist across tab switches, clear on new session
-    )
-
     # ── 2-chart row ───────────────────────────────────────────────────────────
     chart_row = dbc.Row(
         [
@@ -525,8 +507,6 @@ def make_chart_section() -> html.Div:
     return html.Div([
         html.H4("System Comparison", className="section-heading"),
         legend_store,
-        banner_store,
-        banner,
         slider_explanation,
         control_panel,
         legend_row,
@@ -732,40 +712,3 @@ def update_badge_styles(visibility):
 
     return styles[0], styles[1], styles[2]
 
-
-@callback(
-    Output("store-banner-dismissed", "data"),
-    Output("banner-guidance", "is_open"),
-    Input("slider-time-horizon", "value"),
-    Input("slider-battery", "value"),
-    Input("slider-tds", "value"),
-    Input("slider-depth", "value"),
-    State("store-banner-dismissed", "data"),
-    prevent_initial_call=True,
-)
-def dismiss_banner(_th, _bat, _tds, _depth, store):
-    """Dismiss the first-visit guidance banner on any slider interaction.
-
-    Fires when any of the four sliders change value (drag or click). Sets the
-    store flag to dismissed and hides the banner. prevent_initial_call=True
-    ensures the banner is not dismissed on page load when slider defaults fire.
-
-    Parameters
-    ----------
-    _th : float
-        Time horizon slider value (unused; fires callback).
-    _bat : float
-        Battery slider value (unused; fires callback).
-    _tds : float
-        TDS slider value (unused; fires callback).
-    _depth : float
-        Depth slider value (unused; fires callback).
-    store : dict
-        Current banner dismissed-state store.
-
-    Returns
-    -------
-    tuple[dict, bool]
-        Updated store with dismissed=True, and is_open=False to hide banner.
-    """
-    return {"dismissed": True}, False
