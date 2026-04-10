@@ -1,34 +1,34 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.5
-milestone_name: Polish & Comparison Overhaul
-status: in_progress
-stopped_at: ~
-last_updated: "2026-04-09T00:00:00.000Z"
-last_activity: 2026-04-09
+milestone: v1.4
+milestone_name: Data & Display Overhaul
+status: complete
+stopped_at: Milestone v1.4 complete — archived 2026-03-29
+last_updated: "2026-03-29T18:30:00.000Z"
+last_activity: 2026-03-29
 progress:
-  total_phases: 0
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_phases: 2
+  completed_phases: 2
+  total_plans: 6
+  completed_plans: 6
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-04-09)
+See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Students can visually compare mechanical, electrical, and hybrid desalination systems side-by-side to understand cost, land, and efficiency tradeoffs
-**Current focus:** Milestone v1.5 — polish pass, cost graph legend, comparison table overhaul, slider explanation
+**Current focus:** Planning next milestone — run `/gsd:new-milestone` to define v1.5
 
 ## Current Position
 
-Phase: 17-ui-polish-chart-legend — COMPLETE
-Plan: 17-02 (final)
-Status: Phase 17 complete — all plans verified
-Last activity: 2026-04-09 — Phase 17 complete
+Phase: —
+Plan: —
+Status: ✅ v1.4 milestone complete — archived to .planning/milestones/
+Last activity: 2026-03-29
 
 Progress: [██████████] 100%
 
@@ -65,6 +65,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-09 — phase 17 complete
-Stopped at: Phase 17 verified (2 plans, all requirements met)
+Last session: 2026-03-29 — milestone v1.4 complete
+Stopped at: Milestone archived, tag created
 Resume file: None

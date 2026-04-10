@@ -247,7 +247,7 @@ def _make_cross_system_comparison(
 
     return html.Div(
         [
-            html.H6("Cross-System Comparison", className="subsection-heading text-muted"),
+            html.H6("Cross-System Comparison", className="mt-3 text-muted"),
             html.P(
                 f"Equipment in the same process stage ({this_stage}) across systems. "
                 "Green = best value (lowest cost, longest lifespan).",
@@ -374,7 +374,7 @@ def make_equipment_section(
             for idx, row in items_in_stage
         ]
 
-        stage_class = "section-heading"
+        stage_class = "mt-4 mb-2"
         if system == "mechanical":
             stage_class += " stage-heading-mechanical"
         elif system == "electrical":

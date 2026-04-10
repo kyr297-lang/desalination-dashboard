@@ -1,16 +1,19 @@
 # Wind-Powered Desalination Dashboard
 
-## Current Milestone: v1.5 Polish & Comparison Overhaul
+## Current Milestone: v1.4 Data & Display Overhaul
 
-**Goal:** Polish the UI and replace per-stage cross-system comparisons with a consolidated, hybrid-inclusive comparison table across all system tabs.
+**Goal:** Align dashboard with updated data.xlsx, remove obsolete charts, fix broken sliders, and polish all content.
 
 **Target features:**
-- Polish pass: sidebar nav link, heading hierarchy, error messages, print/export verify (POLISH-01–04)
-- Add legend to cost over time graph
-- Remove cross-system comparison slots from equipment accordion
-- Add consolidated 3-system comparison table below accordion on each system tab (drive mechanism, energy storage, key advantage, key limitation, best suited for); current system's column highlighted using existing CSS identity
-- Hybrid included as a full column in the comparison table
-- Add slider explanation paragraph above TDS/depth sliders
+- Fix data loader for new xlsx structure (no Energy sheet, new column layout, lifespan restored)
+- Replace per-component power chart with 3 subsystems (Groundwater Extraction, RO Desalination, Brine Reinjection)
+- Remove Land Area and Wind Turbine Count charts; fix chart-pie→chart-power rename
+- Fix battery/tank slider (name changed in xlsx); fix all slider labels
+- Regroup equipment accordion into logical stages aligned with 3 subsystems
+- Format all equipment names (title case, unicode cleanup, grammar)
+- Update scorecard (remove broken land/power rows)
+- Update all 3 system layout photos
+- Fix hybrid stage heading accent (audit bug)
 
 ---
 
@@ -75,14 +78,7 @@ Students can visually compare mechanical, electrical, and custom hybrid desalina
 
 ### Active
 
-- [ ] Sidebar nav link fix (POLISH-01)
-- [ ] Heading hierarchy fix (POLISH-02)
-- [ ] Error message improvements (POLISH-03)
-- [ ] Print/export verify (POLISH-04)
-- [ ] Cost over time graph legend
-- [ ] Remove cross-system comparison slots from accordion
-- [ ] Consolidated 3-system comparison table (per system tab, highlighted current system, includes hybrid)
-- [ ] Slider explanation paragraph above TDS/depth sliders
+(None — define next milestone requirements with `/gsd:new-milestone`)
 
 ### Out of Scope
 
@@ -142,4 +138,4 @@ Contributors: Amogh Herle, Sofia Ijazi, Kevin Ren, Kyler Sanders — Fall 2025/S
 | PROCESS_STAGES regrouped from 7 to 5 stages | Aligns equipment grouping with 3-subsystem engineering model; removes artificial pre/post-treatment split | ✓ Good — matches domain structure |
 
 ---
-*Last updated: 2026-04-09 — milestone v1.5 started: polish pass, cost graph legend, comparison table overhaul, slider explanation*
+*Last updated: 2026-03-29 after v1.4 milestone — data loader fixed, 3-subsystem power model, land/turbine charts removed, 5-stage equipment grouping, DISPLAY_NAMES unicode cleanup, cost-only scorecard and comparison text*
