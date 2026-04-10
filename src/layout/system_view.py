@@ -165,16 +165,18 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         system_color = SYSTEM_COLORS.get(label, "#6c757d")
         is_active = (key == active_system)
 
-        tab = dbc.Tab(
+        tab_kwargs = dict(
             label=label,
             tab_id=key,
             label_style={"color": "#6c757d"},
-            active_label_style={
+        )
+        if is_active:
+            tab_kwargs["active_label_style"] = {
                 "color": system_color,
                 "fontWeight": "bold",
                 "borderBottom": f"3px solid {system_color}",
-            } if is_active else {"color": "#6c757d"},
-        )
+            }
+        tab = dbc.Tab(**tab_kwargs)
         tabs.append(tab)
 
     tab_bar = dbc.Tabs(
