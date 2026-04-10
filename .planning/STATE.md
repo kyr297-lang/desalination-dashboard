@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-04-09)
 
 ## Current Position
 
-Phase: 17-ui-polish-chart-legend — COMPLETE
-Plan: 17-02 (final)
-Status: Phase 17 complete — all plans verified
-Last activity: 2026-04-09 — Phase 17 complete
+Phase: 18-comparison-table-overhaul-slider-explanation — COMPLETE
+Plan: 18-02 (final)
+Status: Phase 18 complete — all plans verified
+Last activity: 2026-04-10 — Phase 18 complete
 
 Progress: [██████████] 100%
 
