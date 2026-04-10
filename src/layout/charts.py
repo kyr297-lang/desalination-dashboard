@@ -508,7 +508,7 @@ def make_chart_section() -> html.Div:
     )
 
     return html.Div([
-        html.H4("System Comparison", className="mt-4 mb-3"),
+        html.H4("System Comparison", className="section-heading"),
         legend_store,
         banner,
         control_panel,

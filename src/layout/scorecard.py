@@ -262,7 +262,7 @@ def make_scorecard_table(
     )
 
     return html.Div([
-        html.H5("System Scorecard", className="mt-3"),
+        html.H5("System Scorecard", className="section-heading"),
         html.P(
             "Green = best of the compared systems, Red = worst. "
             "Lower cost and LCOW are better. Higher drivetrain efficiency is better.",

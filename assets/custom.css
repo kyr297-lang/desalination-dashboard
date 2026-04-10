@@ -122,6 +122,29 @@
     padding-bottom: 0.25rem;
 }
 
+/* Phase 17: heading hierarchy normalization (POLISH-02, D-11)
+   ───────────────────────────────────────────────────────────
+   Make top-level section headings visually uniform regardless
+   of semantic tag (H4/H5/H6). Two tiers:
+   - .section-heading: top-of-section labels (System Comparison, System Scorecard, per-stage)
+   - .subsection-heading: sub-labels inside a section (Cross-System Comparison)
+*/
+.section-heading {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #212529;
+}
+
+.subsection-heading {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
 /* Print media rules
    ──────────────────
    Hide all non-report UI elements in print/PDF export view.
