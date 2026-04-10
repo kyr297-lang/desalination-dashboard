@@ -145,6 +145,19 @@
     color: #495057;
 }
 
+/* Consolidated comparison table (Phase 18: COMP-02 through COMP-05)
+   ──────────────────────────────────────────────────────────────────
+   Highlight styles are applied inline by system_view.py based on
+   active system. These rules handle base styling only. */
+.comparison-table {
+    font-size: 0.875rem;
+}
+
+.comparison-table th,
+.comparison-table td {
+    vertical-align: middle;
+}
+
 /* Print media rules
    ──────────────────
    Hide all non-report UI elements in print/PDF export view.
@@ -194,6 +207,13 @@
     .stage-heading-mechanical,
     .stage-heading-electrical,
     .stage-heading-hybrid {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Comparison table highlight colors — print preservation */
+    .comparison-table th,
+    .comparison-table td {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }

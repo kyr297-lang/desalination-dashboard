@@ -17,7 +17,7 @@ All three systems (mechanical, electrical, hybrid) render identically:
 from dash import html
 import dash_bootstrap_components as dbc
 
-from src.config import SYSTEM_COLORS
+from src.config import SYSTEM_COLORS, COMPARISON_TABLE_DATA
 from src.layout.scorecard import make_scorecard_table
 from src.layout.equipment_grid import make_equipment_section
 from src.layout.charts import make_chart_section
@@ -45,6 +45,70 @@ _DIAGRAM_CARD_CLASSES = {
     "electrical": "shadow-sm mb-3 system-card-electrical",
     "hybrid": "shadow-sm mb-3",
 }
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Comparison table helpers
+# ──────────────────────────────────────────────────────────────────────────────
+
+def _hex_to_rgb(hex_color: str) -> str:
+    """Convert '#RRGGBB' to 'R, G, B' string for rgba() usage."""
+    h = hex_color.lstrip("#")
+    return f"{int(h[0:2], 16)}, {int(h[2:4], 16)}, {int(h[4:6], 16)}"
+
+
+def _make_comparison_table(active_system: str) -> dbc.Card:
+    """Build the consolidated 3-system comparison table with active column highlight.
+
+    Per D-02 through D-07: renders a 4-column table (row label + 3 systems) with
+    the active system's column visually highlighted using its SYSTEM_COLORS entry.
+    """
+    systems = ["Mechanical", "Electrical", "Hybrid"]
+    active_label = active_system.capitalize()
+    active_color = SYSTEM_COLORS.get(active_label, "#6c757d")
+
+    # Header row: empty label cell + 3 system headers
+    header_cells = [html.Th("", style={"width": "20%"})]
+    for sys_label in systems:
+        is_active = (sys_label == active_label)
+        style = {
+            "textAlign": "center",
+            "backgroundColor": SYSTEM_COLORS[sys_label] if is_active else "#f8f9fa",
+            "color": "white" if is_active else "#212529",
+            "fontWeight": "600",
+            "width": "26.67%",
+        }
+        header_cells.append(html.Th(sys_label, style=style))
+    header = html.Thead(html.Tr(header_cells))
+
+    # Active column tint for body cells
+    active_tint = f"rgba({_hex_to_rgb(active_color)}, 0.10)"
+
+    # Body rows from COMPARISON_TABLE_DATA
+    rows = []
+    for row_label, values in COMPARISON_TABLE_DATA.items():
+        cells = [html.Td(html.Strong(row_label), style={"whiteSpace": "nowrap"})]
+        for sys_label in systems:
+            is_active = (sys_label == active_label)
+            cell_style = {"backgroundColor": active_tint} if is_active else {}
+            cells.append(html.Td(values.get(sys_label, ""), style=cell_style))
+        rows.append(html.Tr(cells))
+
+    table = dbc.Table(
+        [header, html.Tbody(rows)],
+        bordered=True,
+        hover=True,
+        size="sm",
+        className="comparison-table mb-0",
+    )
+
+    return dbc.Card(
+        dbc.CardBody([
+            html.H5("System Comparison", className="section-heading mt-0"),
+            table,
+        ]),
+        className="shadow-sm mb-3",
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -195,10 +259,13 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         className="shadow-sm mb-3",
     )
 
+    comparison_table = _make_comparison_table(active_system)
+
     main_content_children = [
         diagram_card,
         scorecard_card,
         equipment_card,
+        comparison_table,
     ]
 
     # ── 3b. System badge (inserted after tab_bar, visible in print) ──────────
