@@ -141,6 +141,9 @@
     /* Interactive controls and export button */
     .no-print { display: none !important; }
 
+    /* Phase 17: hide badge pill legend row in print (D-03, D-07) */
+    .legend-badge-row { display: none !important; }
+
     /* Hybrid builder inputs (results only, not inputs per CONTEXT.md) */
     .hybrid-builder-section { display: none !important; }
 
