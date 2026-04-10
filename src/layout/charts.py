@@ -503,6 +503,13 @@ def make_chart_section() -> html.Div:
         data={"mechanical": True, "electrical": True, "hybrid": True},
     )
 
+    # ── Banner dismissed store ────────────────────────────────────────────────
+    banner_store = dcc.Store(
+        id="store-banner-dismissed",
+        data={"dismissed": False},
+        storage_type="session",   # persist across tab switches, clear on new session
+    )
+
     # ── 2-chart row ───────────────────────────────────────────────────────────
     chart_row = dbc.Row(
         [
@@ -523,6 +530,7 @@ def make_chart_section() -> html.Div:
     return html.Div([
         html.H4("System Comparison", className="section-heading"),
         legend_store,
+        banner_store,
         banner,
         slider_explanation,
         control_panel,
@@ -568,7 +576,7 @@ def update_charts(years, battery_fraction, visibility, tds_ppm, depth_m):
     visibility : dict
         Legend visibility store {"mechanical": bool, "electrical": bool, "hybrid": bool}.
     tds_ppm : float
-        Source water salinity in PPM from the TDS slider (0-35000, default 950).
+        Source water salinity in PPM from the TDS slider (0–10000, default 950).
     depth_m : float
         Water source depth in metres from the depth slider (0-1900, default 950).
 
