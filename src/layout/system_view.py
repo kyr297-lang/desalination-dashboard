@@ -57,11 +57,14 @@ def _hex_to_rgb(hex_color: str) -> str:
     return f"{int(h[0:2], 16)}, {int(h[2:4], 16)}, {int(h[4:6], 16)}"
 
 
-def _make_comparison_table(active_system: str) -> dbc.Card:
+def _make_comparison_table(active_system: str) -> html.Div:
     """Build the consolidated 3-system comparison table with active column highlight.
 
     Per D-02 through D-07: renders a 4-column table (row label + 3 systems) with
     the active system's column visually highlighted using its SYSTEM_COLORS entry.
+
+    Returns an html.Div (not a standalone Card) so it can be embedded directly
+    inside the merged scorecard card.
     """
     systems = ["Mechanical", "Electrical", "Hybrid"]
     active_label = active_system.capitalize()
@@ -102,13 +105,11 @@ def _make_comparison_table(active_system: str) -> dbc.Card:
         className="comparison-table mb-0",
     )
 
-    return dbc.Card(
-        dbc.CardBody([
-            html.H5("System Comparison", className="section-heading mt-0"),
-            table,
-        ]),
-        className="shadow-sm mb-3",
-    )
+    return html.Div([
+        html.Hr(className="my-3"),
+        html.H5("Qualitative Comparison", className="section-heading mt-0"),
+        table,
+    ])
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -247,11 +248,14 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
     # Scorecard section wrapped in a Card. The export button is inside the
     # CardBody ABOVE scorecard-container so the callback that re-renders
     # scorecard-container children does not destroy the button.
+    comparison_content = _make_comparison_table(active_system)
+
     scorecard_card = dbc.Card(
         dbc.CardBody([
             export_btn,
             scorecard_container,
             comparison_text_div,
+            comparison_content,
         ]),
         className="shadow-sm mb-3",
     )
@@ -261,13 +265,10 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         className="shadow-sm mb-3",
     )
 
-    comparison_table = _make_comparison_table(active_system)
-
     main_content_children = [
         diagram_card,
         scorecard_card,
         equipment_card,
-        comparison_table,
     ]
 
     # ── 3b. System badge (inserted after tab_bar, visible in print) ──────────

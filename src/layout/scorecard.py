@@ -15,7 +15,6 @@ import pandas as pd
 from dash import html, clientside_callback, Input, Output
 import dash_bootstrap_components as dbc
 
-from src.config import RAG_COLORS
 from src.data.processing import (
     compute_scorecard_metrics,
     generate_comparison_text,
@@ -134,7 +133,7 @@ def make_scorecard_table(
     Returns
     -------
     html.Div
-        Container holding the title, legend note, table, and summary row.
+        Container holding the title, legend note, and table.
     """
     # ── 1. Compute aggregate metrics ─────────────────────────────────────────
     metrics = compute_scorecard_metrics(mechanical_df, electrical_df, hybrid_df)
@@ -157,26 +156,7 @@ def make_scorecard_table(
     dt_eff_colors = rag_color(dt_eff_values, metric="drivetrain_efficiency")
     lcow_colors   = rag_color(lcow_values,   metric="lcow")
 
-    # ── 3. Count green dots per system ───────────────────────────────────────
-    green_hex = RAG_COLORS["green"]
-    all_color_maps = [cost_colors, dt_eff_colors, lcow_colors]
-
-    mech_greens = sum(1 for colors in all_color_maps if colors.get("mechanical") == green_hex)
-    elec_greens = sum(1 for colors in all_color_maps if colors.get("electrical") == green_hex)
-    hyb_greens = sum(1 for colors in all_color_maps if colors.get("hybrid") == green_hex) if has_hybrid else 0
-
-    systems_greens = {"Mechanical": mech_greens, "Electrical": elec_greens}
-    if has_hybrid:
-        systems_greens["Hybrid"] = hyb_greens
-
-    best_overall = max(systems_greens, key=lambda k: systems_greens[k])
-    # Check for tie
-    max_greens = systems_greens[best_overall]
-    tied = [k for k, v in systems_greens.items() if v == max_greens]
-    if len(tied) > 1:
-        best_overall = "Tied"
-
-    # ── 4. Build table rows ───────────────────────────────────────────────────
+    # ── 3. Build table rows ───────────────────────────────────────────────────
     def _value_cell(value_str: str, color_hex: str) -> html.Td:
         return html.Td(
             [_make_rag_dot(color_hex), value_str],
@@ -204,7 +184,6 @@ def make_scorecard_table(
                 _value_cell(f"${hyb['lcow']:.2f}/kgal",  lcow_colors.get("hybrid", "")),
             ]),
         ]
-        col_span = 4
         header_row = html.Tr([
             html.Th("Metric"),
             html.Th("Mechanical", style={"textAlign": "center"}),
@@ -229,31 +208,16 @@ def make_scorecard_table(
                 _value_cell(f"${elec['lcow']:.2f}/kgal", lcow_colors.get("electrical", "")),
             ]),
         ]
-        col_span = 3
         header_row = html.Tr([
             html.Th("Metric"),
             html.Th("Mechanical", style={"textAlign": "center"}),
             html.Th("Electrical", style={"textAlign": "center"}),
         ])
 
-    # ── 5. Best overall summary row ───────────────────────────────────────────
-    summary_row = html.Tr(
-        html.Td(
-            f"Best Overall: {best_overall}",
-            colSpan=col_span,
-            style={
-                "textAlign": "center",
-                "fontWeight": "600",
-                "fontStyle": "italic",
-                "backgroundColor": "#f8f9fa",
-            },
-        )
-    )
-
     table = dbc.Table(
         [
             html.Thead(header_row),
-            html.Tbody(rows + [summary_row]),
+            html.Tbody(rows),
         ],
         bordered=True,
         hover=True,
