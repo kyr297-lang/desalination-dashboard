@@ -55,6 +55,12 @@ Progress: [██████████] 100%
 
 All decisions logged in PROJECT.md Key Decisions table.
 
+### Quick Tasks Completed
+
+| ID | Date | Summary |
+|----|------|---------|
+| 260410-oqc | 2026-04-10 | Merged scorecard+comparison into one card, removed Best Overall row, stripped Click Explore text, dropped label-elec-cost from chart callback (6 outputs) |
+
 ### Pending Todos
 
 None.
