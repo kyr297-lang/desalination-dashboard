@@ -60,7 +60,7 @@
 ### v1.5 Polish & Comparison Overhaul (Phases 17-18)
 
 - [ ] **Phase 17: UI Polish & Chart Legend** — Sidebar nav, heading hierarchy, error messages, print/export verification, and cost-over-time graph legend
-- [ ] **Phase 18: Comparison Table Overhaul & Slider Explanation** — Replace per-stage cross-system slots with a consolidated 3-system comparison table on each system tab, and add slider explanation paragraph
+- [x] **Phase 18: Comparison Table Overhaul & Slider Explanation** — Replace per-stage cross-system slots with a consolidated 3-system comparison table on each system tab, and add slider explanation paragraph (completed 2026-04-10)
 
 ## Phase Details
 
@@ -114,4 +114,4 @@
 | 15. Data Layer & Chart Overhaul | v1.4 | 3/3 | Complete | 2026-03-28 |
 | 16. Display Polish & Content | v1.4 | 3/3 | Complete | 2026-03-29 |
 | 17. UI Polish & Chart Legend | v1.5 | 0/? | Not started | - |
-| 18. Comparison Table Overhaul & Slider Explanation | v1.5 | 0/? | Not started | - |
+| 18. Comparison Table Overhaul & Slider Explanation | v1.5 | 2/2 | Complete   | 2026-04-10 |
