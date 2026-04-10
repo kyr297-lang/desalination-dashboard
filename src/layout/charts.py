@@ -14,7 +14,7 @@ build_cost_chart(years, mech_cumulative, elec_cumulative, hybrid_cumulative, vis
 build_energy_bar_chart(mech_energy, elec_energy, hybrid_energy, visibility) -> go.Figure
 make_chart_section() -> html.Div
 update_charts(years, battery_fraction, visibility, tds_ppm, depth_m) -> tuple
-    Returns (cost_fig, power_fig, label_years, label_ratio, label_cost, label_tds, label_depth)
+    Returns (cost_fig, power_fig, label_years, label_ratio, label_tds, label_depth)
 toggle_legend(n_mech, n_elec, n_hybrid, visibility) -> dict
 update_badge_styles(visibility) -> tuple
 """
@@ -25,7 +25,7 @@ from dash import html, dcc, callback, Input, Output, State, ctx
 import dash_bootstrap_components as dbc
 
 from src.config import SYSTEM_COLORS, STAGE_COLORS
-from src.data.processing import compute_chart_data, interpolate_battery_cost, battery_ratio_label, fmt_cost
+from src.data.processing import compute_chart_data, interpolate_battery_cost, battery_ratio_label
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -378,11 +378,6 @@ def make_chart_section() -> html.Div:
                             children="50% Battery / 50% Tank",
                             className="fw-bold ms-2",
                         ),
-                        html.Span(
-                            id="label-elec-cost",
-                            children="",
-                            className="text-muted ms-2",
-                        ),
                     ],
                     width=6,
                 ),
@@ -551,7 +546,6 @@ def make_chart_section() -> html.Div:
     Output("chart-power", "figure"),
     Output("label-years", "children"),
     Output("label-battery-ratio", "children"),
-    Output("label-elec-cost", "children"),
     Output("label-tds", "children"),
     Output("label-depth", "children"),
     Input("slider-time-horizon", "value"),
@@ -583,12 +577,12 @@ def update_charts(years, battery_fraction, visibility, tds_ppm, depth_m):
     Returns
     -------
     tuple
-        (cost_fig, power_fig, label_years, label_ratio, label_cost, label_tds, label_depth)
+        (cost_fig, power_fig, label_years, label_ratio, label_tds, label_depth)
     """
     # Guard: if data not yet loaded, return empty figures and blank labels
     if _data is None:
         empty = go.Figure()
-        return empty, empty, "", "", "", "", ""
+        return empty, empty, "", "", "", ""
 
     cd = compute_chart_data(_data, battery_fraction, years, tds_ppm=tds_ppm, depth_m=depth_m)
 
@@ -608,11 +602,10 @@ def update_charts(years, battery_fraction, visibility, tds_ppm, depth_m):
 
     label_years = f"{years} year{'s' if years != 1 else ''}"
     label_ratio = battery_ratio_label(battery_fraction)
-    label_cost = f"Electrical total: {fmt_cost(cd['electrical_total_cost'])}"
     label_tds = f"{int(round(tds_ppm))} PPM"
     label_depth = f"{int(round(depth_m))} m"
 
-    return cost_fig, power_fig, label_years, label_ratio, label_cost, label_tds, label_depth
+    return cost_fig, power_fig, label_years, label_ratio, label_tds, label_depth
 
 
 @callback(

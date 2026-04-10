@@ -25,8 +25,7 @@ _SYSTEM_CARDS = [
         "label": "Mechanical",
         "key": "mechanical",
         "description": (
-            "Click Explore to view equipment and cost data for the "
-            "mechanical system. A wind turbine powers a hydraulic power unit (HPU) "
+            "A wind turbine powers a hydraulic power unit (HPU) "
             "that drives vertical turbine and plunger pumps through a manifold and "
             "hydraulic motors \u2014 no electrical conversion losses."
         ),
@@ -35,8 +34,7 @@ _SYSTEM_CARDS = [
         "label": "Electrical",
         "key": "electrical",
         "description": (
-            "Click Explore to view equipment and cost data for the "
-            "electrical system. Converts wind to electricity with adjustable "
+            "Converts wind to electricity with adjustable "
             "battery/tank storage \u2014 use the slider to compare storage options."
         ),
     },
@@ -44,8 +42,7 @@ _SYSTEM_CARDS = [
         "label": "Hybrid",
         "key": "hybrid",
         "description": (
-            "Click Explore to view equipment and cost data for the "
-            "hybrid system. A fixed preset configuration that combines a hydraulic "
+            "A fixed preset configuration that combines a hydraulic "
             "drivetrain for RO pressurization with battery-powered electrical "
             "subsystems alongside the mechanical approach."
         ),
@@ -115,7 +112,7 @@ def create_overview_layout() -> html.Div:
                     html.P(
                         "This dashboard was built as part of a Fall 2025\u2013Spring 2026 "
                         "senior design class to compare wind-powered "
-                        "desalination system configurations. Click Explore on any system "
+                        "desalination system configurations. Select any system "
                         "card below to compare equipment and costs across the three "
                         "approaches.",
                         className="mb-2 small",
