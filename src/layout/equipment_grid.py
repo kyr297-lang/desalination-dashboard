@@ -1,13 +1,13 @@
 """
 src/layout/equipment_grid.py
 ============================
-Equipment card grid with accordion detail expansion and cross-system comparison.
+Equipment card grid with accordion detail expansion.
 
 Exports
 -------
 make_equipment_section(df, system, all_data)
     Returns an html.Div grouping equipment accordion items by process stage,
-    with full detail and cross-system comparison in the expanded view.
+    with full detail in the expanded view.
 """
 
 from __future__ import annotations
@@ -119,150 +119,10 @@ def _make_detail_table(row: pd.Series) -> dbc.Table:
     )
 
 
-def _make_cross_system_comparison(
-    equipment_name: str,
-    system: str,
-    all_data: dict,
-) -> html.Div:
-    """Build a cross-system comparison table for equipment in the same process stage.
-
-    Finds equipment items from other systems that share the same process stage as
-    the given equipment item, then renders a small comparison table highlighting
-    the best value per numeric metric column.
-
-    Parameters
-    ----------
-    equipment_name : str
-        Name of the equipment item being expanded.
-    system : str
-        System key ("mechanical" or "electrical").
-    all_data : dict
-        Full data dictionary from load_data().
-
-    Returns
-    -------
-    html.Div
-        Container with heading and comparison table, or a note if no equivalents.
-    """
-    # Determine the stage for the current equipment
-    this_stage = get_equipment_stage(equipment_name, system)
-
-    # Collect equivalents from other systems (same process stage)
-    other_systems = [s for s in ("mechanical", "electrical") if s != system]
-
-    comparison_rows: list[dict] = []
-    # Include current item
-    this_df = all_data.get(system, pd.DataFrame())
-    this_row_df = this_df[this_df["name"] == equipment_name]
-    if not this_row_df.empty:
-        r = this_row_df.iloc[0]
-        raw_name = str(r.get("name", "N/A"))
-        raw_ls = r.get("lifespan_years")
-        comparison_rows.append({
-            "System": system.capitalize(),
-            "Name": DISPLAY_NAMES.get(raw_name, raw_name),
-            "Cost": r.get("cost_usd"),
-            "Lifespan": raw_ls if raw_ls is not None else LIFESPAN_DEFAULTS.get(raw_name, "indefinite"),
-        })
-
-    for other_sys in other_systems:
-        other_df = all_data.get(other_sys, pd.DataFrame())
-        if other_df.empty:
-            continue
-        # Find items in the same process stage
-        for _, other_row in other_df.iterrows():
-            other_stage = get_equipment_stage(str(other_row.get("name", "")), other_sys)
-            if other_stage == this_stage:
-                other_name = str(other_row.get("name", "N/A"))
-                raw_ls = other_row.get("lifespan_years")
-                comparison_rows.append({
-                    "System": other_sys.capitalize(),
-                    "Name": DISPLAY_NAMES.get(other_name, other_name),
-                    "Cost": other_row.get("cost_usd"),
-                    "Lifespan": raw_ls if raw_ls is not None else LIFESPAN_DEFAULTS.get(other_name, "indefinite"),
-                })
-
-    if len(comparison_rows) <= 1:
-        return html.Div(
-            html.P(
-                "No equivalent equipment found in other systems for this process stage.",
-                className="text-muted small fst-italic",
-            ),
-            className="mt-2",
-        )
-
-    # Best values: lowest cost, highest lifespan
-    best_cost = None
-    best_lifespan = None
-    for r in comparison_rows:
-        c = pd.to_numeric(r["Cost"], errors="coerce")
-        if not pd.isna(c):
-            best_cost = min(best_cost, c) if best_cost is not None else c
-        ls = pd.to_numeric(r["Lifespan"], errors="coerce")
-        if not pd.isna(ls):
-            best_lifespan = max(best_lifespan, ls) if best_lifespan is not None else ls
-
-    # Build table rows
-    header = html.Thead(
-        html.Tr([
-            html.Th("System"),
-            html.Th("Name"),
-            html.Th("Cost"),
-            html.Th("Lifespan"),
-        ])
-    )
-    body_rows = []
-    for comp_row in comparison_rows:
-        cost_raw = comp_row["Cost"]
-        cost_numeric = pd.to_numeric(cost_raw, errors="coerce")
-        cost_is_best = (
-            best_cost is not None
-            and not pd.isna(cost_numeric)
-            and float(cost_numeric) == best_cost
-        )
-
-        ls_raw = comp_row["Lifespan"]
-        ls_numeric = pd.to_numeric(ls_raw, errors="coerce")
-        ls_is_best = (
-            best_lifespan is not None
-            and not pd.isna(ls_numeric)
-            and float(ls_numeric) == best_lifespan
-        )
-
-        best_style = {"color": "#28A745", "fontWeight": "bold"}
-        cells = [
-            html.Td(comp_row["System"], style={"fontWeight": "600"}),
-            html.Td(comp_row["Name"], style={"fontSize": "0.85rem"}),
-            html.Td(fmt_cost(cost_raw), style=best_style if cost_is_best else {}),
-            html.Td(_fmt_lifespan(ls_raw), style=best_style if ls_is_best else {}),
-        ]
-        body_rows.append(html.Tr(cells))
-
-    table = dbc.Table(
-        [header, html.Tbody(body_rows)],
-        bordered=True,
-        size="sm",
-        responsive=True,
-    )
-
-    return html.Div(
-        [
-            html.H6("Cross-System Comparison", className="subsection-heading text-muted"),
-            html.P(
-                f"Equipment in the same process stage ({this_stage}) across systems. "
-                "Green = best value (lowest cost, longest lifespan).",
-                className="small text-muted",
-            ),
-            table,
-        ]
-    )
-
-
 def _make_accordion_item(
     row: pd.Series,
     system: str,
     idx: int,
-    all_data: dict,
 ) -> dbc.AccordionItem:
     """Build a single accordion item for one equipment row.
 
@@ -271,11 +131,9 @@ def _make_accordion_item(
     row : pd.Series
         Equipment row from the system DataFrame.
     system : str
-        System key ("mechanical" or "electrical").
+        System key ("mechanical", "electrical", or "hybrid").
     idx : int
         Row index (used for unique item IDs).
-    all_data : dict
-        Full data dictionary for cross-system comparison.
 
     Returns
     -------
@@ -304,13 +162,11 @@ def _make_accordion_item(
 
     # Detail content
     detail_table = _make_detail_table(row)
-    cross_comparison = _make_cross_system_comparison(name, system, all_data)
 
     content = html.Div([
         description,
         _make_summary_badges(row),
         detail_table,
-        cross_comparison,
     ])
 
     return dbc.AccordionItem(
@@ -333,7 +189,7 @@ def make_equipment_section(
 
     Groups equipment by process stage, renders each stage with a header and a
     dbc.Accordion.  Each accordion item shows collapsed summary (name + cost)
-    and expanded detail (description, badges, data table, cross-system comparison).
+    and expanded detail (description, badges, data table).
 
     Parameters
     ----------
@@ -342,7 +198,7 @@ def make_equipment_section(
     system : str
         System key: "mechanical", "electrical", or "hybrid".
     all_data : dict
-        Full data dictionary from load_data() — passed to cross-system comparison.
+        Full data dictionary from load_data() (retained for API compatibility).
 
     Returns
     -------
@@ -370,7 +226,7 @@ def make_equipment_section(
             continue
 
         accordion_items = [
-            _make_accordion_item(row, system, idx, all_data)
+            _make_accordion_item(row, system, idx)
             for idx, row in items_in_stage
         ]
 

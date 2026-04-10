@@ -461,3 +461,34 @@ DRIVETRAIN_EFFICIENCY = {
 # Converted: 7,874,276 m³ × 264.172 gal/m³ / 1000 = 2,080,163 thousand US gallons
 # Usage: LCOW ($/kgal) = total_capex_usd / LCOW_DENOMINATOR_KGAL
 LCOW_DENOMINATOR_KGAL = 2_080_163.0
+
+# Static comparison table content for the consolidated 3-system comparison.
+# Each row maps to a dict of {system_label: cell_text}.
+# Rendered by system_view.py below the equipment accordion.
+COMPARISON_TABLE_DATA = {
+    "Drive mechanism": {
+        "Mechanical": "Hydraulic drivetrain (gearbox, HPU, hydraulic motors)",
+        "Electrical": "Electric motors powered by grid-tied wind turbine",
+        "Hybrid": "Hydraulic drivetrain for RO; electric motors for extraction and brine",
+    },
+    "Energy storage": {
+        "Mechanical": "Pressurized hydraulic accumulators and water tanks",
+        "Electrical": "Tesla Megapack 3.9 MWh lithium-ion battery bank",
+        "Hybrid": "Battery bank (electrical loads) + hydraulic accumulator (RO loads)",
+    },
+    "Key advantage": {
+        "Mechanical": "No battery degradation; simple, robust drivetrain components",
+        "Electrical": "Higher drivetrain efficiency (82%); precise electronic control",
+        "Hybrid": "Balances efficiency and resilience; isolates RO from electrical faults",
+    },
+    "Key limitation": {
+        "Mechanical": "Lower drivetrain efficiency (69%); limited speed control flexibility",
+        "Electrical": "Battery replacement every 12 years adds significant lifecycle cost",
+        "Hybrid": "Most complex system; requires both hydraulic and electrical maintenance",
+    },
+    "Best suited for": {
+        "Mechanical": "Remote sites prioritizing long-term simplicity over efficiency",
+        "Electrical": "Sites with stable wind and access to battery supply chains",
+        "Hybrid": "Sites needing operational resilience with moderate efficiency",
+    },
+}
