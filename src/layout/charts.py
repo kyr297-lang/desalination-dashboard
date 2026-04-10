@@ -19,7 +19,6 @@ toggle_legend(n_mech, n_elec, n_hybrid, visibility) -> dict
 update_badge_styles(visibility) -> tuple
 """
 
-import dash
 import plotly.graph_objects as go
 from dash import html, dcc, callback, Input, Output, State, ctx
 import dash_bootstrap_components as dbc
@@ -128,25 +127,10 @@ def build_cost_chart(
             tickprefix="$",
             tickformat="~s",
         ),
-        showlegend=True,
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1.0,
-            bgcolor="rgba(255,255,255,0.8)",
-            bordercolor="#cccccc",
-            borderwidth=1,
-        ),
+        showlegend=False,
         uirevision=f"cost-{years}",
         transition=_TRANSITION,
-        margin=dict(
-            l=_MARGIN.get("l", 75),
-            r=_MARGIN.get("r", 20),
-            t=max(_MARGIN.get("t", 10), 50),
-            b=_MARGIN.get("b", 40),
-        ),
+        margin=_MARGIN,
         hovermode="x unified",
     )
     return fig
@@ -481,7 +465,7 @@ def make_chart_section() -> html.Div:
                 pill=True,
             ),
         ],
-        className="mb-3 d-flex align-items-center legend-badge-row no-print",
+        className="mb-3 d-flex align-items-center",
     )
 
     # ── Legend visibility store ───────────────────────────────────────────────
@@ -508,7 +492,7 @@ def make_chart_section() -> html.Div:
     )
 
     return html.Div([
-        html.H4("System Comparison", className="section-heading"),
+        html.H4("System Comparison", className="mt-4 mb-3"),
         legend_store,
         banner,
         control_panel,
@@ -636,43 +620,6 @@ def toggle_legend(n_mech, n_elec, n_hybrid, visibility):
     updated = dict(visibility)
     updated[key] = not updated[key]
     return updated
-
-
-@callback(
-    Output("store-legend-visibility", "data", allow_duplicate=True),
-    Input("chart-cost", "restyleData"),
-    State("store-legend-visibility", "data"),
-    prevent_initial_call=True,
-)
-def sync_chart_legend_to_store(restyle_data, visibility):
-    """Sync Plotly in-chart legend clicks to store-legend-visibility (D-02).
-
-    Plotly emits restyleData=[{'visible': [<val>]}, [<trace_idx>]] when a
-    user clicks a legend entry. Trace order in build_cost_chart is
-    Mechanical (0), Electrical (1), Hybrid (2). We map trace_idx -> system
-    key and flip the store value accordingly.
-    """
-    if not restyle_data or not isinstance(restyle_data, list) or len(restyle_data) < 2:
-        return dash.no_update
-    props, trace_indices = restyle_data[0], restyle_data[1]
-    if "visible" not in props or not trace_indices:
-        return dash.no_update
-
-    _idx_to_key = {0: "mechanical", 1: "electrical", 2: "hybrid"}
-    visible_values = props["visible"]
-    updated = dict(visibility)
-    changed = False
-    for i, trace_idx in enumerate(trace_indices):
-        key = _idx_to_key.get(trace_idx)
-        if key is None:
-            continue
-        val = visible_values[i] if i < len(visible_values) else visible_values[0]
-        # Plotly: True = visible, 'legendonly'/False = hidden
-        new_bool = val is True
-        if updated.get(key) != new_bool:
-            updated[key] = new_bool
-            changed = True
-    return updated if changed else dash.no_update
 
 
 @callback(
