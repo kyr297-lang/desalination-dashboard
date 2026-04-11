@@ -21,7 +21,6 @@ from src.config import SYSTEM_COLORS, COMPARISON_TABLE_DATA
 from src.layout.scorecard import make_scorecard_table
 from src.layout.equipment_grid import make_equipment_section
 from src.layout.charts import make_chart_section
-from src.data.processing import compute_scorecard_metrics, generate_comparison_text
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -106,7 +105,6 @@ def _make_comparison_table(active_system: str) -> html.Div:
     )
 
     return html.Div([
-        html.Hr(className="my-3"),
         html.H5("Qualitative Comparison", className="section-heading mt-0"),
         table,
     ])
@@ -210,23 +208,6 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         id="scorecard-container",
     )
 
-    # ── 4. Comparison text — generated from BOM metrics at render time ────────
-    metrics = compute_scorecard_metrics(
-        data["mechanical"], data["electrical"], data.get("hybrid")
-    )
-    if "hybrid" in metrics:
-        comparison_str = generate_comparison_text(
-            metrics["hybrid"], metrics["mechanical"], metrics["electrical"]
-        )
-        comparison_content = html.P(
-            comparison_str,
-            className="text-muted small mt-2",
-            style={"fontStyle": "italic"},
-        )
-    else:
-        comparison_content = None
-    comparison_text_div = html.Div(comparison_content, id="comparison-text")
-
     # ── Export / Print button (hidden in print via no-print class) ────────────
     export_btn = dbc.Button(
         "Export / Print",
@@ -234,7 +215,7 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
         color="secondary",
         outline=True,
         size="sm",
-        className="mb-2 no-print",
+        className="no-print",
     )
 
     # ── 5. Equipment section — same pattern for all three systems ─────────────
@@ -245,20 +226,21 @@ def create_system_view_layout(active_system: str, data: dict) -> html.Div:
     chart_wrapper = make_chart_section()
 
     # ── Assemble layout ───────────────────────────────────────────────────────
-    # Scorecard section wrapped in a Card. The export button is inside the
-    # CardBody ABOVE scorecard-container so the callback that re-renders
-    # scorecard-container children does not destroy the button.
-    comparison_content = _make_comparison_table(active_system)
+    qualitative_section = _make_comparison_table(active_system)
 
-    scorecard_card = dbc.Card(
+    scorecard_card = dbc.Card([
+        dbc.CardHeader(
+            dbc.Row([
+                dbc.Col(html.Span("System Analysis", style={"fontWeight": "600"}), width="auto"),
+                dbc.Col(export_btn, width="auto", className="ms-auto"),
+            ], align="center"),
+        ),
         dbc.CardBody([
-            export_btn,
             scorecard_container,
-            comparison_text_div,
-            comparison_content,
+            html.Div(className="mb-4"),
+            qualitative_section,
         ]),
-        className="shadow-sm mb-3",
-    )
+    ], className="shadow-sm mb-3")
 
     equipment_card = dbc.Card(
         dbc.CardBody(equipment),

@@ -68,7 +68,7 @@ DEPTH_LOOKUP_COLUMNS = ["depth_m", "pump_energy_kw"]
 # Private helpers
 # ──────────────────────────────────────────────────────────────────────────────
 
-def _parse_section(ws, header_row: int, stop_rows: set, cost_col: int = 4) -> list[dict]:
+def _parse_section(ws, header_row: int, stop_rows: set, cost_col: int = 4, lifespan_col: int | None = None) -> list[dict]:
     """
     Parse equipment rows starting immediately after *header_row*.
 
@@ -87,16 +87,17 @@ def _parse_section(ws, header_row: int, stop_rows: set, cost_col: int = 4) -> li
     stop_rows : set[int]
         Row numbers that mark the start of the *next* section (or end boundary).
     cost_col : int
-        1-based column index for the cost_usd value.
-        Electrical section uses col 5 (E = total cost).
-        Mechanical and hybrid sections use col 4 (D = cost).
-        Lifespan is always the column immediately after cost_col.
+        1-based column index for the cost_usd value. Default 4 (column D).
+    lifespan_col : int or None
+        1-based column index for lifespan_years. Defaults to cost_col + 1.
 
     Returns
     -------
     list[dict]
         One dict per equipment row, keys matching EQUIPMENT_COLUMNS.
     """
+    if lifespan_col is None:
+        lifespan_col = cost_col + 1
     rows = []
     for r in range(header_row + 1, ws.max_row + 1):
         if r in stop_rows:
@@ -112,7 +113,7 @@ def _parse_section(ws, header_row: int, stop_rows: set, cost_col: int = 4) -> li
             "name":           name,
             "quantity":       ws.cell(r, 3).value,
             "cost_usd":       ws.cell(r, cost_col).value,
-            "lifespan_years": ws.cell(r, cost_col + 1).value,
+            "lifespan_years": ws.cell(r, lifespan_col).value,
         })
     return rows
 
@@ -389,7 +390,7 @@ def load_data() -> dict:
     mech_start   = section_row_map["mechanical"]
     hybrid_start = section_row_map["hybrid"]
 
-    electrical_rows = _parse_section(ws, elec_start,   stop_rows={mech_start},   cost_col=5)
+    electrical_rows = _parse_section(ws, elec_start,   stop_rows={mech_start},   cost_col=4, lifespan_col=6)
     mechanical_rows = _parse_section(ws, mech_start,   stop_rows={hybrid_start}, cost_col=4)
     hybrid_rows     = _parse_section(ws, hybrid_start, stop_rows=set(),           cost_col=4)
 

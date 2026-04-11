@@ -98,6 +98,15 @@
     }
 }
 
+/* Accordion collapse speed
+   ─────────────────────────
+   Bootstrap's height animation on .collapsing forces a full layout reflow
+   on every frame, causing jank. Disabling the transition makes it snap
+   open/closed instantly and eliminates the lag. */
+.collapsing {
+    transition: none !important;
+}
+
 /* Equipment stage heading accents
    ──────────────────────────────────────────────────────────────────
    These classes are applied by equipment_grid.py to H5 stage heading

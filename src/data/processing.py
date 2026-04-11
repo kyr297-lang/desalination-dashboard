@@ -22,7 +22,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from src.config import PROCESS_STAGES, RAG_COLORS, SUBSYSTEM_POWER, LIFESPAN_DEFAULTS, DRIVETRAIN_EFFICIENCY, LCOW_DENOMINATOR_KGAL
+from src.config import PROCESS_STAGES, RAG_COLORS, SUBSYSTEM_POWER, SUBSYSTEM_POWER_INPUT, SUBSYSTEM_DRIVETRAIN_FACTOR, LIFESPAN_DEFAULTS, DRIVETRAIN_EFFICIENCY, LCOW_DENOMINATOR_KGAL
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Formatting helpers
@@ -576,9 +576,11 @@ def compute_chart_data(
 
     energy_breakdown = {}
     for sys_key in ["mechanical", "electrical", "hybrid"]:
-        energy = dict(SUBSYSTEM_POWER)  # shallow copy of base values
-        energy["RO Desalination"] += ro_kw
-        energy["Groundwater Extraction"] += pump_kw
+        energy = dict(SUBSYSTEM_POWER_INPUT[sys_key])  # per-system turbine input power
+        # Scale slider deltas by each subsystem's drivetrain factor (shaft → input)
+        factors = SUBSYSTEM_DRIVETRAIN_FACTOR[sys_key]
+        energy["RO Desalination"]        += ro_kw   * factors["RO Desalination"]
+        energy["Groundwater Extraction"] += pump_kw * factors["Groundwater Extraction"]
         energy_breakdown[sys_key] = energy
 
     # ── Electrical total cost (live readout for slider label) ─────────────────

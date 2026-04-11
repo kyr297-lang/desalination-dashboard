@@ -22,19 +22,73 @@ SYSTEM_COLORS = {
 # Fixed assignment prevents color shifting when stage values drop to 0.
 STAGE_COLORS = {
     "Groundwater Extraction": "#4AACB0",   # muted teal
+    "Pressure Boost":         "#7B68A8",   # muted purple
     "RO Desalination":        "#D4A739",   # muted amber
     "Brine Reinjection":      "#C46E5A",   # muted brick red
     "Other":                  "#999999",   # medium grey (fallback)
 }
 
-# Engineering constants: subsystem shaft power demands (kW).
-# These are identical across all three systems (mechanical, electrical, hybrid)
-# because the desalination process loads are the same regardless of drive type.
-# Source: Energy sheet analysis (172.9 + 311.49 + 81.865 = 566.255 kW total).
+# Per-system subsystem INPUT power (kW) — what the turbine shaft must supply.
+# Source: FDR Tables 2–4, P_input column. Design conditions:
+#   Q_feed = 0.0548 m³/s, depth = 275 m, ED = 1.5 kWh/m³, P_inject = 550 psi.
+# Shaft process loads (P_subsystem) are identical across systems: 641.0 kW total.
+# P_input differs because each system routes subsystems through different drivetrain
+# paths (hydraulic vs. electrical), each with distinct efficiency losses.
+# Hybrid: Groundwater Extraction uses the hydraulic path; all other subsystems
+#         use the electrical path.
+SUBSYSTEM_POWER_INPUT = {
+    "mechanical": {
+        "Groundwater Extraction": 241.9,
+        "Pressure Boost":          80.4,
+        "RO Desalination":        405.5,
+        "Brine Reinjection":      106.6,
+    },
+    "electrical": {
+        "Groundwater Extraction": 203.7,
+        "Pressure Boost":          67.8,
+        "RO Desalination":        341.6,
+        "Brine Reinjection":       89.8,
+    },
+    "hybrid": {
+        "Groundwater Extraction": 241.9,   # hydraulic drivetrain path
+        "Pressure Boost":          67.8,   # electrical drivetrain path
+        "RO Desalination":        341.6,   # electrical drivetrain path
+        "Brine Reinjection":       89.8,   # electrical drivetrain path
+    },
+}
+
+# Conversion factors: shaft power delta → input power delta per subsystem/system.
+# factor = P_input / P_subsystem from FDR. Applied when TDS/depth sliders change
+# the shaft load — the input power change is scaled by the drivetrain factor.
+SUBSYSTEM_DRIVETRAIN_FACTOR = {
+    "mechanical": {
+        "Groundwater Extraction": 241.9 / 185.8,
+        "Pressure Boost":          80.4 / 61.8,
+        "RO Desalination":        405.5 / 311.5,
+        "Brine Reinjection":      106.6 / 81.9,
+    },
+    "electrical": {
+        "Groundwater Extraction": 203.7 / 185.8,
+        "Pressure Boost":          67.8 / 61.8,
+        "RO Desalination":        341.6 / 311.5,
+        "Brine Reinjection":       89.8 / 81.9,
+    },
+    "hybrid": {
+        "Groundwater Extraction": 241.9 / 185.8,   # hydraulic path
+        "Pressure Boost":          67.8 / 61.8,    # electrical path
+        "RO Desalination":        341.6 / 311.5,   # electrical path
+        "Brine Reinjection":       89.8 / 81.9,    # electrical path
+    },
+}
+
+# Shared shaft process loads (P_subsystem, kW) — kept for reference / legacy use.
+# These are the same for all three systems. Use SUBSYSTEM_POWER_INPUT for the
+# energy chart, which shows turbine input power (P_input).
 SUBSYSTEM_POWER = {
-    "Groundwater Extraction": 172.9,
-    "RO Desalination": 311.49,
-    "Brine Reinjection": 81.865,
+    "Groundwater Extraction": 185.8,
+    "Pressure Boost":         61.8,
+    "RO Desalination":        311.5,
+    "Brine Reinjection":      81.9,
 }
 
 # Default equipment lifespans (years) used when xlsx has no lifespan column.
@@ -444,15 +498,14 @@ DISPLAY_NAMES: dict[str, str] = {
 }
 
 # Drivetrain efficiency constants (turbine shaft output → RO pump shaft input).
-# Mechanical:  gearbox 97% × HPU 88% × hyd motor 90% × pump 90% = 69.3%
-# Electrical:  VFD 97% × electric motor 94% × pump 90%           = 82.1%
-# Hybrid:      RO load (55%) through hydraulic path (69.3%),
-#              GW+brine load (45%) through alternator→rectifier/inverter→VFD→motor→pump (71.8%)
-#              Weighted: 0.55×0.693 + 0.45×0.718 ≈ 70.4%
+# Derived from FDR report Tables 2–4: η = P_subsystem_total / P_input_total.
+# Mechanical:  641.0 kW / 834.4 kW = 76.8%
+# Electrical:  641.0 kW / 702.9 kW = 91.2%
+# Hybrid:      641.0 kW / 741.1 kW = 86.5%
 DRIVETRAIN_EFFICIENCY = {
-    "mechanical": 0.693,
-    "electrical": 0.821,
-    "hybrid":     0.704,
+    "mechanical": 0.768,
+    "electrical": 0.912,
+    "hybrid":     0.865,
 }
 
 # LCOW denominator: cumulative potable water production over 20-year project life.
@@ -478,11 +531,11 @@ COMPARISON_TABLE_DATA = {
     },
     "Key advantage": {
         "Mechanical": "No battery degradation; simple, robust drivetrain components",
-        "Electrical": "Higher drivetrain efficiency (82%); precise electronic control",
-        "Hybrid": "Balances efficiency and resilience; isolates RO from electrical faults",
+        "Electrical": "Highest drivetrain efficiency (91%); precise electronic control",
+        "Hybrid": "87% drivetrain efficiency; balances resilience and reduced losses",
     },
     "Key limitation": {
-        "Mechanical": "Lower drivetrain efficiency (69%); limited speed control flexibility",
+        "Mechanical": "Lowest drivetrain efficiency (77%); limited speed control flexibility",
         "Electrical": "Battery replacement every 12 years adds significant lifecycle cost",
         "Hybrid": "Most complex system; requires both hydraulic and electrical maintenance",
     },

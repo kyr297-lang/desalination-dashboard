@@ -182,6 +182,7 @@ def build_energy_bar_chart(
     """
     ALL_STAGES = [
         "Groundwater Extraction",
+        "Pressure Boost",
         "RO Desalination",
         "Brine Reinjection",
     ]
@@ -418,8 +419,8 @@ def make_chart_section() -> html.Div:
                             min=0,
                             max=1900,
                             step=1,
-                            value=950,
-                            marks={0: "0", 950: "950", 1900: "1900"},
+                            value=275,
+                            marks={0: "0", 275: "275 (design)", 950: "950", 1900: "1900"},
                             tooltip={"always_visible": True, "placement": "bottom"},
                             updatemode="mouseup",
                             allow_direct_input=False,
@@ -428,7 +429,7 @@ def make_chart_section() -> html.Div:
                         ),
                         html.Span(
                             id="label-depth",
-                            children="950 m",
+                            children="275 m",
                             className="fw-bold ms-2",
                         ),
                     ],
@@ -497,7 +498,7 @@ def make_chart_section() -> html.Div:
             ),
             _chart_card(
                 "Power Breakdown",
-                "Shaft power demand by subsystem (kW)",
+                "Required turbine input power by subsystem (kW)",
                 "chart-power",
             ),
         ],
