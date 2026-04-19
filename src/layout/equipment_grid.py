@@ -16,7 +16,7 @@ import pandas as pd
 from dash import html
 import dash_bootstrap_components as dbc
 
-from src.config import EQUIPMENT_DESCRIPTIONS, PROCESS_STAGES, DISPLAY_NAMES, LIFESPAN_DEFAULTS
+from src.config import EQUIPMENT_DESCRIPTIONS, PROCESS_STAGES, DISPLAY_NAMES, LIFESPAN_DEFAULTS, NON_COTS_COMPONENTS
 from src.data.processing import fmt_cost, fmt_num, fmt, fmt_sig2, get_equipment_stage
 
 
@@ -141,17 +141,23 @@ def _make_accordion_item(
     """
     name = str(row.get("name", "Unknown"))
     display_name = DISPLAY_NAMES.get(name, name)
+    is_non_cots = name in NON_COTS_COMPONENTS
     cost_display = fmt_cost(row.get("cost_usd"))
 
-    # Collapsed header: display name + cost
-    title = html.Span([
-        html.Strong(display_name),
+    # Collapsed header: display name + optional non-COTS marker + cost
+    header_parts: list = [html.Strong(display_name)]
+    if is_non_cots:
+        header_parts.append(
+            html.Sup("*", style={"color": "#C0392B", "marginLeft": "2px"})
+        )
+    header_parts.append(
         html.Span(
             f" — {cost_display}",
             className="text-muted ms-1",
             style={"fontSize": "0.85rem"},
-        ),
-    ])
+        )
+    )
+    title = html.Span(header_parts)
 
     # Description uses original name since EQUIPMENT_DESCRIPTIONS keys match raw xlsx strings
     description_text = EQUIPMENT_DESCRIPTIONS.get(name, "No description available.")
@@ -258,4 +264,20 @@ def make_equipment_section(
             )
         )
 
-    return html.Div(sections)
+    has_non_cots = any(
+        str(row.get("name", "")) in NON_COTS_COMPONENTS
+        for _, row in df.iterrows()
+    )
+    children: list = sections
+    if has_non_cots:
+        children = sections + [
+            html.Div(
+                html.Small([
+                    html.Sup("*", style={"color": "#C0392B", "marginRight": "3px"}),
+                    "Non-COTS: custom-fabricated or specially ordered component; "
+                    "not available as a standard commercial off-the-shelf product.",
+                ], className="text-muted fst-italic"),
+                className="mt-3 px-1",
+            )
+        ]
+    return html.Div(children)

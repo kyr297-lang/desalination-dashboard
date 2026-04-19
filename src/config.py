@@ -489,13 +489,43 @@ DISPLAY_NAMES: dict[str, str] = {
     "1.5\u202fMW Turbine (GE Vernova 1.5sle)": "1.5 MW Turbine (GE Vernova 1.5sle)",
     # Electrical — non-breaking space U+00A0 before "CPU"
     "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)": "PLC (Siemens SIMATIC S7-1200 CPU1215C-1)",
-    # Mechanical — double space in Winergy name
-    "Gearbox (Winergy  PEAB series)": "Gearbox (Winergy PEAB series)",
+    # Mechanical / Hybrid — double space in Winergy name; fix lowercase "series"
+    "Gearbox (Winergy  PEAB series)": "Gearbox (Winergy PEAB Series)",
+    # Hybrid — double space + non-standard second-shaft config
+    "Gearbox (Winergy  PEAB series) - Must be ordered with second output shaft": (
+        "Gearbox (Winergy PEAB Series) — Must Be Ordered with Second Output Shaft"
+    ),
     # Mechanical — en-dash U+2013
     "Plunger Pump (Triplex Plunger Pump K 13000 \u2013 3G)": "Plunger Pump (Triplex Plunger Pump K 13000 - 3G)",
-    # Mechanical — missing closing paren
+    # Mechanical / Hybrid — missing closing paren
     "High Pressure Pump (Danfoss APP 78/1500 180B7808 (1300 L/min)": "High Pressure Pump (Danfoss APP 78/1500 180B7808, 1300 L/min)",
+    # Capitalisation fixes — items below display as-is but have lowercase words
+    "Wind turbine rotor lock": "Wind Turbine Rotor Lock",
+    "Gate valve": "Gate Valve",
+    "Pipes (total)": "Pipes (Total)",
+    "Piping (total)": "Piping (Total)",
+    "Extra storage tank (100,000 gallons)": "Extra Storage Tank (100,000 gallons)",
+    "Hydraulic Motor (225 kW rating) (Haaglund CA 50)": "Hydraulic Motor (225 kW Rating) (Haaglund CA 50)",
+    "Hydraulic Motor (225 kW rating) (Haaglund CA 70)": "Hydraulic Motor (225 kW Rating) (Haaglund CA 70)",
+    "Battery (Tesla Megapack 3.9MWh unit)": "Battery (Tesla Megapack 3.9 MWh Unit)",
+    "Submersible Pumps (WDM (Nidec) NHE Series high-head submersible)": (
+        "Submersible Pumps (WDM (Nidec) NHE Series High-Head Submersible)"
+    ),
+    "Pure Aqua Large Reverse Osmosis System RO-600 (Includes Pre and Post treatment)": (
+        "Pure Aqua Large Reverse Osmosis System RO-600 (Includes Pre and Post Treatment)"
+    ),
+    # Hybrid alternator — trailing space in xlsx string
+    "HCI544E 3-Phase - Stamford | 600 kW ": "HCI544E 3-Phase - Stamford | 600 kW",
 }
+
+# Raw xlsx component names that are NOT commercial off-the-shelf products.
+# Used by equipment_grid.py to add an asterisk marker and render a legend.
+NON_COTS_COMPONENTS: frozenset[str] = frozenset({
+    "300 Bar Hydraulic Manifold (Custom Ductile Iron Block)",
+    "Gearbox (Winergy  PEAB series) - Must be ordered with second output shaft",
+    "Rectifier/Inverter Package",
+    "Brine Disposal Well",
+})
 
 # Drivetrain efficiency constants (turbine shaft output → RO pump shaft input).
 # Derived from FDR report Tables 2–4: η = P_subsystem_total / P_input_total.
