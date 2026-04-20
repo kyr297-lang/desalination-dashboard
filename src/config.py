@@ -157,9 +157,6 @@ PROCESS_STAGES = {
             "Pure Aqua Large Reverse Osmosis System RO-600 (Includes Pre and Post treatment)",
             "Booster Pumps (Grundfos CR 10-10 K)",
         ],
-        "Brine & Storage": [
-            "Brine Disposal Well",
-        ],
         "Support": [
             "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)",
             "Piping (total)",
@@ -522,9 +519,9 @@ DISPLAY_NAMES: dict[str, str] = {
 # Used by equipment_grid.py to add an asterisk marker and render a legend.
 NON_COTS_COMPONENTS: frozenset[str] = frozenset({
     "300 Bar Hydraulic Manifold (Custom Ductile Iron Block)",
+    "Hydraulic Motor (225 kW rating) (Haaglund CA 50)",
     "Gearbox (Winergy  PEAB series) - Must be ordered with second output shaft",
     "Rectifier/Inverter Package",
-    "Brine Disposal Well",
 })
 
 # Drivetrain efficiency constants (turbine shaft output → RO pump shaft input).
