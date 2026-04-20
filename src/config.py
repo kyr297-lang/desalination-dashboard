@@ -139,6 +139,7 @@ PROCESS_STAGES = {
         ],
         "Brine & Storage": [
             "Extra storage tank (100,000 gallons)",
+            "Brine Disposal Well",
         ],
         "Support": [
             "Gate valve",
@@ -156,6 +157,9 @@ PROCESS_STAGES = {
         "Desalination": [
             "Pure Aqua Large Reverse Osmosis System RO-600 (Includes Pre and Post treatment)",
             "Booster Pumps (Grundfos CR 10-10 K)",
+        ],
+        "Brine & Storage": [
+            "Brine Disposal Well",
         ],
         "Support": [
             "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)",
@@ -182,6 +186,7 @@ PROCESS_STAGES = {
         ],
         "Brine & Storage": [
             "Extra storage tank (100,000 gallons)",
+            "Brine Disposal Well",
         ],
         "Support": [
             "PLC (Siemens SIMATIC S7-1200\xa0CPU1215C-1)",
@@ -408,9 +413,12 @@ EQUIPMENT_DESCRIPTIONS = {
         "hardness, and alkalinity to potable water standards."
     ),
     "Brine Disposal Well": (
-        "A dedicated injection well for safe subsurface disposal of RO brine "
-        "concentrate, preventing surface contamination and meeting regulatory "
-        "discharge requirements."
+        "Note: this is not a discrete equipment item but an entire engineered "
+        "system — a permitted subsurface injection well with casing, wellhead "
+        "assembly, and injection pumping infrastructure for safe disposal of RO "
+        "brine concentrate. It is non-COTS and requires site-specific geological "
+        "assessment, regulatory permitting, and custom civil/drilling works; no "
+        "standard product lifespan applies."
     ),
     "Extra Storage Tank (100,000 gallons)": (
         "A 100,000-gallon product water or brine buffer tank that decouples "
@@ -522,6 +530,7 @@ NON_COTS_COMPONENTS: frozenset[str] = frozenset({
     "Hydraulic Motor (225 kW rating) (Haaglund CA 50)",
     "Gearbox (Winergy  PEAB series) - Must be ordered with second output shaft",
     "Rectifier/Inverter Package",
+    "Brine Disposal Well",
 })
 
 # Drivetrain efficiency constants (turbine shaft output → RO pump shaft input).
