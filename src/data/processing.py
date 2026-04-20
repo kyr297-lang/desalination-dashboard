@@ -379,7 +379,8 @@ def interpolate_battery_cost(battery_fraction: float, battery_lookup_df: pd.Data
     """
     fractions = pd.to_numeric(battery_lookup_df["battery_fraction"], errors="coerce").values
     costs = pd.to_numeric(battery_lookup_df["total_cost"], errors="coerce").values
-    return float(np.interp(battery_fraction, fractions, costs))
+    mask = ~(np.isnan(fractions) | np.isnan(costs))
+    return float(np.interp(battery_fraction, fractions[mask], costs[mask]))
 
 
 def interpolate_energy(value: float, lookup_df: pd.DataFrame, col_x: str, col_y: str) -> float:
