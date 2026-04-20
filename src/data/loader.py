@@ -390,7 +390,7 @@ def load_data() -> dict:
     mech_start   = section_row_map["mechanical"]
     hybrid_start = section_row_map["hybrid"]
 
-    electrical_rows = _parse_section(ws, elec_start,   stop_rows={mech_start},   cost_col=4, lifespan_col=6)
+    electrical_rows = _parse_section(ws, elec_start,   stop_rows={mech_start},   cost_col=5, lifespan_col=6)
     mechanical_rows = _parse_section(ws, mech_start,   stop_rows={hybrid_start}, cost_col=4)
     hybrid_rows     = _parse_section(ws, hybrid_start, stop_rows=set(),           cost_col=4)
 
