@@ -159,6 +159,7 @@ PROCESS_STAGES = {
             "Booster Pumps (Grundfos CR 10-10 K)",
         ],
         "Brine & Storage": [
+            "Extra storage tank (100,000 gallons)",
             "Brine Disposal Well",
         ],
         "Support": [
